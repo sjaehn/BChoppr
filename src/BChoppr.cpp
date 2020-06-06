@@ -35,13 +35,16 @@ BChoppr::BChoppr (double samplerate, const LV2_Feature* const* features) :
 	controllers {nullptr},
 	sequencesperbar (4), swing (1.0), nrSteps(16),
 	bypass (false), drywet (1.0f), blend (1), attack(0.2), release (0.2),
-	stepLevels {1.0}, stepPositions {0.0}, stepAutoPositions {true},
+	stepPositions {0.0},
 	controlPort1(NULL), controlPort2(NULL),  notifyPort(NULL),
 	record_on(false), monitorpos(-1), message ()
 
 {
+	// Init array members
 	notifications.fill (defaultNotification);
 	monitor.fill (defaultMonitorData);
+	std::fill (stepAutoPositions, stepAutoPositions + MAXSTEPS - 1, true);
+	std::fill (stepLevels, stepLevels + MAXSTEPS, 1.0f);
 
 	//Scan host features for URID map
 	LV2_URID_Map* m = NULL;
