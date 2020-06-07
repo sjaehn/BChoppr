@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <string>
 #include <stdexcept>
+#include <algorithm>
 
 #define LIM(g , min, max) ((g) > (max) ? (max) : ((g) < (min) ? (min) : (g)))
 
