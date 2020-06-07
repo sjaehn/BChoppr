@@ -22,7 +22,7 @@
 
 #include <cstdio>
 #include <string>
-#include <exception>
+#include <stdexcept>
 
 #define LIM(g , min, max) ((g) > (max) ? (max) : ((g) < (min) ? (min) : (g)))
 
