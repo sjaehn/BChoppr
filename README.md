@@ -88,6 +88,7 @@ monitor and step shape.
 * Set all markers to "auto" at once
 * Steps swing option
 * Plugin description and video tutorial linked
+* gcc10/std problem fixed
 
 ## Links
 * Tutorial video: https://youtu.be/PuzoxiAs-h8
