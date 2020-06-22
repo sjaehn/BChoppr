@@ -28,8 +28,21 @@ class SwingHSlider : public BWidgets::HSliderValue
 public:
 	SwingHSlider ();
 	SwingHSlider (const double x, const double y, const double width, const double height, const std::string& name,
-		      const double value, const double min, const double max, const double step) :
-	HSliderValue ( x, y, width, height, name, value, min, max, step, "%1.2f")
+		      const double value, const double min, const double max, const double step, std::string format = "%1.2f",
+	      	      std::function<double (const double val, const double min, const double max)> valfunc = [] (const double val, const double min, const double max)
+		      {return (val >= 1.0 ? 0.5 + 0.5 * (val - 1.0) / (max - 1.0) : 0.5 - 0.5 * (1.0 / val - 1.0) / (1.0 / min - 1.0));},
+	      	      std::function<double (const double frac, const double min, const double max)> fracfunc = [] (const double frac, const double min, const double max)
+		      {
+			      return
+		      		(
+		      			frac >= 0.5 ?
+		      			(2.0 * frac - 1.0) * (max - 1.0) + 1.0 :
+		      			1.0 / ((1.0 - 2.0 * frac) * (1.0 / min - 1.0) + 1.0)
+		      		);
+		      }) :
+	HSliderValue ( x, y, width, height, name, value, min, max, step, format),
+	valueToFraction_ (valfunc),
+	fractionToValue_ (fracfunc)
 	{}
 
 	virtual Widget* clone () const override {return new SwingHSlider (*this);}
@@ -41,11 +54,11 @@ public:
 			std::string valstr =
 			(
 				val < 1.0 ?
-				"1 : " + BUtilities::to_string (1/val, valFormat) :
+				"1 : " + BUtilities::to_string (1.0 / getValue(), valFormat) :
 				(
 					val == 1.0 ?
 					"1 : 1" :
-					BUtilities::to_string (val, valFormat) + " : 1"
+					BUtilities::to_string (getValue(), valFormat) + " : 1"
 				)
 			);
 			valueDisplay.setText (valstr);
@@ -75,7 +88,7 @@ public:
 			{
 				double frac = (event->getPosition ().x - scaleArea.getX ()) / scaleArea.getWidth ();
 				if (getStep () < 0) frac = 1 - frac;
-				double hardValue = fractionToValue (frac);
+				double hardValue = fractionToValue_ (frac, getMin(), getMax());
 				softValue = 0;
 				setValue (hardValue);
 			}
@@ -86,8 +99,8 @@ public:
 					double deltaFrac = event->getDelta ().x / scaleArea.getWidth ();
 					if (getStep () < 0) deltaFrac = -deltaFrac;
 					softValue += deltaFrac;
-					double newValue = fractionToValue (valueToFraction (getValue()) + softValue);
-					setValue (LIMIT (newValue, 1.0 / 3.0, 3.0));
+					double newValue = fractionToValue_ (valueToFraction_ (getValue(), getMin(), getMax()) + softValue, getMin(), getMax());
+					setValue (newValue);
 				}
 			}
 		}
@@ -100,10 +113,10 @@ public:
 
 		if (min != max)
 		{
-			double step = (getStep () != 0 ? getStep () : (max - min) / scaleArea.getWidth ());
-			double frac = valueToFraction (getValue()) + event->getDelta ().y * step;
-			double newValue = fractionToValue (frac);
-			setValue (LIMIT (newValue, 1.0 / 3.0, 3.0));
+			double step = (getStep () != 0.0 ? getStep () : 1.0 / scaleArea.getWidth ());
+			double frac = valueToFraction_ (getValue(), getMin(), getMax()) + event->getDelta ().y * step;
+			double newValue = fractionToValue_ (frac, getMin(), getMax());
+			setValue (newValue);
 		}
 	}
 
@@ -125,20 +138,8 @@ public:
 	}
 
 protected:
-	double valueToFraction (const double val)
-	{
-		return (val >= 1.0 ? 0.25 * (1.0 + val) : 0.25 * (3.0 - 1.0/val));
-	}
-
-	double fractionToValue (const double frac)
-	{
-		return
-		(
-			frac >= 0.5 ?
-			1.0 + (frac - 0.5) * 4.0 :
-			1.0 / (1.0 - (frac - 0.5) * 4.0)
-		);
-	}
+	std::function<double (const double val, const double min, const double max)> valueToFraction_;
+	std::function<double (const double frac, const double min, const double max)> fractionToValue_;
 
 	virtual void updateCoords () override
 	{
@@ -154,12 +155,12 @@ protected:
 			knobRadius
 		);
 
-		scaleXValue = scaleArea.getX() + valueToFraction (getValue()) * scaleArea.getWidth();
+		scaleXValue = scaleArea.getX() + valueToFraction_ (getValue(), getMin(), getMax()) * scaleArea.getWidth();
 
 		knobPosition = BUtilities::Point (scaleXValue, scaleArea.getY() + scaleArea.getHeight() / 2);
 
 		double dh = knobRadius * 2;
-		double dw = 3.2 * dh;
+		double dw = 4.0 * dh;
 		double dy = getYOffset () + h - dh;
 		double dx = LIMIT (scaleXValue - dw / 2, getXOffset (), getXOffset () + getEffectiveWidth () - dw);
 		displayArea = BUtilities::RectArea (dx, dy, dw, dh);
