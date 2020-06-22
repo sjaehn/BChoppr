@@ -76,6 +76,7 @@ private:
 	// Controllers
 	float* controllers[NrControllers];
 	float sequencesperbar;
+	float ampSwing;
 	float swing;
 	float nrSteps;
 	bool bypass;

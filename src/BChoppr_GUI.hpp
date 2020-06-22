@@ -142,6 +142,8 @@ private:
 	BWidgets::Label releaseLabel;
 	BWidgets::HSliderValue sequencesperbarControl;
 	BWidgets::Label sequencesperbarLabel;
+        SwingHSlider ampSwingControl;
+	BWidgets::Label ampSwingLabel;
         SwingHSlider swingControl;
 	BWidgets::Label swingLabel;
         BWidgets::TextButton markersAutoButton;
@@ -151,7 +153,8 @@ private:
 	BWidgets::Label stepshapeLabel;
 	BWidgets::Label sequencemonitorLabel;
 	BWidgets::Label messageLabel;
-	std::array<BWidgets::VSliderValue, MAXSTEPS> stepControl;
+	std::array<BWidgets::VSlider, MAXSTEPS> stepControl;
+        std::array<BWidgets::Label, MAXSTEPS> stepControlLabel;
 	std::array<Marker, MAXSTEPS - 1> markerWidgets;
         BWidgets::ListBox markerListBox;
 
@@ -188,6 +191,7 @@ private:
 	float release;
 	float nrSteps;
 	float sequencesperbar;
+        float ampSwing;
         float swing;
 
 	LV2_Atom_Forge forge;
@@ -214,6 +218,8 @@ private:
 	BStyles::Border screenBorder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.75), 4.0));
 	BStyles::Font defaultFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0,
 						   BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
+        BStyles::Font mdFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0,
+                                         BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
         BStyles::Font smFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 8.0,
                                               BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
 
@@ -223,11 +229,14 @@ private:
 						    {"border", STYLEPTR (&BStyles::noBorder)},
 						    {"textcolors", STYLEPTR (&txColors)},
 						    {"font", STYLEPTR (&defaultFont)}}};
+        BStyles::StyleSet mlStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
+                                                 {"border", STYLEPTR (&BStyles::noBorder)},
+                                                 {"textcolors", STYLEPTR (&fgColors)},
+                                                 {"font", STYLEPTR (&mdFont)}}};
         BStyles::StyleSet smStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
                                                  {"border", STYLEPTR (&BStyles::noBorder)},
                                                  {"textcolors", STYLEPTR (&txColors)},
                                                  {"font", STYLEPTR (&smFont)}}};
-
         BStyles::StyleSet focusStyles = {"labels", {{"background", STYLEPTR (&screenBg)},
                         			    {"border", STYLEPTR (&focusborder)},
                         			    {"textcolors", STYLEPTR (&txColors)},
@@ -293,6 +302,7 @@ private:
 				 {"textcolors", STYLEPTR (&txColors)},
 				 {"font", STYLEPTR (&defaultFont)}}},
 		{"label",	{{"uses", STYLEPTR (&labelStyles)}}},
+                {"mlabel",	{{"uses", STYLEPTR (&mlStyles)}}},
                 {"smlabel",	{{"uses", STYLEPTR (&smStyles)}}},
 		{"hilabel",	{{"uses", STYLEPTR (&labelStyles)},
 				 {"textcolors", STYLEPTR (&BColors::whites)}}},

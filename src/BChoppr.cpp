@@ -34,7 +34,7 @@ BChoppr::BChoppr (double samplerate, const LV2_Feature* const* features) :
 	prevStep(0), actStep(0), nextStep(1),
 	audioInput1(NULL), audioInput2(NULL), audioOutput1(NULL), audioOutput2(NULL),
 	controllers {nullptr},
-	sequencesperbar (4), swing (1.0), nrSteps(16),
+	sequencesperbar (4), ampSwing (1.0), swing (1.0), nrSteps(16),
 	bypass (false), drywet (1.0f), blend (1), attack(0.2), release (0.2),
 	stepPositions {0.0},
 	controlPort1(NULL), controlPort2(NULL),  notifyPort(NULL),
@@ -116,6 +116,7 @@ void BChoppr::run (uint32_t n_samples)
 	attack = LIM (*(controllers[Attack - Controllers]), 0.01, 1.0);
 	release = LIM (*(controllers[Release - Controllers]), 0.01, 1.0);
 	sequencesperbar = LIM (round (*(controllers[SequencesPerBar - Controllers])), 1, 8);
+	ampSwing = LIM (*(controllers[AmpSwing - Controllers]), 0.001, 1000.0);
 
 	float new_swing = LIM (*(controllers[Swing - Controllers]), 0.333333, 3.0);
 	if (new_swing != swing)
@@ -384,10 +385,10 @@ void BChoppr::play(uint32_t start, uint32_t end)
 			}
 
 			// Calculate effect (vol) for the position
-			float act = stepLevels[actStep];
-			float prev = stepLevels[prevStep];
-			float next = stepLevels[nextStep];
-			float vol = stepLevels[actStep];
+			float act = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
+			float prev = stepLevels[prevStep] * LIM ((prevStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
+			float next = stepLevels[nextStep] * LIM ((nextStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
+			float vol = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
 
 			// On attack
 			if (iStepFrac < attack)

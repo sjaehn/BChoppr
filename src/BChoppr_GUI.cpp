@@ -48,8 +48,17 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	releaseLabel (130, 520, 90, 20, "label", "Decay"),
 	sequencesperbarControl (260, 442, 120, 28, "slider", 1.0, 1.0, 8.0, 1.0, "%1.0f"),
 	sequencesperbarLabel (260, 470, 120, 20, "label", "Sequences per bar"),
-	swingControl (460, 442, 120, 28, "slider", 1.0, 1.0 / 3.0, 3.0, 0.0),
-	swingLabel (460, 470, 120, 20, "label", "Steps swing"),
+	ampSwingControl
+	(
+		400, 442, 110, 28, "slider", 1.0, 0.001, 1000.0, 0.0, "%4.1f",
+		[] (const double val, const double min, const double max)
+		{return (val >= 1.0 ? 1.0 - 0.5 / LIMIT (sqrt(val), sqrt(min), sqrt(max)) : 0.5 * LIMIT (sqrt(val), sqrt(min), sqrt(max)));},
+		[] (const double frac, const double min, const double max)
+		{return (frac >= 0.5 ? pow (0.5 / (1.0 - LIMIT (frac, 0, 1)), 2) : pow (2 * LIMIT (frac, 0, 1), 2));}
+	),
+	ampSwingLabel (400, 470, 110, 20, "label", "Amp swing"),
+	swingControl (525, 442, 110, 28, "slider", 1.0, 1.0 / 3.0, 3.0, 0.0),
+	swingLabel (525, 470, 110, 20, "label", "Steps swing"),
 	markersAutoButton (655, 450, 80, 20, "button", "Auto"),
 	markersAutoLabel (655, 470, 80, 20, "label", "Markers"),
 	nrStepsControl (260, 492, 480, 28, "slider", 1.0, 1.0, MAXSTEPS, 1.0, "%2.0f"),
@@ -62,7 +71,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	surface (NULL), cr1 (NULL), cr2 (NULL), cr3 (NULL), cr4 (NULL), pat1 (NULL), pat2 (NULL), pat3 (NULL), pat4 (NULL), pat5 (NULL),
 	pluginPath (bundle_path ? std::string (bundle_path) : std::string ("")),  sz (1.0), bgImageSurface (nullptr),
 	scale (DB_CO(0.0)), bypass (0.0f), drywet (1.0f),
-	blend (1), attack (0.2), release (0.2), nrSteps (16.0), sequencesperbar (4.0), swing (1.0),
+	blend (1), attack (0.2), release (0.2), nrSteps (16.0), sequencesperbar (4.0), ampSwing (1.0), swing (1.0),
 	map (NULL)
 
 {
@@ -81,6 +90,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	attackControl.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 	releaseControl.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 	sequencesperbarControl.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
+	ampSwingControl.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 	swingControl.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 	nrStepsControl.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 	monitorDisplay.setCallbackFunction (BEvents::EventType::WHEEL_SCROLL_EVENT, BChoppr_GUI::monitorScrolledCallback);
@@ -102,6 +112,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	releaseControl.setScrollable (true);
 	releaseControl.setHardChangeable (false);
 	sequencesperbarControl.setScrollable (true);
+	ampSwingControl.setHardChangeable (false);
 	swingControl.setHardChangeable (false);
 	nrStepsControl.setScrollable (true);
 	monitorDisplay.setScrollable (true);
@@ -114,13 +125,17 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	double sx = sContainer.getXOffset();
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
-		stepControl[i] = BWidgets::VSliderValue ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 100, "slider", 1.0, 0.0, 1.0, 0.01, "%1.2f");
+		stepControl[i] = BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 80, "slider", 1.0, 0.0, 1.0, 0.01);
 		stepControl[i].setHardChangeable (false);
 		stepControl[i].setScrollable (true);
 		stepControl[i].setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 		stepControl[i].applyTheme (theme, "slider");
-		stepControl[i].getDisplayLabel ()->setState (BColors::ACTIVE);
 		sContainer.add (stepControl[i]);
+
+		stepControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "mlabel", "1.00");
+		stepControlLabel[i].applyTheme (theme, "mlabel");
+		stepControlLabel[i].setState (BColors::ACTIVE);
+		sContainer.add (stepControlLabel[i]);
 	}
 
 	//Initialialize and configure markers
@@ -163,6 +178,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	mContainer.add (releaseLabel);
 	mContainer.add (sequencesperbarControl);
 	mContainer.add (sequencesperbarLabel);
+	mContainer.add (ampSwingControl);
+	mContainer.add (ampSwingLabel);
 	mContainer.add (swingControl);
 	mContainer.add (swingLabel);
 	mContainer.add (markersAutoButton);
@@ -319,6 +336,7 @@ void BChoppr_GUI::resizeGUI()
 
 	// Resize Fonts
 	defaultFont.setFontSize (12 * sz);
+	mdFont.setFontSize (10 * sz);
 	smFont.setFontSize (8 * sz);
 
 	// Resize Background
@@ -352,8 +370,10 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (releaseLabel, 130, 520, 90, 20, sz);
 	RESIZE (sequencesperbarControl, 260, 442, 120, 28, sz);
 	RESIZE (sequencesperbarLabel, 260, 470, 120, 20, sz);
-	RESIZE (swingControl, 460, 442, 120, 28, sz);
-	RESIZE (swingLabel, 460, 470, 120, 20, sz);
+	RESIZE (ampSwingControl, 400, 442, 110, 28, sz);
+	RESIZE (ampSwingLabel, 400, 470, 110, 20, sz);
+	RESIZE (swingControl, 525, 442, 110, 28, sz);
+	RESIZE (swingLabel, 525, 470, 110, 20, sz);
 	RESIZE (markersAutoButton, 655, 450, 80, 20, sz);
 	RESIZE (markersAutoLabel, 655, 470, 80, 20, sz);
 	RESIZE (nrStepsControl, 260, 492, 480, 28, sz);
@@ -407,6 +427,8 @@ void BChoppr_GUI::applyTheme (BStyles::Theme& theme)
 	releaseLabel.applyTheme (theme);
 	sequencesperbarControl.applyTheme (theme);
 	sequencesperbarLabel.applyTheme (theme);
+	ampSwingControl.applyTheme (theme);
+	ampSwingLabel.applyTheme (theme);
 	swingControl.applyTheme (theme);
 	swingLabel.applyTheme (theme);
 	markersAutoButton.applyTheme (theme);
@@ -421,7 +443,7 @@ void BChoppr_GUI::applyTheme (BStyles::Theme& theme)
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
 		stepControl[i].applyTheme (theme);
-		stepControl[i].update ();	// TODO Remove if fixed in BWidgets TK
+		stepControlLabel[i].applyTheme (theme);
 	}
 }
 
@@ -532,15 +554,26 @@ void BChoppr_GUI::rearrange_controllers ()
 
 	double sw = sContainer.getEffectiveWidth();
 	double sx = sContainer.getXOffset();
+	const double oddf = (ampSwing >= 1.0 ? 1.0 : ampSwing);
+	const double evenf = (ampSwing >= 1.0 ? 1.0 / ampSwing : 1.0);
 
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
 		if (i < nrStepsi)
 		{
-			stepControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 40 * sz);
-			stepControl[i].show ();
+			stepControl[i].setHeight ((14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 66 )) * sz);
+			stepControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 7 * sz, 140 * sz - stepControl[i].getHeight());
+			stepControl[i].show();
+
+			stepControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 40 * sz);
+			stepControlLabel[i].show();
+
 		}
-		else stepControl[i].hide ();
+		else
+		{
+			stepControl[i].hide ();
+			stepControlLabel[i].hide();
+		}
 	}
 
 	for (int i = 0; i < MAXSTEPS - 1; ++i)
@@ -620,6 +653,14 @@ void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 			{
 				ui->sequencesperbar = (float) widget->getValue ();
 				ui->write_function(ui->controller, SequencesPerBar, sizeof(ui->sequencesperbar), 0, &ui->sequencesperbar);
+				return;
+			}
+
+			if (widget == &ui->ampSwingControl)
+			{
+				ui->ampSwing = (float) widget->getValue ();
+				ui->write_function(ui->controller, AmpSwing, sizeof(ui->swing), 0, &ui->ampSwing);
+				ui->rearrange_controllers();
 				return;
 			}
 

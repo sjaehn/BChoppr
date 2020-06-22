@@ -45,11 +45,12 @@ enum BChopprPortIndex
 	Attack		= 10,
 	Release		= 11,
 	SequencesPerBar	= 12,
-	Swing		= 13,
-	NrSteps		= 14,
-	StepPositions	= 15,
-	StepLevels	= 30,
-	NrControllers	= 39
+	AmpSwing	= 13,
+	Swing		= 14,
+	NrSteps		= 15,
+	StepPositions	= 16,
+	StepLevels	= 31,
+	NrControllers	= 40
 };
 
 #endif /* PORTS_HPP_ */
