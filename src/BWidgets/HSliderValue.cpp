@@ -120,7 +120,7 @@ void HSliderValue::updateCoords ()
 	knobPosition = BUtilities::Point (scaleXValue, scaleArea.getY() + scaleArea.getHeight() / 2);
 
 	double dh = knobRadius * 2;
-	double dw = 2.2 * dh;
+	double dw = 3.2 * dh;
 	double dy = getYOffset () + h - dh;
 	double dx = LIMIT (scaleXValue - dw / 2, getXOffset (), getXOffset () + getEffectiveWidth () - dw);
 	displayArea = BUtilities::RectArea (dx, dy, dw, dh);
