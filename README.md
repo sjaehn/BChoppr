@@ -70,6 +70,7 @@ monitor and step shape.
 * **Step markers** : Defines the size of each step. Drag markers to relocate. Right click to switch between automatic and manual placement
 * **Step level control** : Sound level for each individual step
 * **Sequences per bar** : Number of sequences in one bar (1..8)
+* **Amp swing** : Sets all level sliders to a swing pattern (0.001 .. 1000.0). Values lower than 1 mean reduction of odd step level. Values higher than 1 mean reduction of even step level.
 * **Steps swing** : Sets all automatic markers to a swing pattern (1:3..3:1)
 * **Auto markers** : Sets all markers to automatic placement
 * **Number of steps** : Number of steps in one sequence (1..16)
@@ -85,10 +86,7 @@ monitor and step shape.
 * **Monitor** : Visualization of a single step
 
 ## What's new
-* Set all markers to "auto" at once
-* Steps swing option
-* Plugin description and video tutorial linked
-* gcc10/std problem fixed
+* Amp swing
 
 ## Links
 * Tutorial video: https://youtu.be/PuzoxiAs-h8
