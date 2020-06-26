@@ -385,11 +385,6 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (markerListBox, 12, -68, 86, 66, sz);
 	markerListBox.resizeItems (BUtilities::Point (80 * sz, 20 * sz));
 
-	double sw = sContainer.getEffectiveWidth();
-	double sx = sContainer.getXOffset();
-	for (int i = 0; i < MAXSTEPS; ++i) {RESIZE (stepControl[i], (i + 0.5) * sw / sz / nrSteps + sx / sz - 14, 40, 28, 100, sz);}
-	for (int i = 0; i < MAXSTEPS - 1; ++i) {RESIZE (markerWidgets[i], markerWidgets[i].getValue() * sw / sz + sx / sz - 5, 10, 10, 16, sz);}
-
 	// Update monitors
 	destroy_Stepshape ();
 	init_Stepshape ();
@@ -398,6 +393,7 @@ void BChoppr_GUI::resizeGUI()
 	init_mainMonitor ();
 	redrawMainMonitor ();
 	redrawSContainer ();
+	rearrange_controllers ();
 	redrawButtons ();
 
 	// Apply changes
@@ -561,11 +557,14 @@ void BChoppr_GUI::rearrange_controllers ()
 	{
 		if (i < nrStepsi)
 		{
-			stepControl[i].setHeight ((14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 66 )) * sz);
+			stepControl[i].resize (14 * sz, (14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 66 )) * sz);
 			stepControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 7 * sz, 140 * sz - stepControl[i].getHeight());
 			stepControl[i].show();
 
+			if (i < nrStepsi - 1) markerWidgets[i].resize (10 * sz, 16 * sz);
+
 			stepControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 40 * sz);
+			stepControlLabel[i].resize (28 * sz, 20 * sz);
 			stepControlLabel[i].show();
 
 		}
