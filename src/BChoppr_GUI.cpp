@@ -892,8 +892,15 @@ void BChoppr_GUI::buttonClickedCallback (BEvents::Event* event)
 	ui->write_function(ui->controller, Blend, sizeof(fblend), 0, &fblend);
 }
 
-void BChoppr_GUI::helpButtonClickedCallback (BEvents::Event* event) {system(OPEN_CMD " " HELP_URL);}
-void BChoppr_GUI::ytButtonClickedCallback (BEvents::Event* event) {system(OPEN_CMD " " YT_URL);}
+void BChoppr_GUI::helpButtonClickedCallback (BEvents::Event* event)
+{
+	if (system(OPEN_CMD " " HELP_URL)) std::cerr << "BChoppr.lv2#GUI: Can't open " << HELP_URL << ". You can try to call it maually.";
+}
+
+void BChoppr_GUI::ytButtonClickedCallback (BEvents::Event* event)
+{
+	if (system(OPEN_CMD " " YT_URL))  std::cerr << "BChoppr.lv2#GUI: Can't open " << YT_URL << ". You can try to call it maually.";
+}
 
 bool BChoppr_GUI::init_Stepshape ()
 {
