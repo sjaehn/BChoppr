@@ -52,6 +52,8 @@ public:
 		     const std::string& path, const std::vector<FileFilter>& filters, const std::string& buttonText);
 
 
+	FileChooser (const FileChooser& that);
+
 	/**
 	 * Assignment. Copies the file chooser properties from a source and keeps
 	 * its position within the widget tree. Emits a
@@ -95,6 +97,12 @@ public:
 	 * @return	File filters
 	 */
 	std::vector<FileFilter> getFilters () const;
+
+	/**
+	 * Selects and activates one filter out of the file filters.
+	 * @param name	Filter name
+	 */
+	void selectFilter (const std::string& name);
 
 	/**
 	 * Sets the text of the OK button.
@@ -161,9 +169,14 @@ protected:
 	PopupListBox filterPopupListBox;
 	TextButton cancelButton;
 	TextButton okButton;
-	BStyles::Font fileFont;
-	BStyles::Font dirFont;
-	BStyles::Font filterFont;
+	Label fileListBoxFileLabel;
+	Label fileListBoxDirLabel;
+	Label filterPopupListBoxFilterLabel;
+	//BStyles::Font fileFont;
+	//BStyles::Font dirFont;
+	//BStyles::Font filterFont;
+
+	virtual std::function<void (BEvents::Event*)> getFileListBoxClickedCallback();
 };
 
 }
