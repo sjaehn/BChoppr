@@ -452,10 +452,10 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (rectButton, 40, 240, 60, 40, sz);
 	RESIZE (sinButton, 140, 240, 60, 40, sz);
 	RESIZE (stepshapeDisplay, 30, 290, 180, 140, sz);
-	RESIZE (attackControl, 40, 465, 50, 60, sz);
-	RESIZE (attackLabel, 20, 520, 90, 20, sz);
-	RESIZE (releaseControl, 150, 465, 50, 60, sz);
-	RESIZE (releaseLabel, 130, 520, 90, 20, sz);
+	RESIZE (attackControl, 40, 445, 50, 60, sz);
+	RESIZE (attackLabel, 20, 500, 90, 20, sz);
+	RESIZE (releaseControl, 150, 445, 50, 60, sz);
+	RESIZE (releaseLabel, 130, 500, 90, 20, sz);
 	RESIZE (sequencesperbarControl, 260, 442, 120, 28, sz);
 	RESIZE (sequencesperbarLabel, 260, 470, 120, 20, sz);
 	RESIZE (ampSwingControl, 400, 442, 110, 28, sz);
