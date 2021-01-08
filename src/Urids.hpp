@@ -47,6 +47,13 @@ struct BChopprURIs
 	LV2_URID notify_key;
 	LV2_URID notify_messageEvent;
 	LV2_URID notify_message;
+	LV2_URID notify_controllerEvent;
+	LV2_URID notify_controllerNr;
+	LV2_URID notify_controllerValue;
+	LV2_URID notify_controllers;
+	LV2_URID notify_sharedDataLinkEvent;
+	LV2_URID notify_sharedDataNr;
+
 };
 
 void getURIs (LV2_URID_Map* m, BChopprURIs* uris)
@@ -69,6 +76,12 @@ void getURIs (LV2_URID_Map* m, BChopprURIs* uris)
 	uris->notify_key = m->map(m->handle, BCHOPPR_URI "#NOTIFYkey");
 	uris->notify_messageEvent = m->map(m->handle, BCHOPPR_URI "#NOTIFYmessageEvent");
 	uris->notify_message = m->map(m->handle, BCHOPPR_URI "#NOTIFYmessage");
+	uris->notify_controllerEvent = m->map(m->handle, BCHOPPR_URI "#BSchafflControllerEvent");
+	uris->notify_controllerNr = m->map(m->handle, BCHOPPR_URI "#BSchafflControllerNr");
+	uris->notify_controllerValue = m->map(m->handle, BCHOPPR_URI "#BSchafflControllerValue");
+	uris->notify_controllers = m->map(m->handle, BCHOPPR_URI "#BSchafflControllers");
+	uris->notify_sharedDataLinkEvent = m->map(m->handle, BCHOPPR_URI "#BSchafflSharedDataLinkEvent");
+	uris->notify_sharedDataNr = m->map(m->handle, BCHOPPR_URI "#BSchafflSharedDataNr");
 }
 
 #endif /* URIDS_HPP_ */

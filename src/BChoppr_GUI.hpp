@@ -36,11 +36,12 @@
 #include "BWidgets/ListBox.hpp"
 #include "BWidgets/ToggleButton.hpp"
 #include "BWidgets/TextButton.hpp"
+#include "Ports.hpp"
 #include "Marker.hpp"
 #include "LightButton.hpp"
 #include "SwingHSlider.hpp"
 #include "HaloButton.hpp"
-
+#include "HaloToggleButton.hpp"
 #include "definitions.hpp"
 #include "Urids.hpp"
 
@@ -88,6 +89,8 @@ public:
 	void portEvent (uint32_t port_index, uint32_t buffer_size, uint32_t format, const void *buffer);
 	void send_record_on ();
 	void send_record_off ();
+        void sendSharedDataNr ();
+        void sendController (const int nr, const float value);
 	virtual void onConfigureRequest (BEvents::ExposeEvent* event) override;
 	void applyTheme (BStyles::Theme& theme) override;
 
@@ -97,6 +100,7 @@ public:
 
 private:
 	void resizeGUI ();
+        float setController (const int nr, const double value);
         void setMarker (const int markerNr, double value);
         void setAutoMarkers ();
 	void rearrange_controllers ();
@@ -108,6 +112,7 @@ private:
         static void listBoxChangedCallback (BEvents::Event* event);
         static void markersAutoClickedCallback (BEvents::Event* event);
         static void buttonClickedCallback (BEvents::Event* event);
+        static void sharedDataClickedCallback (BEvents::Event* event);
         static void helpButtonClickedCallback (BEvents::Event* event);
 	static void ytButtonClickedCallback (BEvents::Event* event);
 	bool init_Stepshape ();
@@ -133,6 +138,7 @@ private:
         HaloButton helpButton;
         HaloButton ytButton;
 	BWidgets::DrawingSurface monitorDisplay;
+        BWidgets::RangeWidget blendControl;
         BWidgets::DrawingSurface rectButton;
         BWidgets::DrawingSurface sinButton;
 	BWidgets::DrawingSurface stepshapeDisplay;
@@ -157,6 +163,8 @@ private:
         std::array<BWidgets::Label, MAXSTEPS> stepControlLabel;
 	std::array<Marker, MAXSTEPS - 1> markerWidgets;
         BWidgets::ListBox markerListBox;
+        BWidgets::RangeWidget sharedDataSelection;
+        std::array<HaloToggleButton, 4> sharedDataButtons;
 
 
 	cairo_surface_t* surface;
@@ -183,16 +191,8 @@ private:
 	double sz;
 	cairo_surface_t* bgImageSurface;
 
-	float scale;
-        float bypass;
-        float drywet;
-        int blend;
-	float attack;
-	float release;
-	float nrSteps;
-	float sequencesperbar;
-        float ampSwing;
-        float swing;
+        std::array<BWidgets::ValueWidget*, NrControllers> controllers;
+        float scale;
 
 	LV2_Atom_Forge forge;
 	BChopprURIs uris;

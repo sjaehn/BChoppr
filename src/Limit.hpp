@@ -1,7 +1,7 @@
 /* B.Choppr
  * Step Sequencer Effect Plugin
  *
- * Copyright (C) 2018, 2019 by Sven Jähnichen
+ * Copyright (C) 2018 - 2021 by Sven Jähnichen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,26 +18,26 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef DEFINITIONS_HPP_
-#define DEFINITIONS_HPP_
+#ifndef LIMIT_HPP_
+#define LIMIT_HPP_
 
-#define NOTIFYBUFFERSIZE 64
-#define MONITORBUFFERSIZE 64
-#define MAXSTEPS 16
-#define MAXINSTANCES 64
-#define MINMARKERVALUE 0.000001
-#define BCHOPPR_URI "https://www.jahnichen.de/plugins/lv2/BChoppr"
-#define BCHOPPR_GUI_URI "https://www.jahnichen.de/plugins/lv2/BChoppr#gui"
+#include <cmath>
 
-struct BChopprNotifications
+struct Limit
 {
-	float position;
-	float inputMin;
-	float inputMax;
-	float outputMin;
-	float outputMax;
+	float min;
+	float max;
+	float step;
+
+        float validate (float value) const
+        {
+                if (max <= min) return min;
+                if (value <= min) return min;
+                if (value >= max) return max;
+                if (step == 0) return value;
+		float newValue = (step > 0 ? min + round ((value - min) / step) * step : max - round ((max - value) / step) * step);
+		return (newValue >= min ? (newValue <= max ? newValue : max) : min);
+        }
 };
 
-const BChopprNotifications defaultNotification = {0.0, 0.0, 0.0, 0.0, 0.0};
-
-#endif /* DEFINITIONS_HPP_ */
+#endif /* LIMIT_HPP_ */

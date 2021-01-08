@@ -7,6 +7,7 @@
 @prefix time: <http://lv2plug.in/ns/ext/time#> .
 @prefix urid: <http://lv2plug.in/ns/ext/urid#> .
 @prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix rsz: <http://lv2plug.in/ns/ext/resize-port#> .
 
 
@@ -29,10 +30,11 @@
 	doap:maintainer <http://www.jahnichen.de/sjaehn#me> ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
 	lv2:microVersion 0 ;
-	lv2:minorVersion 8 ;
+	lv2:minorVersion 9 ;
         lv2:optionalFeature lv2:hardRTCapable ;
         lv2:binary <BChoppr.so> ;
 	lv2:requiredFeature urid:map ;
+	lv2:extensionData state:interface;
 	ui:ui <https://www.jahnichen.de/plugins/lv2/BChoppr#gui> ;
         lv2:port [
                 a lv2:InputPort , atom:AtomPort ;

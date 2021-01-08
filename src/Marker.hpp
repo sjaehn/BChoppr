@@ -48,7 +48,7 @@ public:
         {
                 std::string valstr = BUtilities::to_string (getValue());
         	focusLabel.setText (valstr);
-        	focusLabel.setOversize (true);
+        	focusLabel.setStacking (BWidgets::STACKING_OVERSIZE);
         	focusLabel.resize ();
         	focusLabel.hide ();
         	add (focusLabel);
