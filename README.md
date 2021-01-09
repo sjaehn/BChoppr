@@ -9,8 +9,12 @@ Each chop can be leveled up or down (gating). B.Choppr is the successor of B.Sli
 ## Installation
 
 a) Install the bchoppr package for your system
-* [Arch user repository](https://aur.archlinux.org/packages/bchoppr-git) by Milk Brewster
-* [Debian](https://kx.studio/Repositories:Plugins) by falkTX
+* [Arch user repository](https://aur.archlinux.org/packages/bchoppr-git) by milk, SpotlightKid
+* [FreeBSD](https://www.freshports.org/audio/bchoppr-lv2) by Yuri
+* [Guix](https://guix.gnu.org/packages/bchoppr-1.8.0/)
+* [NixOS](https://github.com/NixOS/nixpkgs/blob/release-20.09/pkgs/applications/audio/bchoppr/default.nix#L23) by magnetophon
+* [Parabola](https://www.parabola.nu/packages/?q=bchoppr) by Erich Eckner
+* [Ubuntu](https://packages.ubuntu.com/source/groovy/bchoppr) by Erich Eickmeyer
 * Check https://repology.org/project/bchoppr/versions for other systems
 
 b) Build your own binaries in the following three steps.
