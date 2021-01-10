@@ -309,7 +309,7 @@ void BChoppr::run (uint32_t n_samples)
 float BChoppr::readController (const int ctrlNr)
 {
 	// Sync with control ports
-	if ((sharedDataNr == 0) && controlPtrs) return controllerLimits[ctrlNr].validate (*controlPtrs[ctrlNr]);
+	if ((sharedDataNr == 0) && controlPtrs[ctrlNr]) return controllerLimits[ctrlNr].validate (*controlPtrs[ctrlNr]);
 
 	// Otherwise sync with globally shared data
 	if (sharedDataNr <= 4) return controllerLimits[ctrlNr].validate (sharedData[sharedDataNr - 1].get (ctrlNr));
@@ -577,10 +577,9 @@ void BChoppr::play(uint32_t start, uint32_t end)
 LV2_State_Status BChoppr::state_save (LV2_State_Store_Function store, LV2_State_Handle handle, uint32_t flags, const LV2_Feature* const* features)
 {
 	// Save shared data
+	store (handle, uris.notify_sharedDataNr, &sharedDataNr, sizeof(sharedDataNr), uris.atom_Int, LV2_STATE_IS_POD);
 	if (sharedDataNr != 0)
 	{
-		store (handle, uris.notify_sharedDataNr, &sharedDataNr, sizeof(sharedDataNr), uris.atom_Int, LV2_STATE_IS_POD);
-
 		Atom_Controllers atom;
 		for (int i = 0; i < NrControllers; ++i) atom.data[i] = sharedData[sharedDataNr - 1].get (i);
 		atom.body.child_type = uris.atom_Float;
@@ -597,38 +596,41 @@ LV2_State_Status BChoppr::state_restore (LV2_State_Retrieve_Function retrieve, L
 	uint32_t type;
 	uint32_t valflags;
 
-	// Restore sharedData
+	// Restore sharedDataNr
+	if (sharedDataNr != 0) sharedData[sharedDataNr - 1].unlink (this);
 	sharedDataNr = 0;
 	const void* sharedDataNrData = retrieve (handle, uris.notify_sharedDataNr, &size, &type, &valflags);
 	if (sharedDataNrData && (type == uris.atom_Int))
 	{
 		const int nr = *(int*)sharedDataNrData;
-		if ((nr >= 0) && (nr <= 4))
+		if (nr != 0) sharedData[nr - 1].link (this);
+		sharedDataNr = nr;
+	}
+
+	// Restore sharedData
+	if ((sharedDataNr >= 0) && (sharedDataNr <= 4))
+	{
+		const void* controllersData = retrieve (handle, uris.notify_controllers, &size, &type, &valflags);
+		if (controllersData && (type == uris.atom_Vector) && (sharedDataNr > 0))
 		{
-			const void* controllersData = retrieve (handle, uris.notify_controllers, &size, &type, &valflags);
-			if (controllersData && (type == uris.atom_Vector) && (nr > 0))
+			const Atom_Controllers* atom = (const Atom_Controllers*) controllersData;
+			if (atom->body.child_type == uris.atom_Float)
 			{
-				const Atom_Controllers* atom = (const Atom_Controllers*) controllersData;
-				if (atom->body.child_type == uris.atom_Float)
-				{
-					for (int i = 0; i < NrControllers; ++i) sharedData[nr - 1].set (i, atom->data[i]);
-				}
+				for (int i = 0; i < NrControllers; ++i) sharedData[sharedDataNr - 1].set (i, atom->data[i]);
 			}
+		}
+	}
 
-			if (sharedDataNr != 0) sharedData[sharedDataNr - 1].unlink (this);
-			if (nr != 0) sharedData[nr - 1].link (this);
-			sharedDataNr = nr;
-			notify_sharedData = true;
+	notify_sharedData = true;
 
-			for (int i = 0; i < NrControllers; ++i)
-			{
-				float newValue = readController (i);
-				if (newValue != controllers[i])
-				{
-					setController (i, newValue);
-					notify_controllers[i] = true;
-				}
-			}
+	// Load controllers
+	for (int i = 0; i < NrControllers; ++i)
+	{
+		float newValue = readController (i);
+		if (newValue != controllers[i])
+		{
+			setController (i, newValue);
+			notify_controllers[i] = true;
 		}
 	}
 
