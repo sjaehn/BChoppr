@@ -293,6 +293,7 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 						setAutoMarkers ();
 						rearrange_controllers ();
 						redrawSContainer ();
+						redrawMainMonitor ();
 					}
 
 					else setController (nr, val);
@@ -347,74 +348,11 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 			setAutoMarkers ();
 			rearrange_controllers ();
 			redrawSContainer ();
+			redrawMainMonitor();
 		}
 
 		else setController (nr, val);
-
-/*		float* pval = (float*) buffer;
-		switch (port_index) {
-		case Bypass:
-			bypass = LIM (*pval, 0.0f, 1.0f);
-			bypassButton.setValue (*pval);
-			break;
-		case DryWet:
-			drywet = LIM (*pval, 0.0f, 1.0f);
-			drywetDial.setValue (*pval);
-			break;
-		case Blend:
-			{
-				float* pval = (float*) buffer;
-				blend = LIM (*pval, 1.0f, 2.0f);
-				if (blend == 1) {rectButton.rename ("abutton"); sinButton.rename ("nbutton");}
-				if (blend == 2) {sinButton.rename ("abutton"); rectButton.rename ("nbutton");}
-				rectButton.applyTheme (theme);
-				sinButton.applyTheme (theme);
-				redrawButtons ();
-				redrawStepshape ();
-			}
-			break;
-		case Attack:
-			attack = *pval;
-			attackControl.setValue (*pval);
-			break;
-		case Release:
-			release = *pval;
-			releaseControl.setValue (*pval);
-			break;
-		case SequencesPerBar:
-			sequencesperbar = *pval;
-			sequencesperbarControl.setValue (*pval);
-			break;
-		case Swing:
-			swing = *pval;
-			swingControl.setValue (*pval);
-			break;
-		case NrSteps:
-			if (nrSteps != *pval)
-			{
-				nrSteps = *pval;
-				rearrange_controllers ();
-			}
-			redrawMainMonitor ();
-			nrStepsControl.setValue (*pval);
-			break;
-		default:
-			if ((port_index >= StepPositions) and (port_index < StepPositions + MAXSTEPS - 1))
-			{
-				setMarker (port_index-StepPositions, *pval);
-				setAutoMarkers ();
-				rearrange_controllers ();
-				redrawSContainer ();
-				redrawMainMonitor ();
-			}
-
-			else if ((port_index >= StepLevels) and (port_index < StepLevels + MAXSTEPS))
-			{
-				stepControl[port_index-StepLevels].setValue (*pval);
-			}
-		}*/
 	}
-
 }
 
 void BChoppr_GUI::resizeGUI()
@@ -761,7 +699,7 @@ void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 	if ((event) && (event->getWidget ()))
 	{
 		BWidgets::ValueWidget* widget = (BWidgets::ValueWidget*) event->getWidget ();
-		const float value = widget->getValue();
+		const double value = widget->getValue();
 
 		if (widget->getMainWindow ())
 		{

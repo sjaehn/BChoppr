@@ -92,7 +92,7 @@ public:
                 noValue = !hasValue;
                 std::string valstr = (noValue ? "Auto" : BUtilities::to_string (value));
         	focusLabel.setText(valstr);
-        	focusLabel.resize ();
+        	update();
         }
 
         bool hasValue () const {return !noValue;}
