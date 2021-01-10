@@ -338,7 +338,7 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 	}
 
 	// Scan remaining ports
-	else if ((format == 0) && (port_index >= Controllers) && (port_index < Controllers + NrControllers))
+	else if ((format == 0) && (port_index >= Controllers) && (port_index < Controllers + NrControllers) && (sharedDataSelection.getValue() == 0))
 	{
 		int nr = port_index - Controllers;
 		float val = *(float*) buffer;
