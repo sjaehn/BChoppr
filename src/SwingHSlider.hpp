@@ -22,6 +22,7 @@
 
 #include "BWidgets/HSliderValue.hpp"
 #include "BUtilities/to_string.hpp"
+#include "BUtilities/stof.hpp"
 
 class SwingHSlider : public BWidgets::HSliderValue
 {
@@ -43,7 +44,9 @@ public:
 	HSliderValue ( x, y, width, height, name, value, min, max, step, format),
 	valueToFraction_ (valfunc),
 	fractionToValue_ (fracfunc)
-	{}
+	{
+		valueDisplay.setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, displayMessageCallback);
+	}
 
 	virtual Widget* clone () const override {return new SwingHSlider (*this);}
 
@@ -164,6 +167,54 @@ protected:
 		double dy = getYOffset () + h - dh;
 		double dx = LIMIT (scaleXValue - dw / 2, getXOffset (), getXOffset () + getEffectiveWidth () - dw);
 		displayArea = BUtilities::RectArea (dx, dy, dw, dh);
+	}
+
+	static void displayMessageCallback (BEvents::Event* event)
+	{
+		if (event && event->getWidget())
+		{
+			BWidgets::Label* l = (BWidgets::Label*)event->getWidget();
+			SwingHSlider* d = (SwingHSlider*)l->getParent();
+			if (d)
+			{
+				const std::string s = l->getText();
+				const size_t p = s.find (":");
+				if ((p == std::string::npos) || (p >= s.size() - 1))
+				{
+					fprintf (stderr, "Invalid ratio format for %s\n", s.c_str());
+					d->update();
+					return;
+				}
+
+				double v1;
+				try {v1 = BUtilities::stof (s);}
+				catch (std::invalid_argument &ia)
+				{
+					fprintf (stderr, "%s\n", ia.what());
+					d->update();
+					return;
+				}
+
+				double v2;
+				try {v2 = BUtilities::stof (s.substr (p + 2));}
+				catch (std::invalid_argument &ia)
+				{
+					fprintf (stderr, "%s\n", ia.what());
+					d->update();
+					return;
+				}
+
+				if (v2 == 0)
+				{
+					fprintf (stderr, "Division by zero\n");
+					d->update();
+					return;
+				}
+
+				d->setValue (v1 / v2);
+				d->update();
+			}
+		}
 	}
 };
 

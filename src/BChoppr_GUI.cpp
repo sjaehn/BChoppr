@@ -21,6 +21,7 @@
 #include "BChoppr_GUI.hpp"
 #include "Ports.hpp"
 #include "screen.h"
+#include "BUtilities/stof.hpp"
 
 
 BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeWindow parentWindow) :
@@ -98,6 +99,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		stepControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "mlabel", "1.00");
 		stepControlLabel[i].applyTheme (theme, "mlabel");
 		stepControlLabel[i].setState (BColors::ACTIVE);
+		stepControlLabel[i].setEditable (true);
+		stepControlLabel[i].setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, stepControlLabelMessageCallback);
 		sContainer.add (stepControlLabel[i]);
 	}
 
@@ -963,6 +966,36 @@ void BChoppr_GUI::helpButtonClickedCallback (BEvents::Event* event)
 void BChoppr_GUI::ytButtonClickedCallback (BEvents::Event* event)
 {
 	if (system(OPEN_CMD " " YT_URL))  std::cerr << "BChoppr.lv2#GUI: Can't open " << YT_URL << ". You can try to call it maually.";
+}
+
+void BChoppr_GUI::stepControlLabelMessageCallback (BEvents::Event* event)
+{
+	if (event && event->getWidget())
+	{
+		BWidgets::Label* l = (BWidgets::Label*)event->getWidget();
+		BChoppr_GUI* ui = (BChoppr_GUI*)l->getMainWindow();
+		if (ui)
+		{
+			for (int i = 0; i < MAXSTEPS; ++i)
+			{
+				if (l == &ui->stepControlLabel[i])
+				{
+					double val = ui->stepControl[i].getValue();
+					try {val = BUtilities::stof (l->getText());}
+					catch (std::invalid_argument &ia)
+					{
+						fprintf (stderr, "%s\n", ia.what());
+						l->setText (BUtilities::to_string (val, "%1.2f"));
+						return;
+					}
+
+					ui->stepControl[i].setValue (val);
+					l->setText (BUtilities::to_string (ui->stepControl[i].getValue(), "%1.2f"));
+					break;
+				}
+			}
+		}
+	}
 }
 
 bool BChoppr_GUI::init_Stepshape ()

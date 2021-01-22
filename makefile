@@ -73,7 +73,8 @@ GUI_INCL = \
 	src/BWidgets/cairoplus.c \
 	src/BWidgets/pugl/pugl_x11_cairo.c \
 	src/BWidgets/pugl/pugl_x11.c \
-	src/BUtilities/to_string.cpp
+	src/BUtilities/to_string.cpp \
+	src/BUtilities/stof.cpp
 
 ifeq ($(shell $(PKG_CONFIG) --exists lv2 || echo no), no)
   $(error LV2 not found. Please install LV2 first.)

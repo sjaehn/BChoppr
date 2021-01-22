@@ -115,6 +115,7 @@ private:
         static void sharedDataClickedCallback (BEvents::Event* event);
         static void helpButtonClickedCallback (BEvents::Event* event);
 	static void ytButtonClickedCallback (BEvents::Event* event);
+	static void stepControlLabelMessageCallback (BEvents::Event* event);
 	bool init_Stepshape ();
 	void destroy_Stepshape ();
 	void redrawStepshape ();

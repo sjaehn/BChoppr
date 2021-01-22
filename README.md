@@ -105,6 +105,7 @@ Note: Shared data are unlinked from host automation.
 
 ## What's new
 * Share data between different plugin instances
+* Enable enter slider and dial values via keyboard
 
 ## Links
 * Tutorial video: https://youtu.be/PuzoxiAs-h8
