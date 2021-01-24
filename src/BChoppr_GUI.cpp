@@ -25,7 +25,7 @@
 
 
 BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeWindow parentWindow) :
-	Window (760, 560, "B.Choppr", parentWindow, true),
+	Window (760, 560, "B.Choppr", parentWindow, true, PUGL_MODULE, 0),
 	controller (NULL), write_function (NULL),
 
 	mContainer (0, 0, 760, 560, "main"),
