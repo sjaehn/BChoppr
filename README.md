@@ -107,6 +107,7 @@ Note: Shared data are unlinked from host automation.
 * Share data between different plugin instances
 * Enable enter slider and dial values via keyboard
 * Update pugl
+* Support ui:resize (qtractor)
 
 ## Links
 * Tutorial video: https://youtu.be/PuzoxiAs-h8

@@ -1446,7 +1446,17 @@ static int callIdle (LV2UI_Handle ui)
 	return 0;
 }
 
-static const LV2UI_Idle_Interface idle = { callIdle };
+static int callResize (LV2UI_Handle ui, int width, int height)
+{
+	BChoppr_GUI* self = (BChoppr_GUI*) ui;
+	fprintf(stderr, "Resize %i %i\n", width, height);
+	BEvents::ExposeEvent* ev = new BEvents::ExposeEvent (self, self, BEvents::CONFIGURE_REQUEST_EVENT, self->getPosition().x, self->getPosition().y, width, height);
+	self->addEventToQueue (ev);
+	return 0;
+}
+
+static const LV2UI_Idle_Interface idle = {.idle = callIdle };
+static const LV2UI_Resize resize = {.ui_resize = callResize} ;
 
 static const void* extensionData(const char* uri)
 {
