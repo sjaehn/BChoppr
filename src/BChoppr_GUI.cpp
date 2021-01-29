@@ -1449,7 +1449,6 @@ static int callIdle (LV2UI_Handle ui)
 static int callResize (LV2UI_Handle ui, int width, int height)
 {
 	BChoppr_GUI* self = (BChoppr_GUI*) ui;
-	fprintf(stderr, "Resize %i %i\n", width, height);
 	BEvents::ExposeEvent* ev = new BEvents::ExposeEvent (self, self, BEvents::CONFIGURE_REQUEST_EVENT, self->getPosition().x, self->getPosition().y, width, height);
 	self->addEventToQueue (ev);
 	return 0;
@@ -1461,6 +1460,7 @@ static const LV2UI_Resize resize = {.ui_resize = callResize} ;
 static const void* extensionData(const char* uri)
 {
 	if (!strcmp(uri, LV2_UI__idleInterface)) return &idle;
+	else if(!strcmp(uri, LV2_UI__resize)) return &resize;
 	else return NULL;
 }
 
