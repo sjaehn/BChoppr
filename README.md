@@ -108,6 +108,7 @@ Note: Shared data are unlinked from host automation.
 * Enable enter slider and dial values via keyboard
 * Update pugl
 * Support ui:resize (qtractor)
+* Bugfixes
 
 ## Links
 * Tutorial video: https://youtu.be/PuzoxiAs-h8

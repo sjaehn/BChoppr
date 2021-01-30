@@ -1413,12 +1413,6 @@ LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char *plugin
 	int screenWidth  = getScreenWidth ();
 	int screenHeight = getScreenHeight ();
 	if ((screenWidth < 820) || (screenHeight < 600)) sz = 0.66;
-
-	/*
-	std::cerr << "BChoppr_GUI.lv2 screen size " << screenWidth << " x " << screenHeight <<
-			". Set GUI size to " << 760 * sz << " x " << 560 * sz << ".\n";
-	*/
-
 	if (resize) resize->ui_resize(resize->handle, 760 * sz, 560 * sz);
 
 	*widget = (LV2UI_Widget) puglGetNativeWindow (ui->getPuglView ());
