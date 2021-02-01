@@ -27,8 +27,10 @@ STRIPFLAGS += -s --strip-program=$(STRIP)
 DSPFLAGS =
 GUIPPFLAGS += -DPUGL_HAVE_CAIRO
 
-DSPFLAGS += `$(PKG_CONFIG) --cflags --libs $(LV2_LIBS)`
-GUIFLAGS += `$(PKG_CONFIG) --cflags --libs $(LV2_LIBS) $(GUI_LIBS)`
+DSPCFLAGS += `$(PKG_CONFIG) --cflags $(LV2_LIBS)`
+GUICFLAGS += `$(PKG_CONFIG) --cflags $(LV2_LIBS) $(GUI_LIBS)`
+DSPLFLAGS += `$(PKG_CONFIG) --libs $(LV2_LIBS)`
+GUILFLAGS += `$(PKG_CONFIG) --libs $(LV2_LIBS) $(GUI_LIBS)`
 
 BUNDLE = BChoppr.lv2
 DSP = BChoppr
@@ -102,16 +104,16 @@ all: $(BUNDLE)
 $(DSP_OBJ): $(DSP_SRC)
 	@echo -n Build $(BUNDLE) DSP...
 	@mkdir -p $(BUNDLE)
-	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(DSPFLAGS) $< $(DSP_INCL) -o $(BUNDLE)/$@
+	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(DSPCFLAGS) $(DSPLFLAGS) $< $(DSP_INCL) -o $(BUNDLE)/$@
 	@echo \ done.
 
 $(GUI_OBJ): $(GUI_SRC)
 	@echo -n Build $(BUNDLE) GUI...
 	@mkdir -p $(BUNDLE)
 	@mkdir -p $(BUNDLE)/tmp
-	@cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(LDFLAGS) -Wl,--start-group $(GUIFLAGS) $(addprefix ../../, $(GUI_C_INCL)) -Wl,--end-group -c
-	@cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Wl,--start-group $(GUIFLAGS) $(addprefix ../../, $< $(GUI_CXX_INCL)) -Wl,--end-group -c
-	@$(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Wl,--start-group $(GUIFLAGS) $(BUNDLE)/tmp/*.o -Wl,--end-group -o $(BUNDLE)/$@
+	@cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(GUICFLAGS) $(addprefix ../../, $(GUI_C_INCL)) -c
+	@cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(GUICFLAGS) $(addprefix ../../, $< $(GUI_CXX_INCL)) -c
+	@$(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(GUICFLAGS) -Wl,--start-group $(GUILFLAGS) $(BUNDLE)/tmp/*.o -Wl,--end-group -o $(BUNDLE)/$@
 	@rm -rf $(BUNDLE)/tmp
 	@echo \ done.
 
