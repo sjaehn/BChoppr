@@ -26,7 +26,7 @@
 namespace BWidgets
 {
 
-Window::Window () : Window (BWIDGETS_DEFAULT_WIDTH, BWIDGETS_DEFAULT_HEIGHT, "window", 0.0) {}
+Window::Window () : Window (BWIDGETS_DEFAULT_WIDTH, BWIDGETS_DEFAULT_HEIGHT, "window", 0) {}
 
 Window::Window (const double width, const double height, const std::string& title, PuglNativeWindow nativeWindow, bool resizable,
 		PuglWorldType worldType, int worldFlag) :
@@ -45,8 +45,8 @@ Window::Window (const double width, const double height, const std::string& titl
 	if (nativeWindow_ != 0) puglSetParentWindow(view_, nativeWindow_);
 	puglSetWindowTitle(view_, title.c_str());
 	puglSetDefaultSize (view_, getWidth (), getHeight ());
-	puglSetViewHint(view_, PUGL_RESIZABLE, PUGL_TRUE);
 	puglSetViewHint(view_, PUGL_RESIZABLE, resizable ? PUGL_TRUE : PUGL_FALSE);
+	puglSetViewHint(view_, PUGL_IGNORE_KEY_REPEAT, PUGL_TRUE);
 	puglSetWorldHandle(world_, this);
 	puglSetHandle (view_, this);
 	puglSetBackend(view_, puglCairoBackend());
