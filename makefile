@@ -24,7 +24,6 @@ CXXFLAGS += -std=c++11 -fvisibility=hidden -fPIC
 LDFLAGS += -shared -Wl,-z,relro,-z,now
 STRIPFLAGS += -s --strip-program=$(STRIP)
 
-DSPFLAGS =
 GUIPPFLAGS += -DPUGL_HAVE_CAIRO
 
 DSPCFLAGS += `$(PKG_CONFIG) --cflags $(LV2_LIBS)`
