@@ -19,6 +19,7 @@
 #define _POSIX_C_SOURCE 199309L
 
 #include "x11.h"
+#include <stdio.h>
 
 #include "implementation.h"
 #include "types.h"
