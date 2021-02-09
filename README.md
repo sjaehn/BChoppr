@@ -104,10 +104,6 @@ shared data. The plugin now shows the host-provided data.
 Note: Shared data are unlinked from host automation.
 
 ## What's new
-* Share data between different plugin instances
-* Enable enter slider and dial values via keyboard
-* Update pugl
-* Support ui:resize (qtractor)
 * Bugfixes
 
 ## Links

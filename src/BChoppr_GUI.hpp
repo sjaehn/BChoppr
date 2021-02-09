@@ -84,7 +84,7 @@ const std::string messageStrings[MAX_MSG + 1] =
 class BChoppr_GUI : public BWidgets::Window
 {
 public:
-	BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeWindow parentWindow);
+	BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeView parentWindow);
 	~BChoppr_GUI ();
 	void portEvent (uint32_t port_index, uint32_t buffer_size, uint32_t format, const void *buffer);
 	void send_record_on ();
