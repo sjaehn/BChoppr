@@ -637,7 +637,7 @@ LV2_State_Status BChoppr::state_restore (LV2_State_Retrieve_Function retrieve, L
 	return LV2_STATE_SUCCESS;
 }
 
-LV2_Handle instantiate (const LV2_Descriptor* descriptor, double samplerate, const char* bundle_path, const LV2_Feature* const* features)
+static LV2_Handle instantiate (const LV2_Descriptor* descriptor, double samplerate, const char* bundle_path, const LV2_Feature* const* features)
 {
 	// New instance
 	BChoppr* instance;
@@ -664,13 +664,13 @@ LV2_Handle instantiate (const LV2_Descriptor* descriptor, double samplerate, con
 	return (LV2_Handle)instance;
 }
 
-void connect_port (LV2_Handle instance, uint32_t port, void *data)
+static void connect_port (LV2_Handle instance, uint32_t port, void *data)
 {
 	BChoppr* inst = (BChoppr*) instance;
 	inst->connect_port (port, data);
 }
 
-void run (LV2_Handle instance, uint32_t n_samples)
+static void run (LV2_Handle instance, uint32_t n_samples)
 {
 	BChoppr* inst = (BChoppr*) instance;
 	inst->run (n_samples);
@@ -694,7 +694,7 @@ static LV2_State_Status state_restore(LV2_Handle instance, LV2_State_Retrieve_Fu
 	return inst->state_restore (retrieve, handle, flags, features);
 }
 
-void cleanup (LV2_Handle instance)
+static void cleanup (LV2_Handle instance)
 {
 	BChoppr* inst = (BChoppr*) instance;
 	delete inst;
