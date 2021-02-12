@@ -707,7 +707,7 @@ static const void* extension_data(const char* uri)
 	return NULL;
 }
 
-const LV2_Descriptor descriptor =
+static const LV2_Descriptor descriptor =
 {
 		BCHOPPR_URI,
 		instantiate,
