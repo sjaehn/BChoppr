@@ -22,10 +22,19 @@ b) Build your own binaries in the following three steps.
 Step 1: [Download the latest published version](https://github.com/sjaehn/BChoppr/releases) of B.Choppr. Or clone or
 [download the master](https://github.com/sjaehn/BChoppr/archive/master.zip) of this repository.
 
-Step 2: Install pkg-config and the development packages for x11, cairo, and lv2 if not done yet. On
-Debian-based systems you may run:
+Step 2: Install pkg-config and the development packages for x11, cairo, and lv2 if not done yet. If you
+don't have already got the build tools (compilers, make, libraries) then install them too.
+
+On Debian-based systems you may run:
 ```
+sudo apt-get install build-essential
 sudo apt-get install pkg-config libx11-dev libcairo2-dev lv2-dev
+```
+
+On Arch-based systems you may run:
+```
+sudo pacman -S base-devel
+sudo pacman -S pkg-config libx11 cairo lv2
 ```
 
 Step 3: Building and installing into the default lv2 directory (/usr/local/lib/lv2/) is easy using `make` and
@@ -35,11 +44,11 @@ make
 sudo make install
 ```
 
-Optional: Standard `make` and `make install` parameters are supported. Compiling using `make CPPFLAGS+=-O3`
+**Optional:** Standard `make` and `make install` parameters are supported. Compiling using `make CPPFLAGS+=-O3`
 is recommended to improve the plugin performance. Alternatively, you may build a debugging version using
 `make CPPFLAGS+=-g`. For installation into an alternative directory (e.g., /usr/lib/lv2/), change the
 variable `PREFIX` while installing: `sudo make install PREFIX=/usr`. If you want to freely choose the
-install target directory, change the variable `LV2DIR`.
+install target directory, change the variable `LV2DIR` (e.g., `make install LV2DIR=~/.lv2`).
 
 
 ## Running
