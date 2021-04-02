@@ -113,6 +113,8 @@ shared data. The plugin now shows the host-provided data.
 Note: Shared data are unlinked from host automation.
 
 ## What's new
+* Check dependencies / versions
+* Support older systems (gcc < 8, clang < 10, lv2 < 1.18)
 * Bugfixes
 
 ## Links
