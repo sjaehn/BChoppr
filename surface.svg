@@ -13,8 +13,8 @@
    viewBox="0 0 201.08333 148.16667"
    version="1.1"
    id="svg4538"
-   inkscape:version="1.0.1 (0767f8302a, 2020-10-17)"
-   sodipodi:docname="surface2.svg"
+   inkscape:version="1.0.2 (394de47547, 2021-03-26)"
+   sodipodi:docname="surface.svg"
    inkscape:export-filename="/home/sven/dev/c/BChoppr/surface.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
@@ -1318,7 +1318,7 @@
          id="tspan1008"
          x="85.460503"
          y="16.007292"
-         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.10.5</tspan></text>
+         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.10.6</tspan></text>
     <g
        transform="translate(-2.9104143)"
        style="enable-background:new"

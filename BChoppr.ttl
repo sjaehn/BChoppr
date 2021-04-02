@@ -30,7 +30,7 @@
         rdfs:comment "An audio stream chopping LV2 plugin. B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops. Each chop can be leveled up or down (gating)." ;
 	doap:maintainer <http://www.jahnichen.de/sjaehn#me> ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-	lv2:microVersion 5 ;
+	lv2:microVersion 6 ;
 	lv2:minorVersion 10 ;
         lv2:optionalFeature lv2:hardRTCapable ;
         lv2:binary <BChoppr.so> ;
