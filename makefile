@@ -31,6 +31,10 @@ GUICFLAGS += `$(PKG_CONFIG) --cflags $(LV2_LIBS) $(GUI_LIBS)`
 DSPLFLAGS += `$(PKG_CONFIG) --libs $(LV2_LIBS)`
 GUILFLAGS += `$(PKG_CONFIG) --libs $(LV2_LIBS) $(GUI_LIBS)`
 
+ifeq ($(shell test -e src/Locale_$(LANGUAGE).hpp && echo -n yes),yes)
+  GUIPPFLAGS += -DLOCALEFILE=\"Locale_$(LANGUAGE).hpp\"
+endif
+
 BUNDLE = BChoppr.lv2
 DSP = BChoppr
 DSP_SRC = ./src/BChoppr.cpp

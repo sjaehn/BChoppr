@@ -45,6 +45,12 @@
 #include "definitions.hpp"
 #include "Urids.hpp"
 
+#ifdef LOCALEFILE
+#include LOCALEFILE
+#else
+#include "Locale_EN.hpp"
+#endif
+
 #ifndef MESSAGENR_
 #define MESSAGENR_
 enum MessageNr
@@ -78,7 +84,7 @@ enum MessageNr
 const std::string messageStrings[MAX_MSG + 1] =
 {
 	"",
-	"*** Jack transport off or halted. ***"
+	"*** " BCHOPPR_LABEL_JACK_STOP " ***"
 };
 
 class BChoppr_GUI : public BWidgets::Window

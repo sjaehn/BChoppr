@@ -1,10 +1,12 @@
 # B.Choppr
+
 An audio stream chopping LV2 plugin.
 
 Description: B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops.
 Each chop can be leveled up or down (gating). B.Choppr is the successor of B.Slizr.
 
 ![screenshot](https://raw.githubusercontent.com/sjaehn/BChoppr/master/doc/screenshot.png "Screenshot from B.Choppr")
+
 
 ## Installation
 
@@ -48,7 +50,11 @@ sudo make install
 is recommended to improve the plugin performance. Alternatively, you may build a debugging version using
 `make CPPFLAGS+=-g`. For installation into an alternative directory (e.g., /usr/lib/lv2/), change the
 variable `PREFIX` while installing: `sudo make install PREFIX=/usr`. If you want to freely choose the
-install target directory, change the variable `LV2DIR` (e.g., `make install LV2DIR=~/.lv2`).
+install target directory, change the variable `LV2DIR` (e.g., `make install LV2DIR=~/.lv2`) or even define
+`DESTDIR`.
+
+**Optional:** Further supported parameters include `LANGUAGE` (usually two letters code) to change the GUI
+language (see customize).
 
 
 ## Running
@@ -65,6 +71,7 @@ to run it (pseudo) stand-alone and connect it to the JACK system.
 
 Note: **Jack transport is required to get information about beat / position**
 
+
 ## Usage
 
 The plugin slices a stereo input stream, amplifies or silences the individual slices and send the whole
@@ -74,11 +81,15 @@ sequence to the output. Although this affects only the audio signal, it needs a 
 In addition to the global controllers, the interface is divided into three parts: step controls,
 monitor and step shape.
 
+
 ### Global
+
 * **Bypass** : Bypass B.Choppr
 * **Dry/wet** : Dry / wet mixing
 
+
 ### Step controls
+
 * **Step markers** : Defines the size of each step. Drag markers to relocate. Right click to switch between automatic and manual placement
 * **Step level control** : Sound level for each individual step
 * **Sequences per bar** : Number of sequences in one bar (1..8)
@@ -97,6 +108,7 @@ monitor and step shape.
 * **Decay** : Time (fraction of the respective step length) to decrease the level at the end of each step
 * **Monitor** : Visualization of a single step
 
+
 ### 🔗 Shared data
 
 If you use multiple instances of B.Choppr you may be interested in sharing the plugin settings between
@@ -112,10 +124,20 @@ shared data. The plugin now shows the host-provided data.
 
 Note: Shared data are unlinked from host automation.
 
+
+##Customize
+
+You can create customized builds of B.Choppr using the parameter `LANGUAGE` (e.g., `make LANGUAGE=DE`).
+To create a new language pack, copy `src/Locale_EN.hpp` and edit the text for the respective definitions.
+But do not change or delete any definition symbol!
+
+
 ## What's new
-* Check dependencies / versions
-* Support older systems (gcc < 8, clang < 10, lv2 < 1.18)
-* Bugfixes
+
+* Support build parameter LANGUAGE
+* Add EN and DE locales
+
 
 ## Links
+
 * Tutorial video: https://youtu.be/PuzoxiAs-h8

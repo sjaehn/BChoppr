@@ -32,24 +32,24 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	rContainer (260, 80, 480, 350, "rcontainer"),
 	sContainer (3, 210, 474, 137, "scontainer"),
 	monitorSwitch (600, 15, 40, 16, "switch", 0.0),
-	monitorLabel (600, 35, 40, 20, "smlabel", "Monitor"),
+	monitorLabel (600, 35, 40, 20, "smlabel", BCHOPPR_LABEL_MONITOR),
 	bypassButton (662, 15, 16, 16, "redbutton"),
-	bypassLabel (650, 35, 40, 20, "smlabel", "Bypass"),
+	bypassLabel (650, 35, 40, 20, "smlabel", BCHOPPR_LABEL_BYPASS),
 	drywetDial (703, 5, 33, 40, "dial", 1.0, 0.0, 1.0, 0.0, "%1.2f"),
-	drywetLabel (700, 35, 40, 20, "smlabel", "Dry/wet"),
-	helpButton (20, 80, 24, 24, "halobutton", "Help"),
-	ytButton (50, 80, 24, 24, "halobutton", "Tutorial"),
+	drywetLabel (700, 35, 40, 20, "smlabel", BCHOPPR_LABEL_DRY_WET),
+	helpButton (20, 80, 24, 24, "halobutton", BCHOPPR_LABEL_HELP),
+	ytButton (50, 80, 24, 24, "halobutton", BCHOPPR_LABEL_TUTORIAL),
 	monitorDisplay (3, 3, 474, 207, "mmonitor"),
 	blendControl (0, 0, 0, 0, "widget", 1, 1, 2, 1),
 	rectButton (40, 240, 60, 40, "abutton"),
 	sinButton (140, 240, 60, 40, "nbutton"),
 	stepshapeDisplay (30, 290, 180, 140, "smonitor"),
 	attackControl (40, 445, 50, 60, "dial", 0.2, 0.01, 1.0, 0.01, "%1.2f"),
-	attackLabel (20, 500, 90, 20, "label", "Attack"),
+	attackLabel (20, 500, 90, 20, "label", BCHOPPR_LABEL_ATTACK),
 	releaseControl (150, 445, 50, 60, "dial", 0.2, 0.01, 1.0, -0.01, "%1.2f"),
-	releaseLabel (130, 500, 90, 20, "label", "Decay"),
+	releaseLabel (130, 500, 90, 20, "label", BCHOPPR_LABEL_DECAY),
 	sequencesperbarControl (260, 442, 120, 28, "slider", 1.0, 1.0, 8.0, 1.0, "%1.0f"),
-	sequencesperbarLabel (260, 470, 120, 20, "label", "Sequences per bar"),
+	sequencesperbarLabel (260, 470, 120, 20, "label", BCHOPPR_LABEL_SEQUENCES_PER_BAR),
 	ampSwingControl
 	(
 		400, 442, 110, 28, "slider", 1.0, 0.001, 1000.0, 0.0, "%4.1f",
@@ -58,17 +58,17 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		[] (const double frac, const double min, const double max)
 		{return (frac >= 0.5 ? pow (0.5 / (1.0 - LIMIT (frac, 0, 1)), 2) : pow (2 * LIMIT (frac, 0, 1), 2));}
 	),
-	ampSwingLabel (400, 470, 110, 20, "label", "Amp swing"),
+	ampSwingLabel (400, 470, 110, 20, "label", BCHOPPR_LABEL_AMP_SWING),
 	swingControl (525, 442, 110, 28, "slider", 1.0, 1.0 / 3.0, 3.0, 0.0),
-	swingLabel (525, 470, 110, 20, "label", "Steps swing"),
-	markersAutoButton (655, 450, 80, 20, "button", "Auto"),
-	markersAutoLabel (655, 470, 80, 20, "label", "Markers"),
+	swingLabel (525, 470, 110, 20, "label", BCHOPPR_LABEL_STEPS_SWING),
+	markersAutoButton (655, 450, 80, 20, "button", BCHOPPR_LABEL_AUTO),
+	markersAutoLabel (655, 470, 80, 20, "label", BCHOPPR_LABEL_MARKER),
 	nrStepsControl (260, 502, 480, 28, "slider", 1.0, 1.0, MAXSTEPS, 1.0, "%2.0f"),
-	nrStepsLabel (260, 530, 480, 20, "label", "Number of steps"),
-	stepshapeLabel (33, 293, 80, 20, "label", "Step shape"),
-	sequencemonitorLabel (263, 83, 120, 20, "label", "Sequence monitor"),
+	nrStepsLabel (260, 530, 480, 20, "label", BCHOPPR_LABEL_NUMBER_OF_STEPS),
+	stepshapeLabel (33, 293, 80, 20, "label", BCHOPPR_LABEL_STEP_SHAPE),
+	sequencemonitorLabel (263, 83, 120, 20, "label", BCHOPPR_LABEL_SEQUENCE_MONITOR),
 	messageLabel (420, 83, 280, 20, "hilabel", ""),
-	markerListBox (12, -68, 86, 66, "listbox", BItems::ItemList ({"Auto", "Manual"})),
+	markerListBox (12, -68, 86, 66, "listbox", BItems::ItemList ({BCHOPPR_LABEL_MARKER, BCHOPPR_LABEL_MANUAL})),
 	sharedDataSelection (28, 528, 194, 24, "widget", 0, 0, 4, 1),
 
 	surface (NULL), cr1 (NULL), cr2 (NULL), cr3 (NULL), cr4 (NULL), pat1 (NULL), pat2 (NULL), pat3 (NULL), pat4 (NULL), pat5 (NULL),
@@ -116,7 +116,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		sContainer.add (markerWidgets[i]);
 	}
 
-	for (int i = 0; i < 4; ++i) sharedDataButtons[i] = HaloToggleButton (50 * i, 0, 44, 24, "halobutton", "Shared data " + std::to_string (i + 1));
+	for (int i = 0; i < 4; ++i) sharedDataButtons[i] = HaloToggleButton 
+	(50 * i, 0, 44, 24, "halobutton", BCHOPPR_LABEL_SHARED_DATA " " + std::to_string (i + 1));
 
 	// Link controllers
 	controllers[Bypass - Controllers] = &bypassButton;
@@ -1444,7 +1445,7 @@ static int callResize (LV2UI_Handle ui, int width, int height)
 {
 	BChoppr_GUI* self = (BChoppr_GUI*) ui;
 	if (!self) return 0;
-	
+
 	BEvents::ExposeEvent* ev = new BEvents::ExposeEvent (self, self, BEvents::CONFIGURE_REQUEST_EVENT, self->getPosition().x, self->getPosition().y, width, height);
 	self->addEventToQueue (ev);
 	return 0;
