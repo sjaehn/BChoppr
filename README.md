@@ -135,7 +135,11 @@ But do not change or delete any definition symbol!
 ## What's new
 
 * Support build parameter LANGUAGE
-* Add EN and DE locales
+* Locales: EN, DE, IT (by LAM)
+
+
+## Acknowledgments
+* Thanks to LAM for translation
 
 
 ## Links
