@@ -225,6 +225,8 @@ private:
 	BStyles::Border screenBorder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.75), 4.0));
 	BStyles::Font defaultFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0,
 						   BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
+   	BStyles::Font leftFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0,
+   						   BStyles::TEXT_ALIGN_LEFT, BStyles::TEXT_VALIGN_MIDDLE);
         BStyles::Font mdFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0,
                                          BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
         BStyles::Font smFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 8.0,
@@ -236,6 +238,10 @@ private:
 						    {"border", STYLEPTR (&BStyles::noBorder)},
 						    {"textcolors", STYLEPTR (&txColors)},
 						    {"font", STYLEPTR (&defaultFont)}}};
+        BStyles::StyleSet llStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
+                                                 {"border", STYLEPTR (&BStyles::noBorder)},
+                                                 {"textcolors", STYLEPTR (&txColors)},
+                                                 {"font", STYLEPTR (&leftFont)}}};
         BStyles::StyleSet mlStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
                                                  {"border", STYLEPTR (&BStyles::noBorder)},
                                                  {"textcolors", STYLEPTR (&fgColors)},
@@ -309,6 +315,7 @@ private:
 				 {"textcolors", STYLEPTR (&txColors)},
 				 {"font", STYLEPTR (&defaultFont)}}},
 		{"label",	{{"uses", STYLEPTR (&labelStyles)}}},
+                {"llabel",	{{"uses", STYLEPTR (&llStyles)}}},
                 {"mlabel",	{{"uses", STYLEPTR (&mlStyles)}}},
                 {"smlabel",	{{"uses", STYLEPTR (&smStyles)}}},
 		{"hilabel",	{{"uses", STYLEPTR (&labelStyles)},

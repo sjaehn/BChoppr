@@ -36,7 +36,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	bypassButton (662, 15, 16, 16, "redbutton"),
 	bypassLabel (650, 35, 40, 20, "smlabel", BCHOPPR_LABEL_BYPASS),
 	drywetDial (703, 5, 33, 40, "dial", 1.0, 0.0, 1.0, 0.0, "%1.2f"),
-	drywetLabel (700, 35, 40, 20, "smlabel", BCHOPPR_LABEL_DRY_WET),
+	drywetLabel (690, 35, 60, 20, "smlabel", BCHOPPR_LABEL_DRY_WET),
 	helpButton (20, 80, 24, 24, "halobutton", BCHOPPR_LABEL_HELP),
 	ytButton (50, 80, 24, 24, "halobutton", BCHOPPR_LABEL_TUTORIAL),
 	monitorDisplay (3, 3, 474, 207, "mmonitor"),
@@ -65,8 +65,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	markersAutoLabel (655, 470, 80, 20, "label", BCHOPPR_LABEL_MARKER),
 	nrStepsControl (260, 502, 480, 28, "slider", 1.0, 1.0, MAXSTEPS, 1.0, "%2.0f"),
 	nrStepsLabel (260, 530, 480, 20, "label", BCHOPPR_LABEL_NUMBER_OF_STEPS),
-	stepshapeLabel (33, 293, 80, 20, "label", BCHOPPR_LABEL_STEP_SHAPE),
-	sequencemonitorLabel (263, 83, 120, 20, "label", BCHOPPR_LABEL_SEQUENCE_MONITOR),
+	stepshapeLabel (33, 293, 120, 20, "llabel", BCHOPPR_LABEL_STEP_SHAPE),
+	sequencemonitorLabel (263, 83, 120, 20, "llabel", BCHOPPR_LABEL_SEQUENCE_MONITOR),
 	messageLabel (420, 83, 280, 20, "hilabel", ""),
 	markerListBox (12, -68, 86, 66, "listbox", BItems::ItemList ({BCHOPPR_LABEL_MARKER, BCHOPPR_LABEL_MANUAL})),
 	sharedDataSelection (28, 528, 194, 24, "widget", 0, 0, 4, 1),
@@ -116,7 +116,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		sContainer.add (markerWidgets[i]);
 	}
 
-	for (int i = 0; i < 4; ++i) sharedDataButtons[i] = HaloToggleButton 
+	for (int i = 0; i < 4; ++i) sharedDataButtons[i] = HaloToggleButton
 	(50 * i, 0, 44, 24, "halobutton", BCHOPPR_LABEL_SHARED_DATA " " + std::to_string (i + 1));
 
 	// Link controllers
@@ -365,6 +365,7 @@ void BChoppr_GUI::resizeGUI()
 
 	// Resize Fonts
 	defaultFont.setFontSize (12 * sz);
+	leftFont.setFontSize (12 * sz);
 	mdFont.setFontSize (10 * sz);
 	smFont.setFontSize (8 * sz);
 
@@ -386,7 +387,7 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (bypassButton, 662, 15, 16, 16, sz);
 	RESIZE (bypassLabel, 650, 35, 40, 20, sz);
 	RESIZE (drywetDial, 703, 5, 33, 40, sz);
-	RESIZE (drywetLabel, 700, 35, 40, 20, sz);
+	RESIZE (drywetLabel, 690, 35, 60, 20, sz);
 	RESIZE (helpButton, 20, 80, 24, 24, sz);
 	RESIZE (ytButton, 50, 80, 24, 24, sz);
 	RESIZE (monitorDisplay, 3, 3, 474, 207, sz);
@@ -408,7 +409,7 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (markersAutoLabel, 655, 470, 80, 20, sz);
 	RESIZE (nrStepsControl, 260, 502, 480, 28, sz);
 	RESIZE (nrStepsLabel, 260, 530, 480, 20, sz);
-	RESIZE (stepshapeLabel, 33, 293, 80, 20, sz);
+	RESIZE (stepshapeLabel, 33, 293, 120, 20, sz);
 	RESIZE (sequencemonitorLabel, 263, 83, 120, 20, sz);
 	RESIZE (messageLabel, 420, 83, 280, 20,sz);
 	RESIZE (sContainer, 3, 210, 474, 137, sz);
