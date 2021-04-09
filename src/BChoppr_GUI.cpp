@@ -962,7 +962,7 @@ void BChoppr_GUI::sharedDataClickedCallback (BEvents::Event* event)
 
 void BChoppr_GUI::helpButtonClickedCallback (BEvents::Event* event)
 {
-	if (system(OPEN_CMD " " HELP_URL)) std::cerr << "BChoppr.lv2#GUI: Can't open " << HELP_URL << ". You can try to call it manually.\";
+	if (system(OPEN_CMD " " HELP_URL)) std::cerr << "BChoppr.lv2#GUI: Can't open " << HELP_URL << ". You can try to call it manually.\n";
 }
 
 void BChoppr_GUI::ytButtonClickedCallback (BEvents::Event* event)
