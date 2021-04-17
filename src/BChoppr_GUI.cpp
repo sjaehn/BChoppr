@@ -22,6 +22,7 @@
 #include "Ports.hpp"
 #include "screen.h"
 #include "BUtilities/stof.hpp"
+#include "BUtilities/vsystem.hpp"
 
 
 BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeView parentWindow) :
@@ -962,12 +963,20 @@ void BChoppr_GUI::sharedDataClickedCallback (BEvents::Event* event)
 
 void BChoppr_GUI::helpButtonClickedCallback (BEvents::Event* event)
 {
-	if (system(OPEN_CMD " " HELP_URL)) std::cerr << "BChoppr.lv2#GUI: Can't open " << HELP_URL << ". You can try to call it manually.\n";
+	char cmd[] = WWW_BROWSER_CMD;
+	char param[] = HELP_URL;
+	char* argv[] = {cmd, param, NULL};
+	std::cerr << "BChoppr.lv2#GUI: Call " << HELP_URL << " for help.\n";
+	if (BUtilities::vsystem (argv) == -1) std::cerr << "BChoppr.lv2#GUI: Couldn't fork.\n";
 }
 
 void BChoppr_GUI::ytButtonClickedCallback (BEvents::Event* event)
 {
-	if (system(OPEN_CMD " " YT_URL))  std::cerr << "BChoppr.lv2#GUI: Can't open " << YT_URL << ". You can try to call it manually.\n";
+	char cmd[] = WWW_BROWSER_CMD;
+	char param[] = YT_URL;
+	char* argv[] = {cmd, param, NULL};
+	std::cerr << "BChoppr.lv2#GUI: Call " << YT_URL << " for tutorial video.\n";
+	if (BUtilities::vsystem (argv) == -1) std::cerr << "BChoppr.lv2#GUI: Couldn't fork.\n";
 }
 
 void BChoppr_GUI::stepControlLabelMessageCallback (BEvents::Event* event)

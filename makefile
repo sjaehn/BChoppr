@@ -35,6 +35,10 @@ ifeq ($(shell test -e src/Locale_$(LANGUAGE).hpp && echo -n yes),yes)
   GUIPPFLAGS += -DLOCALEFILE=\"Locale_$(LANGUAGE).hpp\"
 endif
 
+ifdef WWW_BROWSER_CMD
+  GUIPPFLAGS += -DWWW_BROWSER_CMD=\"$(WWW_BROWSER_CMD)\"
+endif
+
 BUNDLE = BChoppr.lv2
 DSP = BChoppr
 DSP_SRC = ./src/BChoppr.cpp
@@ -77,7 +81,9 @@ GUI_CXX_INCL = \
 	src/BWidgets/BStyles.cpp \
 	src/BWidgets/BColors.cpp \
 	src/BUtilities/to_string.cpp \
-	src/BUtilities/stof.cpp
+	src/BUtilities/stof.cpp \
+	src/BUtilities/vsystem.cpp
+
 
 GUI_C_INCL = \
 	src/screen.c \

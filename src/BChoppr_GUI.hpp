@@ -73,7 +73,7 @@ enum MessageNr
 #define BG_FILE "surface.png"
 #define HELP_URL "https://github.com/sjaehn/BChoppr/blob/master/README.md"
 #define YT_URL " https://youtu.be/PuzoxiAs-h8"
-#define OPEN_CMD "xdg-open"
+#define WWW_BROWSER_CMD "x-www-browser"
 
 #define DB_CO(g) ((g) > -90.0f ? powf(10.0f, (g) * 0.05f) : 0.0f)
 #define CO_DB(g) ((g) > 0.0001f ? logf((g)) / 0.05f : -90.0f)

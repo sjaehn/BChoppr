@@ -125,7 +125,7 @@ shared data. The plugin now shows the host-provided data.
 Note: Shared data are unlinked from host automation.
 
 
-##Customize
+## Customize
 
 You can create customized builds of B.Choppr using the parameter `LANGUAGE` (e.g., `make LANGUAGE=DE`).
 To create a new language pack, copy `src/Locale_EN.hpp` and edit the text for the respective definitions.
@@ -136,6 +136,7 @@ But do not change or delete any definition symbol!
 
 * Support build parameter LANGUAGE
 * Locales: EN, DE, IT (by LAM)
+* Enable web browser call (help, tutorial) on fork-blocking hosts
 
 
 ## Acknowledgments
