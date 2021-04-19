@@ -16,7 +16,8 @@ a) Install the bchoppr package for your system
 * [Guix](https://guix.gnu.org/packages/bchoppr-1.8.0/)
 * [NixOS](https://github.com/NixOS/nixpkgs/blob/release-20.09/pkgs/applications/audio/bchoppr/default.nix#L23) by magnetophon
 * [Parabola](https://www.parabola.nu/packages/?q=bchoppr) by Erich Eckner
-* [Ubuntu](https://packages.ubuntu.com/source/groovy/bchoppr) by Erich Eickmeyer
+* [openSUSE](https://software.opensuse.org/package/BChoppr)
+* [Ubuntu](https://launchpad.net/ubuntu/+source/bchoppr) by Erich Eickmeyer
 * Check https://repology.org/project/bchoppr/versions for other systems
 
 b) Build your own binaries in the following three steps.
