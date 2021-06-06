@@ -138,6 +138,7 @@ But do not change or delete any definition symbol!
 * Support build parameter LANGUAGE
 * Locales: EN, DE, IT (by LAM)
 * Enable web browser call (help, tutorial) on fork-blocking hosts
+* Do not mute if transport stopped
 
 
 ## Acknowledgments

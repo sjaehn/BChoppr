@@ -120,6 +120,7 @@ private:
 	uint32_t prevStep;
 	uint32_t actStep;
 	uint32_t nextStep;
+	float pos;
 
 	// Audio buffers
 	float* audioInput1;

@@ -34,7 +34,7 @@ BChoppr::BChoppr (double samplerate, const LV2_Feature* const* features) :
 	map(NULL),
 	rate(samplerate), bpm(120.0f), speed(1), position(0),
 	beatsPerBar (4), beatUnit (4), refFrame(0),
-	prevStep(0), actStep(0), nextStep(1),
+	prevStep(0), actStep(0), nextStep(1), pos (0),
 	audioInput1(NULL), audioInput2(NULL), audioOutput1(NULL), audioOutput2(NULL),
 	sharedDataNr (0),
 	controlPtrs {nullptr}, controllers {0.0f},
@@ -467,22 +467,17 @@ void BChoppr::play(uint32_t start, uint32_t end)
 {
 	int steps = controllers[NrSteps - Controllers];
 
-	//Silence if halted or bpm == 0
-	if ((speed == 0.0f) || (bpm < 1.0f))
-	{
-		memset(&audioOutput1[start], 0, (end-start)*sizeof(float));
-		memset(&audioOutput2[start], 0, (end-start)*sizeof(float));
-		return;
-	}
-
 	for (uint32_t i = start; i < end; ++i)
 	{
 		float effect1 = audioInput1[i];
 		float effect2 = audioInput2[i];
 
 		// Interpolate position within the loop
-		float relpos = (i - refFrame) * speed / (rate / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
-		float pos = MODFL (position + relpos);
+		if ((speed != 0.0f) && (bpm >= 1.0f))
+		{
+			float relpos = (i - refFrame) * speed / (rate / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
+			pos = MODFL (position + relpos);
+		}
 
 		if (!controllers[Bypass - Controllers])
 		{
