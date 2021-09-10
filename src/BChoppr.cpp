@@ -289,7 +289,7 @@ void BChoppr::run (uint32_t n_samples)
 	if (last_t < n_samples) play(last_t, n_samples);		// Play remaining samples
 
 	// Update position in case of no new barBeat submitted on next call
-	double relpos = (n_samples - refFrame) * speed / (rate / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
+	const float relpos = float (n_samples - refFrame) * speed / (float (rate) / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
 	position = MODFL (position + relpos);
 	refFrame = 0;
 
@@ -348,7 +348,7 @@ void BChoppr::setController (const int ctrlNr, const float value)
 
 void BChoppr::recalculateAutoPositions ()
 {
-	int nrMarkers = controllers[NrSteps - Controllers] - 1;
+	const int nrMarkers = controllers[NrSteps - Controllers] - 1;
 	int start = 0;
 	for (int i = 0; i < nrMarkers; ++i)
 	{
@@ -356,16 +356,16 @@ void BChoppr::recalculateAutoPositions ()
 		{
 			if ((i == nrMarkers - 1) || (!stepAutoPositions[i + 1]))
 			{
-				double swing = controllers[Swing - Controllers];
-				double s = 2.0 * swing / (swing + 1.0);
-				double anc = (start == 0 ? 0 : stepPositions[start - 1]);
-				double suc = (i == nrMarkers - 1 ? 1 : stepPositions[i + 1]);
-				double diff = suc - anc;
-				double dist = i - start + 1.0 + (int (i - start) & 1 ? ((start & 1) ? 2.0 - s : s) : 1.0);
-				double step = (diff < 0 ? 0 : diff / dist);
+				const float swing = controllers[Swing - Controllers];
+				const float s = 2.0f * swing / (swing + 1.0f);
+				float anc = (start == 0 ? 0 : stepPositions[start - 1]);
+				const float suc = (i == nrMarkers - 1 ? 1.0f : stepPositions[i + 1]);
+				const float diff = suc - anc;
+				const float dist = float (i - start) + 1.0f + (int (i - start) & 1 ? ((start & 1) ? 2.0f - s : s) : 1.0f);
+				const float step = (diff < 0.0f ? 0.0f : diff / dist);
 				for (int j = start; j <= i; ++j)
 				{
-					double f = ((j & 1) ? 2.0 - s : s);
+					const float f = ((j & 1) ? 2.0f - s : s);
 					anc += f * step;
 					stepPositions[j] = anc;
 				}
@@ -465,7 +465,7 @@ void BChoppr::notifyMessageToGui()
 
 void BChoppr::play(uint32_t start, uint32_t end)
 {
-	int steps = controllers[NrSteps - Controllers];
+	const int steps = controllers[NrSteps - Controllers];
 
 	for (uint32_t i = start; i < end; ++i)
 	{
@@ -475,7 +475,7 @@ void BChoppr::play(uint32_t start, uint32_t end)
 		// Interpolate position within the loop
 		if ((speed != 0.0f) && (bpm >= 1.0f))
 		{
-			float relpos = (i - refFrame) * speed / (rate / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
+			const float relpos = float (i - refFrame) * speed / (float (rate) / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
 			pos = MODFL (position + relpos);
 		}
 
@@ -486,10 +486,10 @@ void BChoppr::play(uint32_t start, uint32_t end)
 			for (iStep = 0; (iStep < steps - 1) && (stepPositions[iStep] < pos); ++iStep) {}
 
 			// Calculate fraction of active step
-			float steppos = (iStep == 0 ? 0 : stepPositions[iStep - 1]);
-			float nextpos = (int (iStep) == steps - 1 ? 1 : stepPositions[iStep]);
-			float stepsize = nextpos - steppos;
-			float iStepFrac = (stepsize <= 0 ? 0 : (pos - steppos) / stepsize);
+			const float steppos = (iStep == 0 ? 0.0f : stepPositions[iStep - 1]);
+			const float nextpos = (iStep == steps - 1 ? 1.0f : stepPositions[iStep]);
+			const float stepsize = nextpos - steppos;
+			const float iStepFrac = (stepsize <= 0.0f ? 0.0f : (pos - steppos) / stepsize);
 
 			// Move to the next step?
 			if (actStep != uint32_t (iStep))
@@ -500,31 +500,31 @@ void BChoppr::play(uint32_t start, uint32_t end)
 			}
 
 			// Calculate effect (vol) for the position
-			float ampSwing = controllers[AmpSwing - Controllers];
-			float* stepLevels = &controllers[StepLevels - Controllers];
-			float act = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
-			float prev = stepLevels[prevStep] * LIM ((prevStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
-			float next = stepLevels[nextStep] * LIM ((nextStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
-			float vol = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0, 1);
+			const float ampSwing = controllers[AmpSwing - Controllers];
+			const float* stepLevels = &controllers[StepLevels - Controllers];
+			const float act = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			const float prev = stepLevels[prevStep] * LIM ((prevStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			const float next = stepLevels[nextStep] * LIM ((nextStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			float vol = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
 
 			// On attack
 			if (iStepFrac < controllers[Attack - Controllers])
 			{
 				if (prev < act)
 				{
-					if (controllers[Blend - Controllers] == 1) vol = prev + (iStepFrac / controllers[Attack - Controllers]) * (vol - prev);
-					else if (controllers[Blend - Controllers] == 2) vol = prev + 0.5 * (sin (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5)) + 1) * (vol - prev);
+					if (controllers[Blend - Controllers] == 1.0f) vol = prev + (iStepFrac / controllers[Attack - Controllers]) * (vol - prev);
+					else if (controllers[Blend - Controllers] == 2.0f) vol = prev + 0.5f * (sinf (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5f)) + 1.0f) * (vol - prev);
 				}
 
 			}
 
 			// On release
-			if (iStepFrac > (1 - controllers[Release - Controllers]))
+			if (iStepFrac > (1.0f - controllers[Release - Controllers]))
 			{
 				if (next < act)
 				{
-					if (controllers[Blend - Controllers] == 1) vol = next + (((1 - iStepFrac)) / controllers[Release - Controllers]) * (vol - next);
-					else if (controllers[Blend - Controllers] == 2) vol = next + 0.5 * (sin (M_PI * ((1 - iStepFrac) / controllers[Release - Controllers] - 0.5)) + 1) * (vol - next);
+					if (controllers[Blend - Controllers] == 1.0f) vol = next + (((1.0f - iStepFrac)) / controllers[Release - Controllers]) * (vol - next);
+					else if (controllers[Blend - Controllers] == 2.0f) vol = next + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / controllers[Release - Controllers] - 0.5f)) + 1.0f) * (vol - next);
 				}
 			}
 
@@ -564,8 +564,8 @@ void BChoppr::play(uint32_t start, uint32_t end)
 
 		// Send effect to audio output
 		const float drywet = controllers[DryWet - Controllers];
-		audioOutput1[i] = audioInput1[i] * (1 - drywet) + effect1 * drywet;
-		audioOutput2[i] = audioInput1[i] * (1 - drywet) + effect2 * drywet;
+		audioOutput1[i] = audioInput1[i] * (1.0f - drywet) + effect1 * drywet;
+		audioOutput2[i] = audioInput1[i] * (1.0f - drywet) + effect2 * drywet;
 	}
 }
 
