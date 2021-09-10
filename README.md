@@ -20,7 +20,15 @@ a) Install the bchoppr package for your system
 * [Ubuntu](https://launchpad.net/ubuntu/+source/bchoppr) by Erich Eickmeyer
 * Check https://repology.org/project/bchoppr/versions for other systems
 
-b) Build your own binaries in the following three steps.
+Note: This will NOT necessarily install the latest version of B.Choppr. The version provided depends on the packagers.
+
+b) Use the latest provided binaries
+
+Unpack the provided bchoppr-\*.zip or bchoppr-\*.tar.xz from the latest release and 
+copy the BChoppr.lv2 folder to your lv2 directory (depending on your system settings,
+~/.lv2/, /usr/lib/lv2/, /usr/local/lib/lv2/, or ...).
+
+c) Build your own binaries in the following three steps.
 
 Step 1: [Download the latest published version](https://github.com/sjaehn/BChoppr/releases) of B.Choppr. Or clone or
 [download the master](https://github.com/sjaehn/BChoppr/archive/master.zip) of this repository.
@@ -47,9 +55,8 @@ make
 sudo make install
 ```
 
-**Optional:** Standard `make` and `make install` parameters are supported. Compiling using `make CPPFLAGS+=-O3`
-is recommended to improve the plugin performance. Alternatively, you may build a debugging version using
-`make CPPFLAGS+=-g`. For installation into an alternative directory (e.g., /usr/lib/lv2/), change the
+**Optional:** Standard `make` and `make install` parameters are supported. Alternatively, you may build a debugging version using
+`make CXXFLAGS+=-g`. For installation into an alternative directory (e.g., /usr/lib/lv2/), change the
 variable `PREFIX` while installing: `sudo make install PREFIX=/usr`. If you want to freely choose the
 install target directory, change the variable `LV2DIR` (e.g., `make install LV2DIR=~/.lv2`) or even define
 `DESTDIR`.
@@ -135,10 +142,14 @@ But do not change or delete any definition symbol!
 
 ## What's new
 
-* Support build parameter LANGUAGE
-* Locales: EN, DE, IT (by LAM)
-* Enable web browser call (help, tutorial) on fork-blocking hosts
-* Do not mute if transport stopped
+* Faster
+  * Optimized DSP code
+  * Compiler optimizations (`-O3 -ffast-math`)
+* Presets, just a few
+* Binary compatibility improved
+  * Static libs
+  * Strip symbols by default
+* Binary packages provided
 
 
 ## Acknowledgments
