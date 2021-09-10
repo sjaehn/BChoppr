@@ -1,0 +1,137 @@
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Jittery_Jim>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Jittery Jim" ;
+	lv2:port [
+		lv2:symbol "amp_swing" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "attack" ;
+		pset:value 0.2
+	] , [
+		lv2:symbol "blend" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "bypass" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "dry_wet" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "level_01" ;
+		pset:value 0.86000001
+	] , [
+		lv2:symbol "level_02" ;
+		pset:value 0.05
+	] , [
+		lv2:symbol "level_03" ;
+		pset:value 0.58999997
+	] , [
+		lv2:symbol "level_04" ;
+		pset:value 0.01
+	] , [
+		lv2:symbol "level_05" ;
+		pset:value 0.87
+	] , [
+		lv2:symbol "level_06" ;
+		pset:value 0.13
+	] , [
+		lv2:symbol "level_07" ;
+		pset:value 0.54000002
+	] , [
+		lv2:symbol "level_08" ;
+		pset:value 0.02
+	] , [
+		lv2:symbol "level_09" ;
+		pset:value 0.67000002
+	] , [
+		lv2:symbol "level_10" ;
+		pset:value 0.07
+	] , [
+		lv2:symbol "level_11" ;
+		pset:value 0.43000001
+	] , [
+		lv2:symbol "level_12" ;
+		pset:value 0.02
+	] , [
+		lv2:symbol "level_13" ;
+		pset:value 0.81999999
+	] , [
+		lv2:symbol "level_14" ;
+		pset:value 0.25999999
+	] , [
+		lv2:symbol "level_15" ;
+		pset:value 0.62
+	] , [
+		lv2:symbol "level_16" ;
+		pset:value 0.08
+	] , [
+		lv2:symbol "number_steps" ;
+		pset:value 16.0
+	] , [
+		lv2:symbol "position_01" ;
+		pset:value 0.04852321
+	] , [
+		lv2:symbol "position_02" ;
+		pset:value 0.12447257
+	] , [
+		lv2:symbol "position_03" ;
+		pset:value 0.15822785
+	] , [
+		lv2:symbol "position_04" ;
+		pset:value 0.275
+	] , [
+		lv2:symbol "position_05" ;
+		pset:value 0.3
+	] , [
+		lv2:symbol "position_06" ;
+		pset:value 0.35654008
+	] , [
+		lv2:symbol "position_07" ;
+		pset:value 0.39873418
+	] , [
+		lv2:symbol "position_08" ;
+		pset:value 0.48101267
+	] , [
+		lv2:symbol "position_09" ;
+		pset:value 0.51898736
+	] , [
+		lv2:symbol "position_10" ;
+		pset:value 0.60970461
+	] , [
+		lv2:symbol "position_11" ;
+		pset:value 0.65189874
+	] , [
+		lv2:symbol "position_12" ;
+		pset:value 0.74894518
+	] , [
+		lv2:symbol "position_13" ;
+		pset:value 0.8101266
+	] , [
+		lv2:symbol "position_14" ;
+		pset:value 0.86497891
+	] , [
+		lv2:symbol "position_15" ;
+		pset:value 0.90717298
+	] , [
+		lv2:symbol "release" ;
+		pset:value 0.2
+	] , [
+		lv2:symbol "sequences_per_bar" ;
+		pset:value 4.0
+	] , [
+		lv2:symbol "swing" ;
+		pset:value 1.0
+	] ;
+	state:state [
+		<https://www.jahnichen.de/plugins/lv2/BChoppr#BSchafflSharedDataNr> "0"^^xsd:int
+	] .
+

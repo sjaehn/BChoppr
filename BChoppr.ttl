@@ -6,9 +6,10 @@
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 @prefix time: <http://lv2plug.in/ns/ext/time#> .
 @prefix urid: <http://lv2plug.in/ns/ext/urid#> .
-@prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
-@prefix state: <http://lv2plug.in/ns/ext/state#> .
-@prefix rsz: <http://lv2plug.in/ns/ext/resize-port#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+@prefix state:  <http://lv2plug.in/ns/ext/state#> .
+@prefix rsz:  <http://lv2plug.in/ns/ext/resize-port#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 
 
 <http://www.jahnichen.de/sjaehn#me>
@@ -30,7 +31,7 @@
         rdfs:comment "An audio stream chopping LV2 plugin. B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops. Each chop can be leveled up or down (gating)." ;
 	doap:maintainer <http://www.jahnichen.de/sjaehn#me> ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-	lv2:microVersion 8 ;
+	lv2:microVersion 9 ;
 	lv2:minorVersion 10 ;
         lv2:optionalFeature lv2:hardRTCapable ;
         lv2:binary <BChoppr.so> ;
@@ -410,3 +411,39 @@
                 lv2:minimum 0.0 ;
                 lv2:maximum 1.0 ;
         ] .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Basic_tremolo>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Basic Tremolo" ;
+        rdfs:seeAlso <BChoppr_Basic_tremolo.ttl> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Faster_louder_chopper>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Faster, louder, chopper!" ;
+        rdfs:seeAlso <BChoppr_Faster_louder_chopper.ttl> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Jittery_Jim>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Jittery Jim" ;
+        rdfs:seeAlso <BChoppr_Jittery_Jim.ttl> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Raving_loony>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Raving loony" ;
+        rdfs:seeAlso <BChoppr_Raving_loony.ttl> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Stall_the_engine>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Stall the engine" ;
+        rdfs:seeAlso <BChoppr_Stall_the_engine.ttl> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Waltz_through_Vienna>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Waltz through Vienna" ;
+        rdfs:seeAlso <BChoppr_Waltz_through_Vienna.ttl> .
