@@ -19,6 +19,7 @@
  */
 
 #include "BChoppr_GUI.hpp"
+#include "BWidgets/Dial.hpp"
 #include "Ports.hpp"
 #include "screen.h"
 #include "BUtilities/stof.hpp"
@@ -31,7 +32,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 
 	mContainer (0, 0, 760, 560, "main"),
 	rContainer (260, 80, 480, 350, "rcontainer"),
-	sContainer (3, 210, 474, 137, "scontainer"),
+	sContainer (3, 165, 474, 182, "scontainer"),
 	monitorSwitch (600, 15, 40, 16, "switch", 0.0),
 	monitorLabel (600, 35, 40, 20, "smlabel", BCHOPPR_LABEL_MONITOR),
 	bypassButton (662, 15, 16, 16, "redbutton"),
@@ -40,7 +41,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	drywetLabel (690, 35, 60, 20, "smlabel", BCHOPPR_LABEL_DRY_WET),
 	helpButton (20, 80, 24, 24, "halobutton", BCHOPPR_LABEL_HELP),
 	ytButton (50, 80, 24, 24, "halobutton", BCHOPPR_LABEL_TUTORIAL),
-	monitorDisplay (3, 3, 474, 207, "mmonitor"),
+	monitorDisplay (3, 3, 474, 162, "mmonitor"),
 	blendControl (0, 0, 0, 0, "widget", 1, 1, 2, 1),
 	rectButton (40, 240, 60, 40, "abutton"),
 	sinButton (140, 240, 60, 40, "nbutton"),
@@ -86,23 +87,38 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		throw std::bad_alloc ();
 	}
 
-	//Initialialize and configure stepControllers
+	//Initialialize and configure step controllers
 	double sw = sContainer.getEffectiveWidth();
 	double sx = sContainer.getXOffset();
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
-		stepControl[i] = BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 80, "slider", 1.0, 0.0, 1.0, 0.01);
-		stepControl[i].setHardChangeable (false);
-		stepControl[i].setScrollable (true);
-		stepControl[i].applyTheme (theme, "slider");
-		sContainer.add (stepControl[i]);
+		stepLevelControl[i] = BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 80, "slider", 1.0, 0.0, 1.0, 0.01);
+		stepLevelControl[i].setHardChangeable (false);
+		stepLevelControl[i].setScrollable (true);
+		stepLevelControl[i].applyTheme (theme, "slider");
+		sContainer.add (stepLevelControl[i]);
 
-		stepControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "mlabel", "1.00");
-		stepControlLabel[i].applyTheme (theme, "mlabel");
-		stepControlLabel[i].setState (BColors::ACTIVE);
-		stepControlLabel[i].setEditable (true);
-		stepControlLabel[i].setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, stepControlLabelMessageCallback);
-		sContainer.add (stepControlLabel[i]);
+		stepLevelControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "mlabel", "1.00");
+		stepLevelControlLabel[i].applyTheme (theme, "mlabel");
+		stepLevelControlLabel[i].setState (BColors::ACTIVE);
+		stepLevelControlLabel[i].setEditable (true);
+		stepLevelControlLabel[i].setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, stepControlLabelMessageCallback);
+		sContainer.add (stepLevelControlLabel[i]);
+
+		stepPanControl[i] = BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 12.5, 140, 25, 25, "slider", 0.0, -1.0, 1.0, 0.01);
+		stepPanControl[i].setHardChangeable (false);
+		stepPanControl[i].setScrollable (true);
+		stepPanControl[i].applyTheme (theme, "slider");
+		sContainer.add (stepPanControl[i]);
+
+		stepPanControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 175, 20, "mlabel", "1.00");
+		stepPanControlLabel[i].applyTheme (theme, "mlabel");
+		stepPanControlLabel[i].setState (BColors::ACTIVE);
+		stepPanControlLabel[i].setEditable (true);
+		stepPanControlLabel[i].setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, stepControlLabelMessageCallback);
+		sContainer.add (stepPanControlLabel[i]);
+
+		
 	}
 
 	//Initialialize and configure markers
@@ -131,7 +147,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	controllers[Swing - Controllers] = &swingControl;
 	controllers[NrSteps - Controllers] = &nrStepsControl;
 	for (int i = 0; i < MAXSTEPS - 1; ++i) controllers[StepPositions + i - Controllers] = &markerWidgets[i];
-	for (int i = 0; i < MAXSTEPS; ++i) controllers[StepLevels + i - Controllers] = &stepControl[i];
+	for (int i = 0; i < MAXSTEPS; ++i) controllers[StepLevels + i - Controllers] = &stepLevelControl[i];
+	for (int i = 0; i < MAXSTEPS; ++i) controllers[StepPans + i - Controllers] = &stepPanControl[i];
 
 	// Set callbacks
 	for (int i = 0; i < NrControllers; ++i) controllers[i]->setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
@@ -391,7 +408,7 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (drywetLabel, 690, 35, 60, 20, sz);
 	RESIZE (helpButton, 20, 80, 24, 24, sz);
 	RESIZE (ytButton, 50, 80, 24, 24, sz);
-	RESIZE (monitorDisplay, 3, 3, 474, 207, sz);
+	RESIZE (monitorDisplay, 3, 3, 474, 162, sz);
 	RESIZE (blendControl, 0, 0, 0, 0, sz);
 	RESIZE (rectButton, 40, 240, 60, 40, sz);
 	RESIZE (sinButton, 140, 240, 60, 40, sz);
@@ -413,7 +430,7 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (stepshapeLabel, 33, 293, 120, 20, sz);
 	RESIZE (sequencemonitorLabel, 263, 83, 120, 20, sz);
 	RESIZE (messageLabel, 420, 83, 280, 20,sz);
-	RESIZE (sContainer, 3, 210, 474, 137, sz);
+	RESIZE (sContainer, 3, 165, 474, 182, sz);
 	RESIZE (markerListBox, 12, -68, 86, 66, sz);
 	markerListBox.resizeItems (BUtilities::Point (80 * sz, 20 * sz));
 	RESIZE (sharedDataSelection, 28, 528, 194, 24, sz);
@@ -473,8 +490,10 @@ void BChoppr_GUI::applyTheme (BStyles::Theme& theme)
 	markerListBox.applyTheme (theme);
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
-		stepControl[i].applyTheme (theme);
-		stepControlLabel[i].applyTheme (theme);
+		stepLevelControl[i].applyTheme (theme);
+		stepPanControl[i].applyTheme (theme);
+		stepLevelControlLabel[i].applyTheme (theme);
+		stepPanControlLabel[i].applyTheme (theme);
 	}
 	sharedDataSelection.applyTheme (theme);
 	for (HaloToggleButton& s : sharedDataButtons) s.applyTheme (theme);
@@ -583,7 +602,12 @@ float BChoppr_GUI::setController (const int nr, const double value)
 
 	else if ((nr >= StepLevels - Controllers) and (nr < StepLevels - Controllers + MAXSTEPS))
 	{
-		stepControlLabel[nr - (StepLevels - Controllers)].setText (BUtilities::to_string (value, "%1.2f"));
+		stepLevelControlLabel[nr - (StepLevels - Controllers)].setText (BUtilities::to_string (value, "%1.2f"));
+	}
+
+	else if ((nr >= StepPans - Controllers) and (nr < StepPans - Controllers + MAXSTEPS))
+	{
+		stepPanControlLabel[nr - (StepPans - Controllers)].setText (BUtilities::to_string (value, "%1.2f"));
 	}
 
 	return value;
@@ -671,21 +695,30 @@ void BChoppr_GUI::rearrange_controllers ()
 	{
 		if (i < nrStepsi)
 		{
-			stepControl[i].resize (14 * sz, (14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 66 )) * sz);
-			stepControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 7 * sz, 140 * sz - stepControl[i].getHeight());
-			stepControl[i].show();
+			stepLevelControl[i].resize (14 * sz, (14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 66 )) * sz);
+			stepLevelControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 7 * sz, 140 * sz - stepLevelControl[i].getHeight());
+			stepLevelControl[i].show();
+
+			stepLevelControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 40 * sz);
+			stepLevelControlLabel[i].resize (28 * sz, 20 * sz);
+			stepLevelControlLabel[i].show();
+
+			stepPanControl[i].resize (25 * sz, 25 * sz);
+			stepPanControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 12.5 * sz, 140 * sz);
+			stepPanControl[i].show();
+
+			stepPanControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 165 * sz);
+			stepPanControlLabel[i].resize (28 * sz, 20 * sz);
+			stepPanControlLabel[i].show();
 
 			if (i < nrStepsi - 1) markerWidgets[i].resize (10 * sz, 16 * sz);
-
-			stepControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 40 * sz);
-			stepControlLabel[i].resize (28 * sz, 20 * sz);
-			stepControlLabel[i].show();
-
 		}
 		else
 		{
-			stepControl[i].hide ();
-			stepControlLabel[i].hide();
+			stepLevelControl[i].hide ();
+			stepPanControl[i].hide();
+			stepLevelControlLabel[i].hide();
+			stepPanControlLabel[i].hide();
 		}
 	}
 
@@ -989,9 +1022,9 @@ void BChoppr_GUI::stepControlLabelMessageCallback (BEvents::Event* event)
 		{
 			for (int i = 0; i < MAXSTEPS; ++i)
 			{
-				if (l == &ui->stepControlLabel[i])
+				if (l == &ui->stepLevelControlLabel[i])
 				{
-					double val = ui->stepControl[i].getValue();
+					double val = ui->stepLevelControl[i].getValue();
 					try {val = BUtilities::stof (l->getText());}
 					catch (std::invalid_argument &ia)
 					{
@@ -1000,8 +1033,24 @@ void BChoppr_GUI::stepControlLabelMessageCallback (BEvents::Event* event)
 						return;
 					}
 
-					ui->stepControl[i].setValue (val);
-					l->setText (BUtilities::to_string (ui->stepControl[i].getValue(), "%1.2f"));
+					ui->stepLevelControl[i].setValue (val);
+					l->setText (BUtilities::to_string (ui->stepLevelControl[i].getValue(), "%1.2f"));
+					break;
+				}
+
+				else if (l == &ui->stepPanControlLabel[i])
+				{
+					double val = ui->stepLevelControl[i].getValue();
+					try {val = BUtilities::stof (l->getText());}
+					catch (std::invalid_argument &ia)
+					{
+						fprintf (stderr, "%s\n", ia.what());
+						l->setText (BUtilities::to_string (val, "%1.2f"));
+						return;
+					}
+
+					ui->stepPanControl[i].setValue (val);
+					l->setText (BUtilities::to_string (ui->stepPanControl[i].getValue(), "%1.2f"));
 					break;
 				}
 			}
@@ -1333,7 +1382,7 @@ void BChoppr_GUI::redrawSContainer ()
 		cairo_move_to (cr, markerWidgets[i].getValue() * width, 0);
 		cairo_rel_line_to (cr, 0, 30 * sz);
 		cairo_line_to (cr, (i + 1) / nrStepsControl.getValue() * width, 40 * sz);
-		cairo_rel_line_to (cr, 0, 100 * sz);
+		cairo_rel_line_to (cr, 0, 145 * sz);
 		cairo_stroke (cr);
 	}
 

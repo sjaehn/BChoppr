@@ -50,7 +50,8 @@ enum BChopprPortIndex
 	NrSteps		= 15,
 	StepPositions	= 16,
 	StepLevels	= 31,
-	NrControllers	= 40
+	StepPans	= 47,
+	NrControllers	= 56
 };
 
 #endif /* PORTS_HPP_ */

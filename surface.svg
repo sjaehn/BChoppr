@@ -5,9 +5,9 @@
    viewBox="0 0 201.08333 148.16667"
    version="1.1"
    id="svg4538"
-   inkscape:version="1.1 (ce6663b3b7, 2021-05-25)"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
    sodipodi:docname="surface.svg"
-   inkscape:export-filename="/home/sven/dev/c/BChoppr/surface.png"
+   inkscape:export-filename="surface.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -847,9 +847,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.73552632"
-     inkscape:cx="166.54741"
-     inkscape:cy="524.11449"
+     inkscape:zoom="2.0803826"
+     inkscape:cx="255.72219"
+     inkscape:cy="240.58075"
      inkscape:document-units="px"
      inkscape:current-layer="layer5"
      showgrid="true"
@@ -861,7 +861,9 @@
      inkscape:window-maximized="1"
      showguides="false"
      inkscape:document-rotation="0"
-     inkscape:pagecheckerboard="0">
+     inkscape:pagecheckerboard="0"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid4540" />
@@ -1319,7 +1321,7 @@
          id="tspan1008"
          x="85.460503"
          y="16.007292"
-         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.10.10</tspan></text>
+         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.11.0</tspan></text>
     <g
        transform="translate(-2.9104143)"
        style="enable-background:new"
@@ -1503,5 +1505,52 @@
        style="display:inline;fill:#01f93e;fill-opacity:1;stroke-width:0.0044116"
        d="m 3.6046846,144.4571 c -0.0365,-0.008 -0.060815,-0.0174 -0.094651,-0.036 -0.024768,-0.0136 -0.084673,-0.0716 -0.4197496,-0.40679 -0.3602011,-0.36029 -0.3920931,-0.39338 -0.4065935,-0.42183 -0.053204,-0.1044 -0.050255,-0.21443 0.00838,-0.31261 0.012188,-0.0204 0.097975,-0.10919 0.3496691,-0.36167 0.1834365,-0.18405 0.3483696,-0.34745 0.366518,-0.36309 0.060448,-0.0522 0.1283104,-0.0779 0.2052635,-0.0779 0.086213,0 0.1519778,0.0278 0.2173764,0.0916 l 0.041084,0.0401 -0.1081945,0.108 -0.1081943,0.108 -0.018997,-0.0186 c -0.01044,-0.0108 -0.020912,-0.0186 -0.023254,-0.0186 -0.00234,0 -0.1516751,0.14738 -0.331853,0.32752 l -0.3275972,0.32752 0.3562982,0.35618 0.3562983,0.35617 0.3275972,-0.32752 c 0.1801784,-0.18014 0.327597,-0.32943 0.327597,-0.33177 0,-0.002 -0.00839,-0.0128 -0.018644,-0.0232 l -0.018644,-0.019 0.1079904,-0.10812 0.1079904,-0.10812 0.040102,0.041 c 0.063836,0.0654 0.091529,0.13112 0.091529,0.21732 0,0.0798 -0.025968,0.14594 -0.082483,0.20996 -0.062916,0.0712 -0.6880823,0.68994 -0.7145753,0.70715 -0.067457,0.0438 -0.1563637,0.061 -0.2302544,0.0445 z m 0.330132,-0.88453 c -0.00772,-0.002 -0.021612,-0.01 -0.030884,-0.0166 -0.026568,-0.0212 -0.3571079,-0.35486 -0.3630439,-0.36636 -0.00682,-0.0132 -0.00686,-0.0454 -9e-5,-0.0588 0.00742,-0.0146 0.9304002,-0.93797 0.9457229,-0.9461 0.015115,-0.008 0.046546,-0.008 0.06088,-0.001 0.012568,0.007 0.3418199,0.33307 0.3659683,0.36305 0.014795,0.0184 0.01719,0.0244 0.01719,0.0432 0,0.012 -0.00287,0.0272 -0.00634,0.0338 -0.00346,0.008 -0.2164252,0.2217 -0.4732121,0.47812 -0.3538639,0.35335 -0.4700882,0.46689 -0.4801206,0.46904 -0.00727,0.001 -0.015222,0.004 -0.01765,0.004 -0.0024,6e-4 -0.010716,-2.9e-4 -0.018437,-0.002 z m 0.8745652,-0.30008 c -0.067428,-0.0108 -0.1184292,-0.037 -0.1735282,-0.0901 l -0.041084,-0.0397 0.1082544,-0.108 0.1082545,-0.10799 0.018998,0.0186 c 0.01044,0.0108 0.0209,0.0187 0.023227,0.0187 0.00234,0 0.1516629,-0.14737 0.3318536,-0.3275 l 0.3276198,-0.3275 -0.3562776,-0.3562 -0.3562781,-0.35619 -0.3276184,0.32749 c -0.1801906,0.18013 -0.3276186,0.32942 -0.3276186,0.33176 0,0.002 0.00839,0.0128 0.018644,0.0233 l 0.018644,0.019 -0.1079904,0.10812 -0.1079892,0.10811 -0.040103,-0.041 c -0.063836,-0.0654 -0.09153,-0.13112 -0.09153,-0.21732 0,-0.0769 0.025748,-0.14476 0.077893,-0.2052 0.015655,-0.0182 0.1790899,-0.18303 0.3631921,-0.36642 0.2489644,-0.24798 0.341513,-0.33747 0.3612036,-0.3492 0.09652,-0.0576 0.2003901,-0.0623 0.3022374,-0.0136 l 0.041917,0.02 0.3930745,0.39325 c 0.3623429,0.36252 0.3943037,0.39568 0.4087994,0.42415 0.054136,0.10632 0.049714,0.22278 -0.01208,0.31783 -0.017576,0.027 -0.635205,0.65096 -0.7077289,0.71494 -0.03989,0.0352 -0.09008,0.063 -0.1335527,0.074 -0.034034,0.008 -0.088583,0.012 -0.1204327,0.008 z"
        id="path1102" />
+    <g
+       id="g3279">
+      <rect
+         style="fill:#00ff64;fill-opacity:1;stroke:none;stroke-width:1.32292;stop-color:#000000"
+         id="rect520"
+         width="2.6458333"
+         height="11.90625"
+         x="-68.791664"
+         y="101.86459"
+         transform="scale(-1,1)" />
+      <text
+         xml:space="preserve"
+         style="font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;stroke-width:0.264583"
+         x="-111.44038"
+         y="68.484726"
+         id="text680"
+         transform="rotate(-90)"><tspan
+           sodipodi:role="line"
+           id="tspan678"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:'Good Times';-inkscape-font-specification:'Good Times';stroke-width:0.264583"
+           x="-111.44038"
+           y="68.484726">PAN</tspan></text>
+    </g>
+    <g
+       id="g3279-3"
+       transform="matrix(1,0,0,1.1294117,0,-45.83518)">
+      <rect
+         style="fill:#00ff64;fill-opacity:1;stroke:none;stroke-width:1.81818;stop-color:#000000"
+         id="rect520-5"
+         width="2.6458333"
+         height="22.489584"
+         x="-68.791664"
+         y="107.81772"
+         transform="scale(-1,1)" />
+      <text
+         xml:space="preserve"
+         style="font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;stroke-width:0.264583"
+         x="-124.66941"
+         y="68.484726"
+         id="text680-6"
+         transform="rotate(-90)"><tspan
+           sodipodi:role="line"
+           id="tspan678-2"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:'Good Times';-inkscape-font-specification:'Good Times';stroke-width:0.264583"
+           x="-124.66941"
+           y="68.484726">LEVEL</tspan></text>
+    </g>
   </g>
 </svg>

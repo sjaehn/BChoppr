@@ -142,14 +142,16 @@ But do not change or delete any definition symbol!
 
 ## What's new
 
-* Faster
-  * Optimized DSP code
-  * Compiler optimizations (`-O3 -ffast-math`)
-* Presets, just a few
-* Binary compatibility improved
-  * Static libs
-  * Strip symbols by default
-* Binary packages provided
+* Step-specific panning
+
+
+## TODO
+
+* Allow visualization of dial widgets < 20 px
+* Change visualization to stereo
+* Update presets to include the new control ports
+* Add a crazy panning preset
+* Bugfix makefile: strip removes debugging symbols 
 
 
 ## Acknowledgments

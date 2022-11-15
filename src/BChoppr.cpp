@@ -24,6 +24,7 @@
 #include <string>
 #include <stdexcept>
 #include <algorithm>
+#include "Ports.hpp"
 #include "SharedData.hpp"
 
 #define LIM(g , min, max) ((g) > (max) ? (max) : ((g) < (min) ? (min) : (g)))
@@ -499,21 +500,36 @@ void BChoppr::play(uint32_t start, uint32_t end)
 				nextStep = (iStep < steps - 1 ? iStep + 1 : 0);
 			}
 
-			// Calculate effect (vol) for the position
+			// Calculate effect (level) for the position
 			const float ampSwing = controllers[AmpSwing - Controllers];
 			const float* stepLevels = &controllers[StepLevels - Controllers];
-			const float act = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
-			const float prev = stepLevels[prevStep] * LIM ((prevStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
-			const float next = stepLevels[nextStep] * LIM ((nextStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
-			float vol = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			const float actLevel = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			const float prevLevel = stepLevels[prevStep] * LIM ((prevStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			const float nextLevel = stepLevels[nextStep] * LIM ((nextStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			float level = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+
+			// ... and the panning
+			const float* stepPans = &controllers[StepPans - Controllers];
+			const float actPan = stepPans[actStep];
+			const float prevPan = stepPans[prevStep];
+			const float nextPan = stepPans[nextStep];
+			float pan = stepPans[actStep];
 
 			// On attack
 			if (iStepFrac < controllers[Attack - Controllers])
 			{
-				if (prev < act)
+				if (prevLevel < actLevel)
 				{
-					if (controllers[Blend - Controllers] == 1.0f) vol = prev + (iStepFrac / controllers[Attack - Controllers]) * (vol - prev);
-					else if (controllers[Blend - Controllers] == 2.0f) vol = prev + 0.5f * (sinf (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5f)) + 1.0f) * (vol - prev);
+					if (controllers[Blend - Controllers] == 1.0f) 
+					{
+						level = prevLevel + (iStepFrac / controllers[Attack - Controllers]) * (level - prevLevel);
+						pan = prevPan + (iStepFrac / controllers[Attack - Controllers]) * (pan - prevPan);
+					}
+					else if (controllers[Blend - Controllers] == 2.0f) 
+					{
+						level = prevLevel + 0.5f * (sinf (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5f)) + 1.0f) * (level - prevLevel);
+						pan = prevPan + 0.5f * (sinf (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5f)) + 1.0f) * (pan - prevPan);
+					}
 				}
 
 			}
@@ -521,16 +537,24 @@ void BChoppr::play(uint32_t start, uint32_t end)
 			// On release
 			if (iStepFrac > (1.0f - controllers[Release - Controllers]))
 			{
-				if (next < act)
+				if (nextLevel < actLevel)
 				{
-					if (controllers[Blend - Controllers] == 1.0f) vol = next + (((1.0f - iStepFrac)) / controllers[Release - Controllers]) * (vol - next);
-					else if (controllers[Blend - Controllers] == 2.0f) vol = next + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / controllers[Release - Controllers] - 0.5f)) + 1.0f) * (vol - next);
+					if (controllers[Blend - Controllers] == 1.0f) 
+					{
+						level = nextLevel + (((1.0f - iStepFrac)) / controllers[Release - Controllers]) * (level - nextLevel);
+						pan = nextPan + (((1.0f - iStepFrac)) / controllers[Release - Controllers]) * (pan - nextPan);
+					}
+					else if (controllers[Blend - Controllers] == 2.0f) 
+					{
+						level = nextLevel + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / controllers[Release - Controllers] - 0.5f)) + 1.0f) * (level - nextLevel);
+						pan = nextPan + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / controllers[Release - Controllers] - 0.5f)) + 1.0f) * (pan - nextPan);
+					}
 				}
 			}
 
 			// Apply effect on input
-			effect1 = audioInput1[i] * vol;
-			effect2 = audioInput2[i] * vol;
+			effect1 = audioInput1[i] * level * (pan <= 0.0f ? 1.0f : 1.0f - pan);
+			effect2 = audioInput2[i] * level * (pan >= 0.0f ? 1.0f : 1.0f + pan);
 		}
 
 

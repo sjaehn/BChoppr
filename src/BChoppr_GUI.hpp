@@ -95,8 +95,8 @@ public:
 	void portEvent (uint32_t port_index, uint32_t buffer_size, uint32_t format, const void *buffer);
 	void send_record_on ();
 	void send_record_off ();
-        void sendSharedDataNr ();
-        void sendController (const int nr, const float value);
+	void sendSharedDataNr ();
+	void sendController (const int nr, const float value);
 	virtual void onConfigureRequest (BEvents::ExposeEvent* event) override;
 	void applyTheme (BStyles::Theme& theme) override;
 
@@ -106,20 +106,20 @@ public:
 
 private:
 	void resizeGUI ();
-        float setController (const int nr, const double value);
-        void setMarker (const int markerNr, double value);
-        void setAutoMarkers ();
+	float setController (const int nr, const double value);
+	void setMarker (const int markerNr, double value);
+	void setAutoMarkers ();
 	void rearrange_controllers ();
 	static void valueChangedCallback (BEvents::Event* event);
-        static void markerClickedCallback (BEvents::Event* event);
+    static void markerClickedCallback (BEvents::Event* event);
 	static void markerDraggedCallback (BEvents::Event* event);
-        static void monitorScrolledCallback (BEvents::Event* event);
-        static void monitorDraggedCallback (BEvents::Event* event);
-        static void listBoxChangedCallback (BEvents::Event* event);
-        static void markersAutoClickedCallback (BEvents::Event* event);
-        static void buttonClickedCallback (BEvents::Event* event);
-        static void sharedDataClickedCallback (BEvents::Event* event);
-        static void helpButtonClickedCallback (BEvents::Event* event);
+	static void monitorScrolledCallback (BEvents::Event* event);
+	static void monitorDraggedCallback (BEvents::Event* event);
+	static void listBoxChangedCallback (BEvents::Event* event);
+	static void markersAutoClickedCallback (BEvents::Event* event);
+	static void buttonClickedCallback (BEvents::Event* event);
+	static void sharedDataClickedCallback (BEvents::Event* event);
+	static void helpButtonClickedCallback (BEvents::Event* event);
 	static void ytButtonClickedCallback (BEvents::Event* event);
 	static void stepControlLabelMessageCallback (BEvents::Event* event);
 	bool init_Stepshape ();
@@ -130,24 +130,24 @@ private:
 	void add_monitor_data (BChopprNotifications* notifications, uint32_t notificationsCount, uint32_t& end);
 	void redrawMainMonitor ();
 	void redrawSContainer ();
-        void redrawButtons ();
+    void redrawButtons ();
 
 
 	BWidgets::Widget mContainer;
-        BWidgets::Widget rContainer;
+    BWidgets::Widget rContainer;
 	BWidgets::DrawingSurface sContainer;
 	BWidgets::HSwitch monitorSwitch;
 	BWidgets::Label monitorLabel;
-        LightButton bypassButton;
-        BWidgets::Label bypassLabel;
-        BWidgets::DialValue drywetDial;
-        BWidgets::Label drywetLabel;
-        HaloButton helpButton;
-        HaloButton ytButton;
+	LightButton bypassButton;
+	BWidgets::Label bypassLabel;
+	BWidgets::DialValue drywetDial;
+	BWidgets::Label drywetLabel;
+	HaloButton helpButton;
+	HaloButton ytButton;
 	BWidgets::DrawingSurface monitorDisplay;
-        BWidgets::RangeWidget blendControl;
-        BWidgets::DrawingSurface rectButton;
-        BWidgets::DrawingSurface sinButton;
+	BWidgets::RangeWidget blendControl;
+	BWidgets::DrawingSurface rectButton;
+	BWidgets::DrawingSurface sinButton;
 	BWidgets::DrawingSurface stepshapeDisplay;
 	BWidgets::DialValue attackControl;
 	BWidgets::Label attackLabel;
@@ -155,23 +155,25 @@ private:
 	BWidgets::Label releaseLabel;
 	BWidgets::HSliderValue sequencesperbarControl;
 	BWidgets::Label sequencesperbarLabel;
-        SwingHSlider ampSwingControl;
+    SwingHSlider ampSwingControl;
 	BWidgets::Label ampSwingLabel;
-        SwingHSlider swingControl;
+    SwingHSlider swingControl;
 	BWidgets::Label swingLabel;
-        BWidgets::TextButton markersAutoButton;
-        BWidgets::Label markersAutoLabel;
+	BWidgets::TextButton markersAutoButton;
+	BWidgets::Label markersAutoLabel;
 	BWidgets::HSliderValue nrStepsControl;
 	BWidgets::Label nrStepsLabel;
 	BWidgets::Label stepshapeLabel;
 	BWidgets::Label sequencemonitorLabel;
 	BWidgets::Label messageLabel;
-	std::array<BWidgets::VSlider, MAXSTEPS> stepControl;
-        std::array<BWidgets::Label, MAXSTEPS> stepControlLabel;
+	std::array<BWidgets::VSlider, MAXSTEPS> stepLevelControl;
+	std::array<BWidgets::Dial, MAXSTEPS> stepPanControl;
+    std::array<BWidgets::Label, MAXSTEPS> stepLevelControlLabel;
+	std::array<BWidgets::Label, MAXSTEPS> stepPanControlLabel;
 	std::array<Marker, MAXSTEPS - 1> markerWidgets;
-        BWidgets::ListBox markerListBox;
-        BWidgets::RangeWidget sharedDataSelection;
-        std::array<HaloToggleButton, 4> sharedDataButtons;
+	BWidgets::ListBox markerListBox;
+	BWidgets::RangeWidget sharedDataSelection;
+	std::array<HaloToggleButton, 4> sharedDataButtons;
 
 
 	cairo_surface_t* surface;
@@ -209,17 +211,17 @@ private:
 
 	// Definition of styles
 	BColors::ColorSet fgColors = {{{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.2, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-        BColors::ColorSet rdColors = {{{0.75, 0.0, 0.0, 1.0}, {1.0, 0.25, 0.25, 1.0}, {0.2, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
+    BColors::ColorSet rdColors = {{{0.75, 0.0, 0.0, 1.0}, {1.0, 0.25, 0.25, 1.0}, {0.2, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::ColorSet txColors = {{{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.5, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::ColorSet bgColors = {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::Color ink = {0.0, 0.75, 0.2, 1.0};
 
 	BStyles::Border border = {{ink, 1.0}, 0.0, 2.0, 0.0};
-        BStyles::Border actborder = {{{CAIRO_INK1, 1.0}, 2.0}, 0.0, 1.0, 0.0};
-        BStyles::Border inactborder = {{BColors::darkgrey, 1.0}, 0.0, 2.0, 0.0};
+	BStyles::Border actborder = {{{CAIRO_INK1, 1.0}, 2.0}, 0.0, 1.0, 0.0};
+	BStyles::Border inactborder = {{BColors::darkgrey, 1.0}, 0.0, 2.0, 0.0};
 	BStyles::Border blindborder = {{{0.0, 0.0, 0.0, 0.0}, 1.0}, 0.0, 2.0, 0.0};
-        BStyles::Border labelBorder = BStyles::Border (BStyles::noLine, 0.0, 4.0);
-        BStyles::Border focusborder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.5), 2.0));
+	BStyles::Border labelBorder = BStyles::Border (BStyles::noLine, 0.0, 4.0);
+	BStyles::Border focusborder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.5), 2.0));
 	BStyles::Fill widgetBg = BStyles::noFill;
 	BStyles::Fill screenBg = BStyles::Fill (BColors::Color (0.0, 0.0, 0.0, 0.75));
 	BStyles::Border screenBorder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.75), 4.0));
@@ -227,13 +229,13 @@ private:
 						   BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
    	BStyles::Font leftFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0,
    						   BStyles::TEXT_ALIGN_LEFT, BStyles::TEXT_VALIGN_MIDDLE);
-        BStyles::Font mdFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0,
-                                         BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
-        BStyles::Font smFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 8.0,
-                                              BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
+	BStyles::Font mdFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0,
+										BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
+	BStyles::Font smFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 8.0,
+											BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
 
-        BStyles::StyleSet defaultStyles = {"default", {{"background", STYLEPTR (&BStyles::noFill)},
-						       {"border", STYLEPTR (&BStyles::noBorder)}}};
+	BStyles::StyleSet defaultStyles = {"default", {{"background", STYLEPTR (&BStyles::noFill)},
+							{"border", STYLEPTR (&BStyles::noBorder)}}};
 	BStyles::StyleSet labelStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
 						    {"border", STYLEPTR (&BStyles::noBorder)},
 						    {"textcolors", STYLEPTR (&txColors)},
