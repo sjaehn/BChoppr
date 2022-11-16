@@ -273,7 +273,7 @@ void Dial::draw (const BUtilities::RectArea& area)
 
 	// Draw dial
 	// only if minimum requirements satisfied
-	if (dialRadius >= 12)
+	if (dialRadius >= 5)
 	{
 		// Draw super class widget elements first
 		Widget::draw (area);
