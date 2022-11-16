@@ -27,21 +27,21 @@
 
 
 BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeView parentWindow) :
-	Window (760, 560, "B.Choppr", parentWindow, true, PUGL_MODULE, 0),
+	Window (820, 560, "B.Choppr", parentWindow, true, PUGL_MODULE, 0),
 	controller (NULL), write_function (NULL),
 
-	mContainer (0, 0, 760, 560, "main"),
-	rContainer (260, 80, 480, 350, "rcontainer"),
-	sContainer (3, 165, 474, 182, "scontainer"),
-	monitorSwitch (600, 15, 40, 16, "switch", 0.0),
-	monitorLabel (600, 35, 40, 20, "smlabel", BCHOPPR_LABEL_MONITOR),
-	bypassButton (662, 15, 16, 16, "redbutton"),
-	bypassLabel (650, 35, 40, 20, "smlabel", BCHOPPR_LABEL_BYPASS),
-	drywetDial (703, 5, 33, 40, "dial", 1.0, 0.0, 1.0, 0.0, "%1.2f"),
-	drywetLabel (690, 35, 60, 20, "smlabel", BCHOPPR_LABEL_DRY_WET),
+	mContainer (0, 0, 820, 560, "main"),
+	rContainer (260, 80, 540, 350, "rcontainer"),
+	sContainer (3, 165, 534, 182, "scontainer"),
+	monitorSwitch (660, 15, 40, 16, "switch", 0.0),
+	monitorLabel (660, 35, 40, 20, "smlabel", BCHOPPR_LABEL_MONITOR),
+	bypassButton (722, 15, 16, 16, "redbutton"),
+	bypassLabel (710, 35, 40, 20, "smlabel", BCHOPPR_LABEL_BYPASS),
+	drywetDial (763, 5, 33, 40, "dial", 1.0, 0.0, 1.0, 0.0, "%1.2f"),
+	drywetLabel (750, 35, 60, 20, "smlabel", BCHOPPR_LABEL_DRY_WET),
 	helpButton (20, 80, 24, 24, "halobutton", BCHOPPR_LABEL_HELP),
 	ytButton (50, 80, 24, 24, "halobutton", BCHOPPR_LABEL_TUTORIAL),
-	monitorDisplay (3, 3, 474, 162, "mmonitor"),
+	monitorDisplay (3, 3, 534, 162, "mmonitor"),
 	blendControl (0, 0, 0, 0, "widget", 1, 1, 2, 1),
 	rectButton (40, 240, 60, 40, "abutton"),
 	sinButton (140, 240, 60, 40, "nbutton"),
@@ -54,19 +54,19 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	sequencesperbarLabel (260, 470, 120, 20, "label", BCHOPPR_LABEL_SEQUENCES_PER_BAR),
 	ampSwingControl
 	(
-		400, 442, 110, 28, "slider", 1.0, 0.001, 1000.0, 0.0, "%4.1f",
+		420, 442, 110, 28, "slider", 1.0, 0.001, 1000.0, 0.0, "%4.1f",
 		[] (const double val, const double min, const double max)
 		{return (val >= 1.0 ? 1.0 - 0.5 / LIMIT (sqrt(val), sqrt(min), sqrt(max)) : 0.5 * LIMIT (sqrt(val), sqrt(min), sqrt(max)));},
 		[] (const double frac, const double min, const double max)
 		{return (frac >= 0.5 ? pow (0.5 / (1.0 - LIMIT (frac, 0, 1)), 2) : pow (2 * LIMIT (frac, 0, 1), 2));}
 	),
-	ampSwingLabel (400, 470, 110, 20, "label", BCHOPPR_LABEL_AMP_SWING),
-	swingControl (525, 442, 110, 28, "slider", 1.0, 1.0 / 3.0, 3.0, 0.0),
-	swingLabel (525, 470, 110, 20, "label", BCHOPPR_LABEL_STEPS_SWING),
-	markersAutoButton (655, 450, 80, 20, "button", BCHOPPR_LABEL_AUTO),
-	markersAutoLabel (655, 470, 80, 20, "label", BCHOPPR_LABEL_MARKER),
-	nrStepsControl (260, 502, 480, 28, "slider", 1.0, 1.0, MAXSTEPS, 1.0, "%2.0f"),
-	nrStepsLabel (260, 530, 480, 20, "label", BCHOPPR_LABEL_NUMBER_OF_STEPS),
+	ampSwingLabel (420, 470, 110, 20, "label", BCHOPPR_LABEL_AMP_SWING),
+	swingControl (565, 442, 110, 28, "slider", 1.0, 1.0 / 3.0, 3.0, 0.0),
+	swingLabel (565, 470, 110, 20, "label", BCHOPPR_LABEL_STEPS_SWING),
+	markersAutoButton (715, 450, 80, 20, "button", BCHOPPR_LABEL_AUTO),
+	markersAutoLabel (715, 470, 80, 20, "label", BCHOPPR_LABEL_MARKER),
+	nrStepsControl (260, 502, 540, 28, "slider", 1.0, 1.0, MAXSTEPS, 1.0, "%2.0f"),
+	nrStepsLabel (260, 530, 540, 20, "label", BCHOPPR_LABEL_NUMBER_OF_STEPS),
 	stepshapeLabel (33, 293, 120, 20, "llabel", BCHOPPR_LABEL_STEP_SHAPE),
 	sequencemonitorLabel (263, 83, 120, 20, "llabel", BCHOPPR_LABEL_SEQUENCE_MONITOR),
 	messageLabel (420, 83, 280, 20, "hilabel", ""),
@@ -92,7 +92,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	double sx = sContainer.getXOffset();
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
-		stepLevelControl[i] = BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 80, "slider", 1.0, 0.0, 1.0, 0.01);
+		stepLevelControl[i] = BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 75, "slider", 1.0, 0.0, 1.0, 0.01);
 		stepLevelControl[i].setHardChangeable (false);
 		stepLevelControl[i].setScrollable (true);
 		stepLevelControl[i].applyTheme (theme, "slider");
@@ -105,13 +105,13 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		stepLevelControlLabel[i].setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, stepControlLabelMessageCallback);
 		sContainer.add (stepLevelControlLabel[i]);
 
-		stepPanControl[i] = BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 12.5, 140, 25, 25, "slider", 0.0, -1.0, 1.0, 0.01);
+		stepPanControl[i] = BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 15, 135, 30, 30, "slider", 0.0, -1.0, 1.0, 0.01);
 		stepPanControl[i].setHardChangeable (false);
 		stepPanControl[i].setScrollable (true);
 		stepPanControl[i].applyTheme (theme, "slider");
 		sContainer.add (stepPanControl[i]);
 
-		stepPanControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 175, 20, "mlabel", "1.00");
+		stepPanControlLabel[i] = BWidgets::Label ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 165, 20, "mlabel", "1.00");
 		stepPanControlLabel[i].applyTheme (theme, "mlabel");
 		stepPanControlLabel[i].setState (BColors::ACTIVE);
 		stepPanControlLabel[i].setEditable (true);
@@ -388,7 +388,7 @@ void BChoppr_GUI::resizeGUI()
 	smFont.setFontSize (8 * sz);
 
 	// Resize Background
-	cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 760 * sz, 560 * sz);
+	cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 820 * sz, 560 * sz);
 	cairo_t* cr = cairo_create (surface);
 	cairo_scale (cr, sz, sz);
 	cairo_set_source_surface(cr, bgImageSurface, 0, 0);
@@ -398,17 +398,17 @@ void BChoppr_GUI::resizeGUI()
 	cairo_surface_destroy (surface);
 
 	// Resize widgets
-	RESIZE (mContainer, 0, 0, 760, 560, sz);
-	RESIZE (rContainer, 260, 80, 480, 350, sz);
-	RESIZE (monitorSwitch, 600, 15, 40, 16, sz);
-	RESIZE (monitorLabel, 600, 35, 40, 20, sz);
-	RESIZE (bypassButton, 662, 15, 16, 16, sz);
-	RESIZE (bypassLabel, 650, 35, 40, 20, sz);
-	RESIZE (drywetDial, 703, 5, 33, 40, sz);
-	RESIZE (drywetLabel, 690, 35, 60, 20, sz);
+	RESIZE (mContainer, 0, 0, 820, 560, sz);
+	RESIZE (rContainer, 260, 80, 540, 350, sz);
+	RESIZE (monitorSwitch, 660, 15, 40, 16, sz);
+	RESIZE (monitorLabel, 660, 35, 40, 20, sz);
+	RESIZE (bypassButton, 722, 15, 16, 16, sz);
+	RESIZE (bypassLabel, 710, 35, 40, 20, sz);
+	RESIZE (drywetDial, 763, 5, 33, 40, sz);
+	RESIZE (drywetLabel, 750, 35, 60, 20, sz);
 	RESIZE (helpButton, 20, 80, 24, 24, sz);
 	RESIZE (ytButton, 50, 80, 24, 24, sz);
-	RESIZE (monitorDisplay, 3, 3, 474, 162, sz);
+	RESIZE (monitorDisplay, 3, 3, 534, 162, sz);
 	RESIZE (blendControl, 0, 0, 0, 0, sz);
 	RESIZE (rectButton, 40, 240, 60, 40, sz);
 	RESIZE (sinButton, 140, 240, 60, 40, sz);
@@ -419,18 +419,18 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (releaseLabel, 130, 500, 90, 20, sz);
 	RESIZE (sequencesperbarControl, 260, 442, 120, 28, sz);
 	RESIZE (sequencesperbarLabel, 260, 470, 120, 20, sz);
-	RESIZE (ampSwingControl, 400, 442, 110, 28, sz);
-	RESIZE (ampSwingLabel, 400, 470, 110, 20, sz);
-	RESIZE (swingControl, 525, 442, 110, 28, sz);
-	RESIZE (swingLabel, 525, 470, 110, 20, sz);
-	RESIZE (markersAutoButton, 655, 450, 80, 20, sz);
-	RESIZE (markersAutoLabel, 655, 470, 80, 20, sz);
-	RESIZE (nrStepsControl, 260, 502, 480, 28, sz);
-	RESIZE (nrStepsLabel, 260, 530, 480, 20, sz);
+	RESIZE (ampSwingControl, 420, 442, 110, 28, sz);
+	RESIZE (ampSwingLabel, 420, 470, 110, 20, sz);
+	RESIZE (swingControl, 565, 442, 110, 28, sz);
+	RESIZE (swingLabel, 565, 470, 110, 20, sz);
+	RESIZE (markersAutoButton, 715, 450, 80, 20, sz);
+	RESIZE (markersAutoLabel, 715, 470, 80, 20, sz);
+	RESIZE (nrStepsControl, 260, 502, 540, 28, sz);
+	RESIZE (nrStepsLabel, 260, 530, 540, 20, sz);
 	RESIZE (stepshapeLabel, 33, 293, 120, 20, sz);
 	RESIZE (sequencemonitorLabel, 263, 83, 120, 20, sz);
 	RESIZE (messageLabel, 420, 83, 280, 20,sz);
-	RESIZE (sContainer, 3, 165, 474, 182, sz);
+	RESIZE (sContainer, 3, 165, 534, 182, sz);
 	RESIZE (markerListBox, 12, -68, 86, 66, sz);
 	markerListBox.resizeItems (BUtilities::Point (80 * sz, 20 * sz));
 	RESIZE (sharedDataSelection, 28, 528, 194, 24, sz);
@@ -503,7 +503,7 @@ void BChoppr_GUI::onConfigureRequest (BEvents::ExposeEvent* event)
 {
 	Window::onConfigureRequest (event);
 
-	sz = (getWidth() / 760 > getHeight() / 560 ? getHeight() / 560 : getWidth() / 760);
+	sz = (getWidth() / 820 > getHeight() / 560 ? getHeight() / 560 : getWidth() / 820);
 	resizeGUI ();
 }
 
@@ -695,16 +695,16 @@ void BChoppr_GUI::rearrange_controllers ()
 	{
 		if (i < nrStepsi)
 		{
-			stepLevelControl[i].resize (14 * sz, (14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 66 )) * sz);
-			stepLevelControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 7 * sz, 140 * sz - stepLevelControl[i].getHeight());
+			stepLevelControl[i].resize (14 * sz, (14 + LIMIT (66 * ((i % 2) == 0 ? oddf : evenf), 0, 61 )) * sz);
+			stepLevelControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 7 * sz, 135 * sz - stepLevelControl[i].getHeight());
 			stepLevelControl[i].show();
 
 			stepLevelControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 40 * sz);
 			stepLevelControlLabel[i].resize (28 * sz, 20 * sz);
 			stepLevelControlLabel[i].show();
 
-			stepPanControl[i].resize (25 * sz, 25 * sz);
-			stepPanControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 12.5 * sz, 140 * sz);
+			stepPanControl[i].resize (30 * sz, 30 * sz);
+			stepPanControl[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 15 * sz, 135 * sz);
 			stepPanControl[i].show();
 
 			stepPanControlLabel[i].moveTo ((i + 0.5) * sw / nrStepsi + sx - 14 * sz, 165 * sz);
@@ -1472,8 +1472,8 @@ static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char 
 	double sz = 1.0;
 	int screenWidth  = getScreenWidth ();
 	int screenHeight = getScreenHeight ();
-	if ((screenWidth < 820) || (screenHeight < 600)) sz = 0.66;
-	if (resize) resize->ui_resize(resize->handle, 760 * sz, 560 * sz);
+	if ((screenWidth < 880) || (screenHeight < 600)) sz = 0.66;
+	if (resize) resize->ui_resize(resize->handle, 820 * sz, 560 * sz);
 
 	*widget = (LV2UI_Widget) puglGetNativeWindow (ui->getPuglView ());
 	ui->send_record_on();

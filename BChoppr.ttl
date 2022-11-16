@@ -28,10 +28,10 @@
 <https://www.jahnichen.de/plugins/lv2/BChoppr>
         a lv2:Plugin, lv2:DynamicsPlugin, doap:Project;
         doap:name "B.Choppr" ;
-        rdfs:comment "An audio stream chopping LV2 plugin. B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops. Each chop can be leveled up or down (gating)." ;
+        rdfs:comment "An audio stream chopping LV2 plugin. B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops. Each chop can be leveled up or down (gating) or panned to the left or right." ;
 	doap:maintainer <http://www.jahnichen.de/sjaehn#me> ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-	lv2:microVersion 0 ;
+	lv2:microVersion 1 ;
 	lv2:minorVersion 11 ;
         lv2:optionalFeature lv2:hardRTCapable ;
         lv2:binary <BChoppr.so> ;
