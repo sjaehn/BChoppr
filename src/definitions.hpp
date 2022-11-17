@@ -32,10 +32,10 @@
 struct BChopprNotifications
 {
 	float position;
-	float inputMin;
-	float inputMax;
-	float outputMin;
-	float outputMax;
+	float input1;
+	float input2;
+	float output1;
+	float output2;
 };
 
 const BChopprNotifications defaultNotification = {0.0, 0.0, 0.0, 0.0, 0.0};

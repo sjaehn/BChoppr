@@ -38,10 +38,10 @@ struct BChopprMonitor_t
 {
 	int count;
 	bool ready;
-	double inputMin;
-	double inputMax;
-	double outputMin;
-	double outputMax;
+	double input1;
+	double input2;
+	double output1;
+	double output2;
 };
 
 const BChopprMonitor_t defaultMonitorData = {0, false, 0.0, 0.0, 0.0, 0.0};

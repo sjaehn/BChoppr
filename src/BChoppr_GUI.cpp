@@ -1217,10 +1217,10 @@ void BChoppr_GUI::add_monitor_data (BChopprNotifications* notifications, uint32_
 		if (monitorpos >= MONITORBUFFERSIZE) monitorpos = MONITORBUFFERSIZE;
 		if (monitorpos < 0) monitorpos = 0;
 
-		mainMonitor.data[monitorpos].inputMin = notifications[i].inputMin;
-		mainMonitor.data[monitorpos].inputMax = notifications[i].inputMax;
-		mainMonitor.data[monitorpos].outputMin = notifications[i].outputMin;
-		mainMonitor.data[monitorpos].outputMax = notifications[i].outputMax;
+		mainMonitor.data[monitorpos].input1 = notifications[i].input1;
+		mainMonitor.data[monitorpos].input2 = notifications[i].input2;
+		mainMonitor.data[monitorpos].output1 = notifications[i].output1;
+		mainMonitor.data[monitorpos].output2 = notifications[i].output2;
 		mainMonitor.horizonPos = monitorpos;
 	}
 }
@@ -1260,18 +1260,18 @@ void BChoppr_GUI::redrawMainMonitor ()
 		cairo_surface_clear (surface);
 
 		// Draw input (cr, cr3) and output (cr2, cr4) curves
-		cairo_move_to (cr1, 0, height * (0.5  - (0.4 * LIM ((mainMonitor.data[0].inputMax / scale), 0.0f, 1.0f))));
-		cairo_move_to (cr2, 0, height * (0.5  - (0.4 * LIM ((mainMonitor.data[0].outputMax / scale), 0.0f, 1.0f))));
-		cairo_move_to (cr3, 0, height * (0.5  + (0.4 * LIM (-(mainMonitor.data[0].inputMin / scale), 0.0f, 1.0f))));
-		cairo_move_to (cr4, 0, height * (0.5  + (0.4 * LIM (-(mainMonitor.data[0].outputMin / scale), 0.0f, 1.0f))));
+		cairo_move_to (cr1, 0, height * (0.5  + (0.4 * LIM ((mainMonitor.data[0].input2 / scale), 0.0f, 1.0f))));
+		cairo_move_to (cr2, 0, height * (0.5  + (0.4 * LIM ((mainMonitor.data[0].output2 / scale), 0.0f, 1.0f))));
+		cairo_move_to (cr3, 0, height * (0.5  - (0.4 * LIM ((mainMonitor.data[0].input1 / scale), 0.0f, 1.0f))));
+		cairo_move_to (cr4, 0, height * (0.5  - (0.4 * LIM ((mainMonitor.data[0].output1 / scale), 0.0f, 1.0f))));
 
 		for (int i = 0; i < MONITORBUFFERSIZE; ++i)
 		{
 			double pos = ((double) i) / (MONITORBUFFERSIZE - 1.0f);
-			cairo_line_to (cr1, pos * width, height * (0.5  - (0.4 * LIM ((mainMonitor.data[i].inputMax / scale), 0.0f, 1.0f))));
-			cairo_line_to (cr2, pos * width, height * (0.5  - (0.4 * LIM ((mainMonitor.data[i].outputMax / scale), 0.0f, 1.0f))));
-			cairo_line_to (cr3, pos * width, height * (0.5  + (0.4 * LIM (-(mainMonitor.data[i].inputMin / scale), 0.0f, 1.0f))));
-			cairo_line_to (cr4, pos * width, height * (0.5  + (0.4 * LIM (-(mainMonitor.data[i].outputMin / scale), 0.0f, 1.0f))));
+			cairo_line_to (cr1, pos * width, height * (0.5  + (0.4 * LIM ((mainMonitor.data[i].input2 / scale), 0.0f, 1.0f))));
+			cairo_line_to (cr2, pos * width, height * (0.5  + (0.4 * LIM ((mainMonitor.data[i].output2 / scale), 0.0f, 1.0f))));
+			cairo_line_to (cr3, pos * width, height * (0.5  - (0.4 * LIM ((mainMonitor.data[i].input1 / scale), 0.0f, 1.0f))));
+			cairo_line_to (cr4, pos * width, height * (0.5  - (0.4 * LIM ((mainMonitor.data[i].output1 / scale), 0.0f, 1.0f))));
 		}
 
 		// Visualize input (cr, cr3) and output (cr2, cr4) curves

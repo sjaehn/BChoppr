@@ -416,28 +416,28 @@ void BChoppr::notifyGUI()
 				if (notificationsCount < NOTIFYBUFFERSIZE - 1)
 				{
 					notifications[notificationsCount].position = i;
-					notifications[notificationsCount].inputMin = monitor[i].inputMin;
-					notifications[notificationsCount].inputMax = monitor[i].inputMax;
-					notifications[notificationsCount].outputMin = monitor[i].outputMin;
-					notifications[notificationsCount].outputMax = monitor[i].outputMax;
+					notifications[notificationsCount].input1 = monitor[i].input1;
+					notifications[notificationsCount].input2 = monitor[i].input2;
+					notifications[notificationsCount].output1 = monitor[i].output1;
+					notifications[notificationsCount].output2 = monitor[i].output2;
 					notificationsCount++;
 				}
 
 				// Reset monitor data
 				monitor[i].ready = false;
-				monitor[i].inputMin = 0.0;
-				monitor[i].inputMax = 0.0;
-				monitor[i].outputMin = 0.0;
-				monitor[i].outputMax = 0.0;
+				monitor[i].input1 = 0.0;
+				monitor[i].input2 = 0.0;
+				monitor[i].output1 = 0.0;
+				monitor[i].output2 = 0.0;
 			}
 		}
 
 		// And build one closing notification block for submission of current position (horizon)
 		notifications[notificationsCount].position = monitorpos;
-		notifications[notificationsCount].inputMin = monitor[monitorpos].inputMin;
-		notifications[notificationsCount].inputMax = monitor[monitorpos].inputMax;
-		notifications[notificationsCount].outputMin = monitor[monitorpos].outputMin;
-		notifications[notificationsCount].outputMax = monitor[monitorpos].outputMax;
+		notifications[notificationsCount].input1 = monitor[monitorpos].input1;
+		notifications[notificationsCount].input2 = monitor[monitorpos].input2;
+		notifications[notificationsCount].output1 = monitor[monitorpos].output1;
+		notifications[notificationsCount].output2 = monitor[monitorpos].output2;
 
 		// Send notifications
 		LV2_Atom_Forge_Frame frame;
@@ -579,14 +579,10 @@ void BChoppr::play(uint32_t start, uint32_t end)
 			}
 
 			// Get max input and output values for a block
-			if (effect1 < monitor[monitorpos].outputMin) monitor[monitorpos].outputMin = effect1;
-			if (effect1 > monitor[monitorpos].outputMax) monitor[monitorpos].outputMax = effect1;
-			if (effect2 < monitor[monitorpos].outputMin) monitor[monitorpos].outputMin = effect2;
-			if (effect2 > monitor[monitorpos].outputMax) monitor[monitorpos].outputMax = effect2;
-			if (audioInput1[i] < monitor[monitorpos].inputMin) monitor[monitorpos].inputMin = audioInput1[i];
-			if (audioInput1[i] > monitor[monitorpos].inputMax) monitor[monitorpos].inputMax = audioInput1[i];
-			if (audioInput2[i] < monitor[monitorpos].inputMin) monitor[monitorpos].inputMin = audioInput2[i];
-			if (audioInput2[i] > monitor[monitorpos].inputMax) monitor[monitorpos].inputMax = audioInput2[i];
+			if (fabs(effect1) > monitor[monitorpos].output1) monitor[monitorpos].output1 = fabs(effect1);
+			if (fabs(effect2) > monitor[monitorpos].output2) monitor[monitorpos].output2 = fabs(effect2);
+			if (fabs(audioInput1[i]) > monitor[monitorpos].input1) monitor[monitorpos].input1 = fabs(audioInput1[i]);
+			if (fabs(audioInput2[i]) > monitor[monitorpos].input2) monitor[monitorpos].input2 = fabs(audioInput2[i]);
 
 			monitor[monitorpos].ready = false;
 		}

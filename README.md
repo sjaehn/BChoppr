@@ -145,12 +145,12 @@ But do not change or delete any definition symbol!
 * Step-specific panning
 * Improved visibility of widgets by increased window size
 * Impoved dial widget visibility even at down scaling
+* Monitor now shows a represntation of l/r signals
 * Update presets to include the new control ports
 
 
 ## TODO
 
-* Change visualization to stereo
 * Add a crazy panning preset
 * Bugfix makefile: strip removes debugging symbols
 * Update readme
