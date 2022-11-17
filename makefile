@@ -111,6 +111,7 @@ $(BUNDLE): clean $(DSP_OBJ) $(GUI_OBJ)
 
 all: $(BUNDLE)
 
+ifeq (,$(filter -g,$(CXXFLAGS)))
 $(DSP_OBJ): $(DSP_SRC)
 	@echo -n Build $(BUNDLE) DSP...
 	@mkdir -p $(BUNDLE)
@@ -128,6 +129,24 @@ $(GUI_OBJ): $(GUI_SRC)
 	@$(STRIP) $(STRIPFLAGS) $(BUNDLE)/$@
 	@rm -rf $(BUNDLE)/tmp
 	@echo \ done.
+else
+$(DSP_OBJ): $(DSP_SRC)
+	@echo -n Build \-g $(BUNDLE) DSP...
+	@mkdir -p $(BUNDLE)
+	@$(CXX) $(CPPFLAGS) $(OPTIMIZATIONS) $(CXXFLAGS) $(LDFLAGS) $(DSPCFLAGS) -Wl,--start-group $(DSPLIBS) $< $(DSP_INCL) -Wl,--end-group -o $(BUNDLE)/$@
+	@echo \ done.
+
+$(GUI_OBJ): $(GUI_SRC)
+	@echo -n Build \-g $(BUNDLE) GUI...
+	@mkdir -p $(BUNDLE)
+	@mkdir -p $(BUNDLE)/tmp
+	@cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(GUICFLAGS) $(addprefix ../../, $(GUI_C_INCL)) -c
+	@cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(GUICFLAGS) $(addprefix ../../, $< $(GUI_CXX_INCL)) -c
+	@$(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(GUICFLAGS) -Wl,--start-group $(GUILIBS) $(BUNDLE)/tmp/*.o -Wl,--end-group -o $(BUNDLE)/$@
+	@rm -rf $(BUNDLE)/tmp
+	@echo \ done.
+endif
+
 
 install:
 	@echo -n Install $(BUNDLE) to $(DESTDIR)$(LV2DIR)...

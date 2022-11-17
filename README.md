@@ -99,7 +99,8 @@ monitor and step shape.
 ### Step controls
 
 * **Step markers** : Defines the size of each step. Drag markers to relocate. Right click to switch between automatic and manual placement
-* **Step level control** : Sound level for each individual step
+* **Step level sliders** : Sound level for each individual step
+* **Step panning dials**: Sound l/r panning for each individual step
 * **Sequences per bar** : Number of sequences in one bar (1..8)
 * **Amp swing** : Sets all level sliders to a swing pattern (0.001 .. 1000.0). Values lower than 1 mean reduction of odd step level. Values higher than 1 mean reduction of even step level.
 * **Steps swing** : Sets all automatic markers to a swing pattern (1:3..3:1)
@@ -147,13 +148,12 @@ But do not change or delete any definition symbol!
 * Impoved dial widget visibility even at down scaling
 * Monitor now shows a represntation of l/r signals
 * Update presets to include the new control ports
+* Bugfix makefile: strip removes debugging symbols
 
 
 ## TODO
 
 * Add a crazy panning preset
-* Bugfix makefile: strip removes debugging symbols
-* Update readme
 
 
 ## Acknowledgments
