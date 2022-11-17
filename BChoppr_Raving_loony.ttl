@@ -74,6 +74,54 @@
 		lv2:symbol "level_16" ;
 		pset:value 0.1
 	] , [
+		lv2:symbol "pan_01" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_02" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_03" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_04" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_05" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_06" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_07" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_08" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_09" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_10" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_11" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_12" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_13" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_14" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_15" ;
+		pset:value 0.0
+	] , [
+		lv2:symbol "pan_16" ;
+		pset:value 0.0
+	] , [
 		lv2:symbol "number_steps" ;
 		pset:value 16.0
 	] , [

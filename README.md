@@ -143,15 +143,17 @@ But do not change or delete any definition symbol!
 ## What's new
 
 * Step-specific panning
+* Improved visibility of widgets by increased window size
+* Impoved dial widget visibility even at down scaling
+* Update presets to include the new control ports
 
 
 ## TODO
 
-* Allow visualization of dial widgets < 20 px
 * Change visualization to stereo
-* Update presets to include the new control ports
 * Add a crazy panning preset
-* Bugfix makefile: strip removes debugging symbols 
+* Bugfix makefile: strip removes debugging symbols
+* Update readme
 
 
 ## Acknowledgments
