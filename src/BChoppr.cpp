@@ -467,6 +467,13 @@ void BChoppr::notifyMessageToGui()
 void BChoppr::play(uint32_t start, uint32_t end)
 {
 	const int steps = controllers[NrSteps - Controllers];
+	const float ampSwing = controllers[AmpSwing - Controllers];
+	const float* stepLevels = &controllers[StepLevels - Controllers];
+	const float* stepPans = &controllers[StepPans - Controllers];
+	const float attack = controllers[Attack - Controllers];
+	const float release = controllers[Release - Controllers];
+	const float sequencesPerBar = controllers[SequencesPerBar - Controllers];
+	const float blend = controllers[Blend - Controllers];
 
 	for (uint32_t i = start; i < end; ++i)
 	{
@@ -476,7 +483,7 @@ void BChoppr::play(uint32_t start, uint32_t end)
 		// Interpolate position within the loop
 		if ((speed != 0.0f) && (bpm >= 1.0f))
 		{
-			const float relpos = float (i - refFrame) * speed / (float (rate) / (bpm / 60)) * controllers[SequencesPerBar - Controllers] / beatsPerBar;	// Position relative to reference frame
+			const float relpos = float (i - refFrame) * speed / (float (rate) / (bpm / 60)) * sequencesPerBar / beatsPerBar;	// Position relative to reference frame
 			pos = MODFL (position + relpos);
 		}
 
@@ -501,53 +508,51 @@ void BChoppr::play(uint32_t start, uint32_t end)
 			}
 
 			// Calculate effect (level) for the position
-			const float ampSwing = controllers[AmpSwing - Controllers];
-			const float* stepLevels = &controllers[StepLevels - Controllers];
+			
 			const float actLevel = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
 			const float prevLevel = stepLevels[prevStep] * LIM ((prevStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
 			const float nextLevel = stepLevels[nextStep] * LIM ((nextStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
-			float level = stepLevels[actStep] * LIM ((actStep % 2 == 0 ? ampSwing : 1.0f / ampSwing), 0.0f, 1.0f);
+			float level = actLevel;
 
 			// ... and the panning
-			const float* stepPans = &controllers[StepPans - Controllers];
 			const float actPan = stepPans[actStep];
 			const float prevPan = stepPans[prevStep];
 			const float nextPan = stepPans[nextStep];
-			float pan = stepPans[actStep];
+			float pan = actPan;
 
 			// On attack
-			if (iStepFrac < controllers[Attack - Controllers])
+			if (iStepFrac < attack)
 			{
-				if (prevLevel < actLevel)
+				if (prevLevel <= actLevel)
 				{
-					if (controllers[Blend - Controllers] == 1.0f) 
+					if (blend == 1.0f) 
 					{
-						level = prevLevel + (iStepFrac / controllers[Attack - Controllers]) * (level - prevLevel);
-						pan = prevPan + (iStepFrac / controllers[Attack - Controllers]) * (pan - prevPan);
+						if (level != prevLevel) level = prevLevel + (iStepFrac / attack) * (level - prevLevel);
+						if (pan != prevPan) pan = prevPan + (iStepFrac / attack) * (pan - prevPan);
 					}
-					else if (controllers[Blend - Controllers] == 2.0f) 
+					else if (blend == 2.0f) 
 					{
-						level = prevLevel + 0.5f * (sinf (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5f)) + 1.0f) * (level - prevLevel);
-						pan = prevPan + 0.5f * (sinf (M_PI * (iStepFrac / controllers[Attack - Controllers] - 0.5f)) + 1.0f) * (pan - prevPan);
+						if (level != prevLevel) level = prevLevel + 0.5f * (sinf (M_PI * (iStepFrac / attack - 0.5f)) + 1.0f) * (level - prevLevel);
+						if (pan != prevPan) pan = prevPan + 0.5f * (sinf (M_PI * (iStepFrac / attack - 0.5f)) + 1.0f) * (pan - prevPan);
 					}
 				}
 
 			}
 
 			// On release
-			if (iStepFrac > (1.0f - controllers[Release - Controllers]))
+			if (iStepFrac > (1.0f - release))
 			{
 				if (nextLevel < actLevel)
 				{
-					if (controllers[Blend - Controllers] == 1.0f) 
+					if (blend == 1.0f) 
 					{
-						level = nextLevel + (((1.0f - iStepFrac)) / controllers[Release - Controllers]) * (level - nextLevel);
-						pan = nextPan + (((1.0f - iStepFrac)) / controllers[Release - Controllers]) * (pan - nextPan);
+						level = nextLevel + (((1.0f - iStepFrac)) / release) * (level - nextLevel);
+						if (pan != nextPan) pan = nextPan + (((1.0f - iStepFrac)) / release) * (pan - nextPan);
 					}
-					else if (controllers[Blend - Controllers] == 2.0f) 
+					else if (blend == 2.0f) 
 					{
-						level = nextLevel + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / controllers[Release - Controllers] - 0.5f)) + 1.0f) * (level - nextLevel);
-						pan = nextPan + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / controllers[Release - Controllers] - 0.5f)) + 1.0f) * (pan - nextPan);
+						level = nextLevel + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / release - 0.5f)) + 1.0f) * (level - nextLevel);
+						if (pan != nextPan) pan = nextPan + 0.5f * (sinf (M_PI * ((1.0f - iStepFrac) / release - 0.5f)) + 1.0f) * (pan - nextPan);
 					}
 				}
 			}
