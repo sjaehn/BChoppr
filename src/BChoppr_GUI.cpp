@@ -70,7 +70,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	stepshapeLabel (33, 293, 120, 20, "llabel", BCHOPPR_LABEL_STEP_SHAPE),
 	sequencemonitorLabel (263, 83, 120, 20, "llabel", BCHOPPR_LABEL_SEQUENCE_MONITOR),
 	messageLabel (420, 83, 280, 20, "hilabel", ""),
-	markerListBox (12, -68, 86, 66, "listbox", BItems::ItemList ({BCHOPPR_LABEL_MARKER, BCHOPPR_LABEL_MANUAL})),
+	markerListBox (12, -68, 86, 66, "listbox", BItems::ItemList ({BCHOPPR_LABEL_AUTO, BCHOPPR_LABEL_MANUAL})),
 	sharedDataSelection (28, 528, 194, 24, "widget", 0, 0, 4, 1),
 
 	surface (NULL), cr1 (NULL), cr2 (NULL), cr3 (NULL), cr4 (NULL), pat1 (NULL), pat2 (NULL), pat3 (NULL), pat4 (NULL), pat5 (NULL),
