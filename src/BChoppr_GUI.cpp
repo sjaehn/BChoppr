@@ -1171,16 +1171,16 @@ bool BChoppr_GUI::init_mainMonitor ()
 	cr2 = cairo_create (surface);
 	cr3 = cairo_create (surface);
 	cr4 = cairo_create (surface);
-	pat1 = cairo_pattern_create_linear (0, 0, 0, height);
+	pat1 = cairo_pattern_create_linear (0, height, 0, 0);
 	cairo_pattern_add_color_stop_rgba (pat1, 0.1, CAIRO_INK1, 1);
 	cairo_pattern_add_color_stop_rgba (pat1, 0.6, CAIRO_INK1, 0);
-	pat2 = cairo_pattern_create_linear (0, 0, 0, height);
+	pat2 = cairo_pattern_create_linear (0, height, 0, 0);
 	cairo_pattern_add_color_stop_rgba (pat2, 0.1, CAIRO_INK2, 1);
 	cairo_pattern_add_color_stop_rgba (pat2, 0.6, CAIRO_INK2, 0);
-	pat3 = cairo_pattern_create_linear (0, height, 0, 0);
+	pat3 = cairo_pattern_create_linear (0, 0, 0, height);
 	cairo_pattern_add_color_stop_rgba (pat3, 0.1, CAIRO_INK1, 1);
 	cairo_pattern_add_color_stop_rgba (pat3, 0.6, CAIRO_INK1, 0);
-	pat4 = cairo_pattern_create_linear (0, height, 0, 0);
+	pat4 = cairo_pattern_create_linear (0, 0, 0, height);
 	cairo_pattern_add_color_stop_rgba (pat4, 0.1, CAIRO_INK2, 1);
 	cairo_pattern_add_color_stop_rgba (pat4, 0.6, CAIRO_INK2, 0);
 
