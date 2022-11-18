@@ -153,7 +153,8 @@ But do not change or delete any definition symbol!
 
 ## TODO
 
-* Add a crazy panning preset
+* Moooaaaaaarrrrrrr presets
+* Enter position / step length via keyboard
 
 
 ## Acknowledgments

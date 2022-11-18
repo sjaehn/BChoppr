@@ -31,8 +31,8 @@
         rdfs:comment "An audio stream chopping LV2 plugin. B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops. Each chop can be leveled up or down (gating) or panned to the left or right." ;
 	doap:maintainer <http://www.jahnichen.de/sjaehn#me> ;
 	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-	lv2:microVersion 3 ;
-	lv2:minorVersion 11 ;
+	lv2:microVersion 0 ;
+	lv2:minorVersion 12 ;
         lv2:optionalFeature lv2:hardRTCapable ;
         lv2:binary <BChoppr.so> ;
 	lv2:requiredFeature urid:map ;
@@ -557,6 +557,12 @@
 	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
 	rdfs:label "Jittery Jim" ;
         rdfs:seeAlso <BChoppr_Jittery_Jim.ttl> .
+
+<https://www.jahnichen.de/plugins/lv2/BChoppr#Panning_tremolo>
+	a pset:Preset ;
+	lv2:appliesTo <https://www.jahnichen.de/plugins/lv2/BChoppr> ;
+	rdfs:label "Panning Tremolo" ;
+        rdfs:seeAlso <BChoppr_Panning_tremolo.ttl> .
 
 <https://www.jahnichen.de/plugins/lv2/BChoppr#Raving_loony>
 	a pset:Preset ;
