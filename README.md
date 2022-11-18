@@ -3,7 +3,8 @@
 An audio stream chopping LV2 plugin.
 
 Description: B.Choppr cuts the audio input stream into a repeated sequence of up to 16 chops.
-Each chop can be leveled up or down (gating). B.Choppr is the successor of B.Slizr.
+Each chop can be leveled up or down (gating) or panned to the left or right. B.Choppr is the 
+successor of B.Slizr.
 
 ![screenshot](https://raw.githubusercontent.com/sjaehn/BChoppr/master/doc/screenshot.png "Screenshot from B.Choppr")
 
@@ -145,8 +146,8 @@ But do not change or delete any definition symbol!
 
 * Step-specific panning
 * Improved visibility of widgets by increased window size
-* Impoved dial widget visibility even at down scaling
-* Monitor now shows a represntation of l/r signals
+* Improved dial widget visibility even at down scaling
+* Monitor now shows a representation of l/r signals
 * Update presets to include the new control ports
 * Bugfix makefile: strip removes debugging symbols
 
