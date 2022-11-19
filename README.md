@@ -150,12 +150,12 @@ But do not change or delete any definition symbol!
 * Monitor now shows a representation of l/r signals
 * Update presets to include the new control ports
 * Bugfix makefile: strip removes debugging symbols
+* Enter position / step length via keyboard
 
 
 ## TODO
 
 * Moooaaaaaarrrrrrr presets
-* Enter position / step length via keyboard
 
 
 ## Acknowledgments

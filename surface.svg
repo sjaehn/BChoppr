@@ -848,10 +848,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.73552632"
-     inkscape:cx="261.03757"
-     inkscape:cy="242.68336"
+     inkscape:cx="300.46511"
+     inkscape:cy="322.89803"
      inkscape:document-units="px"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="layer2"
      showgrid="true"
      units="px"
      inkscape:window-width="1920"
@@ -1322,7 +1322,7 @@
          id="tspan1008"
          x="85.460503"
          y="16.007292"
-         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.12.0</tspan></text>
+         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.12.1</tspan></text>
     <g
        transform="translate(-2.9104143)"
        style="enable-background:new"
@@ -1509,7 +1509,7 @@
     <g
        id="g3279">
       <rect
-         style="fill:#00ff64;fill-opacity:1;stroke:none;stroke-width:1.39448;stop-color:#000000"
+         style="fill:#00c033;fill-opacity:1;stroke:none;stroke-width:1.39448;stop-color:#000000"
          id="rect520"
          width="2.6458333"
          height="13.229167"
@@ -1533,7 +1533,7 @@
        id="g3279-3"
        transform="matrix(1,0,0,1.1294117,0,-45.83518)">
       <rect
-         style="fill:#00ff64;fill-opacity:1;stroke:none;stroke-width:1.7702;stop-color:#000000"
+         style="fill:#00c033;fill-opacity:1;stroke:none;stroke-width:1.7702;stop-color:#000000"
          id="rect520-5"
          width="2.6458333"
          height="21.318253"

@@ -23,8 +23,9 @@
 #include "Ports.hpp"
 #include "screen.h"
 #include "BUtilities/stof.hpp"
+#include "BUtilities/to_string.hpp"
 #include "BUtilities/vsystem.hpp"
-
+#include <exception>
 
 BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeView parentWindow) :
 	Window (820, 560, "B.Choppr", parentWindow, true, PUGL_MODULE, 0),
@@ -70,7 +71,12 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	stepshapeLabel (33, 293, 120, 20, "llabel", BCHOPPR_LABEL_STEP_SHAPE),
 	sequencemonitorLabel (263, 83, 120, 20, "llabel", BCHOPPR_LABEL_SEQUENCE_MONITOR),
 	messageLabel (420, 83, 280, 20, "hilabel", ""),
-	markerListBox (12, -68, 86, 66, "listbox", BItems::ItemList ({BCHOPPR_LABEL_AUTO, BCHOPPR_LABEL_MANUAL})),
+	markerListBox (12, -68, 66, 86, "menu", BItems::ItemList ({BCHOPPR_LABEL_AUTO, BCHOPPR_LABEL_MANUAL, BCHOPPR_LABEL_ENTER})),
+	enterFrame (66, 52, 320, 70, "menu"),
+	enterPositionPopup (10, 10, 120, 20, 110, 64, "menu", BItems::ItemList ({BCHOPPR_LABEL_NEW_POSITION, BCHOPPR_LABEL_NEW_LENGTH}), 1),
+	enterEdit (140, 10, 60, 20, "lflabel", "0.000"),
+	enterSequencesPopup (210, 10, 100, 20, 80, 64, "menu", BItems::ItemList ({BCHOPPR_LABEL_SEQUENCES, BCHOPPR_LABEL_STEPS}), 1),
+	enterOkButton (120, 40, 80, 20, "button", BCHOPPR_LABEL_APPLY),
 	sharedDataSelection (28, 528, 194, 24, "widget", 0, 0, 4, 1),
 
 	surface (NULL), cr1 (NULL), cr2 (NULL), cr3 (NULL), cr4 (NULL), pat1 (NULL), pat2 (NULL), pat3 (NULL), pat4 (NULL), pat5 (NULL),
@@ -156,6 +162,9 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	monitorDisplay.setCallbackFunction (BEvents::EventType::WHEEL_SCROLL_EVENT, BChoppr_GUI::monitorScrolledCallback);
 	monitorDisplay.setCallbackFunction (BEvents::EventType::POINTER_DRAG_EVENT, BChoppr_GUI::monitorDraggedCallback);
 	markerListBox.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::listBoxChangedCallback);
+	enterPositionPopup.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::enterListBoxChangedCallback);
+	enterSequencesPopup.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::enterListBoxChangedCallback);
+	enterOkButton.setCallbackFunction(BEvents::BUTTON_CLICK_EVENT, enterOkClickedCallback);
 	markersAutoButton.setCallbackFunction (BEvents::EventType::VALUE_CHANGED_EVENT, BChoppr_GUI::markersAutoClickedCallback);
 	rectButton.setCallbackFunction (BEvents::EventType::BUTTON_PRESS_EVENT, BChoppr_GUI::buttonClickedCallback);
 	sinButton.setCallbackFunction (BEvents::EventType::BUTTON_PRESS_EVENT, BChoppr_GUI::buttonClickedCallback);
@@ -180,6 +189,9 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	monitorDisplay.setScrollable (true);
 	monitorDisplay.setDraggable (true);
 	markerListBox.setStacking (BWidgets::STACKING_OVERSIZE);
+	enterFrame.setStacking (BWidgets::STACKING_OVERSIZE);
+	enterFrame.hide();
+	enterEdit.setEditable (true);
 	applyTheme (theme);
 
 
@@ -190,7 +202,11 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	redrawButtons ();
 
 	// Pack widgets
-	mContainer.add (rContainer);
+	enterFrame.add (enterPositionPopup);
+	enterFrame.add (enterEdit);
+	enterFrame.add (enterSequencesPopup);
+	enterFrame.add (enterOkButton);
+	markerListBox.add (enterFrame);
 	rContainer.add (monitorDisplay);
 	rContainer.add (sContainer);
 	mContainer.add (blendControl);
@@ -224,6 +240,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	mContainer.add (messageLabel);
 	for (HaloToggleButton& s : sharedDataButtons) sharedDataSelection.add (s);
 	mContainer.add (sharedDataSelection);
+	mContainer.add (rContainer);
 	add (mContainer);
 
 	//Scan host features for URID map
@@ -431,8 +448,21 @@ void BChoppr_GUI::resizeGUI()
 	RESIZE (sequencemonitorLabel, 263, 83, 120, 20, sz);
 	RESIZE (messageLabel, 420, 83, 280, 20,sz);
 	RESIZE (sContainer, 3, 165, 534, 182, sz);
-	RESIZE (markerListBox, 12, -68, 86, 66, sz);
+	RESIZE (markerListBox, 12, -88, 66, 86, sz);
 	markerListBox.resizeItems (BUtilities::Point (80 * sz, 20 * sz));
+	enterFrame.resize (320 * sz, 70 * sz);
+	if (markerListBox.getAbsolutePosition().x / sz > 420) enterFrame.moveTo (-320 * sz, 40 * sz);
+	else enterFrame.moveTo (66 * sz, 52 * sz);
+	RESIZE (enterPositionPopup, 10, 10, 120, 20, sz);
+	enterPositionPopup.resizeListBox (BUtilities::Point (120 * sz, 64 * sz));
+	enterPositionPopup.moveListBox (BUtilities::Point (0, 20 * sz));
+	enterPositionPopup.resizeListBoxItems (BUtilities::Point (120 * sz, 20 * sz));
+	RESIZE (enterEdit, 140, 10, 70, 20, sz);
+	RESIZE (enterSequencesPopup, 210, 10, 100, 20, sz);
+	enterSequencesPopup.resizeListBox (BUtilities::Point (100 * sz, 64 * sz));
+	enterSequencesPopup.moveListBox (BUtilities::Point (0, 20 * sz));
+	enterSequencesPopup.resizeListBoxItems (BUtilities::Point (100 * sz, 20 * sz));
+	RESIZE (enterOkButton, 120, 40, 80, 20, sz);
 	RESIZE (sharedDataSelection, 28, 528, 194, 24, sz);
 	for (int i = 0; i < 4; ++i) {RESIZE (sharedDataButtons[i], 50 * i, 0, 44, 24, sz);}
 
@@ -488,6 +518,11 @@ void BChoppr_GUI::applyTheme (BStyles::Theme& theme)
 	messageLabel.applyTheme (theme);
 	sContainer.applyTheme (theme);
 	markerListBox.applyTheme (theme);
+	enterFrame.applyTheme (theme);
+	enterPositionPopup.applyTheme (theme);
+	enterEdit.applyTheme (theme);
+	enterSequencesPopup.applyTheme (theme);
+	enterOkButton.applyTheme (theme);
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
 		stepLevelControl[i].applyTheme (theme);
@@ -733,6 +768,47 @@ void BChoppr_GUI::rearrange_controllers ()
 	}
 }
 
+void BChoppr_GUI::recalculateEnterEdit ()
+{
+	Marker* marker = (Marker*)markerListBox.getParent();
+	if (!marker) return;
+
+	int nrSteps = controllers[NrSteps - Controllers]->getValue();
+
+	for (int i = 0; i < nrSteps - 1; ++i)
+	{
+		if (marker == &markerWidgets[i])
+		{
+			const double rpos = marker->getValue();
+			double val = rpos;
+
+			if (enterPositionPopup.getValue() == 1.0)
+			{
+				if (enterSequencesPopup.getValue() == 2.0)
+				{
+					val = rpos * nrSteps;
+					// TODO rounding
+				}
+			}
+
+			else 
+			{
+				const double prpos = (i > 0 ? markerWidgets[i - 1].getValue() : 0.0);
+				if (enterSequencesPopup.getValue() == 1.0) val = rpos - prpos;
+				else
+				{
+					val = (rpos - prpos) * nrSteps;
+					// TODO rounding
+				}
+
+			}
+
+			enterEdit.setText (BUtilities::to_string (val, "%1.6f"));
+			break;
+		}
+	}
+}
+
 void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 {
 	if ((event) && (event->getWidget ()))
@@ -818,7 +894,11 @@ void BChoppr_GUI::markerClickedCallback (BEvents::Event* event)
 			if (oldMarker && (oldMarker == marker))
 			{
 				if (ui->markerListBox.isVisible()) ui->markerListBox.hide();
-				else ui->markerListBox.show ();
+				else 
+				{
+					ui->markerListBox.show ();
+					ui->enterFrame.hide();
+				}
 			}
 
 			else if (oldMarker && (oldMarker != marker))
@@ -826,12 +906,14 @@ void BChoppr_GUI::markerClickedCallback (BEvents::Event* event)
 				oldMarker->release (&ui->markerListBox);
 				marker->add (ui->markerListBox);
 				ui->markerListBox.show();
+				ui->enterFrame.hide();
 			}
 
 			else
 			{
 				marker->add (ui->markerListBox);
 				ui->markerListBox.show();
+				ui->enterFrame.hide();
 			}
 
 		}
@@ -929,15 +1011,38 @@ void BChoppr_GUI::listBoxChangedCallback (BEvents::Event* event)
 	BChoppr_GUI* ui = (BChoppr_GUI*)m->getMainWindow();
 	if (!ui) return;
 
-	double value = vev->getValue();
-	if (value == 1.0) m->setHasValue (false);
-	else if (value == 2.0) m->setHasValue (true);
-	else return;
+	int value = vev->getValue();
+	switch (value)
+	{
+		case 1:		// Auto
+					m->setHasValue (false);
+					ui->enterFrame.hide();
+					lb->hide();
+					ui->setAutoMarkers();
+					ui->rearrange_controllers();
+					ui->redrawSContainer();
+					break;
 
-	lb->hide();
-	ui->setAutoMarkers();
-	ui->rearrange_controllers();
-	ui->redrawSContainer();
+		case 2:		// Manual
+					m->setHasValue (true);
+					ui->enterFrame.hide();
+					lb->hide();
+					ui->setAutoMarkers();
+					ui->rearrange_controllers();
+					ui->redrawSContainer();
+					break;
+
+		case 3: 	// Enter
+					m->setHasValue (true);
+					ui->recalculateEnterEdit();
+					if (ui->markerListBox.getAbsolutePosition().x / ui->sz > 420) ui->enterFrame.moveTo (-320 * ui->sz, ui->enterFrame.getPosition().y);
+					else ui->enterFrame.moveTo (66 * ui->sz, ui->enterFrame.getPosition().y);
+					ui->enterFrame.show();
+					break;
+
+		default:	return;
+	}
+
 	ui->redrawMainMonitor();
 }
 
@@ -1054,6 +1159,94 @@ void BChoppr_GUI::stepControlLabelMessageCallback (BEvents::Event* event)
 					break;
 				}
 			}
+		}
+	}
+}
+
+void BChoppr_GUI::enterListBoxChangedCallback (BEvents::Event* event)
+{
+	if (!event) return;
+	BEvents::ValueChangedEvent* vev = (BEvents::ValueChangedEvent*) event;
+	BWidgets::ListBox* lb = (BWidgets::ListBox*) vev->getWidget();
+	if (!lb) return;
+	Marker* m = (Marker*) lb->getParent();
+	if (!m) return;
+	BChoppr_GUI* ui = (BChoppr_GUI*)m->getMainWindow();
+	if (!ui) return;
+
+	ui->recalculateEnterEdit();
+}
+
+void BChoppr_GUI::enterOkClickedCallback (BEvents::Event* event)
+{
+	if (!event) return;
+	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
+	if (pev->getButton() != BDevices::LEFT_BUTTON) return;
+	BWidgets::TextButton* button = (BWidgets::TextButton*)event->getWidget();
+	if (!button) return;
+	BChoppr_GUI* ui = (BChoppr_GUI*)button->getMainWindow();
+	if (!ui) return;
+	Marker* marker = (Marker*)ui->markerListBox.getParent();
+	if (!marker) return;
+
+	int nrSteps = ui->controllers[NrSteps - Controllers]->getValue();
+
+	for (int i = 0; i < nrSteps - 1; ++i)
+	{
+		if (marker == &ui->markerWidgets[i])
+		{
+			double frac = marker->getValue();
+			double val = 0.0;
+
+			try 
+			{
+				val = BUtilities::stof (ui->enterEdit.getText());
+				if (ui->enterPositionPopup.getValue() == 1.0)
+				{
+					if (ui->enterSequencesPopup.getValue() == 1.0) frac = val;
+					else frac = val / nrSteps;
+				}
+
+				else
+				{
+					const double prec = (i > 0 ? ui->markerWidgets[i - 1].getValue() : 0.0);
+					if (i > 0) ui->markerWidgets[i - 1].setHasValue (true);
+					if (ui->enterSequencesPopup.getValue() == 1.0) frac = val + prec;
+					else frac = val / nrSteps + prec;
+				}
+			}
+			catch (std::exception &exc) {std::cerr << "BSchaffl.lv2#GUI: " << exc.what() << "\n";}
+
+			frac = LIMIT (frac, MINMARKERVALUE, 1.0);
+
+			// Limit to antecessors value
+			for (int j = i - 1; j >= 0; --j)
+			{
+				if (ui->markerWidgets[j].hasValue())
+				{
+					if (frac < ui->markerWidgets[j].getValue()) frac = ui->markerWidgets[j].getValue();
+					break;
+				}
+			}
+
+			// Limit to successors value
+			for (int j = i + 1; j < nrSteps - 1; ++j)
+			{
+				if (ui->markerWidgets[j].hasValue())
+				{
+					if (frac > ui->markerWidgets[j].getValue()) frac = ui->markerWidgets[j].getValue();
+					break;
+				}
+			}
+
+			ui->enterFrame.hide();
+			ui->markerListBox.hide();
+			ui->setMarker (i, frac);
+			ui->setAutoMarkers();
+			ui->rearrange_controllers();
+			ui->redrawSContainer();
+			ui->redrawMainMonitor();
+			break;
 		}
 	}
 }

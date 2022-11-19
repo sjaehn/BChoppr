@@ -24,6 +24,7 @@
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
+#include "BWidgets/BStyles.hpp"
 #include "BWidgets/Widget.hpp"
 #include "BWidgets/Window.hpp"
 #include "BWidgets/Label.hpp"
@@ -34,6 +35,7 @@
 #include "BWidgets/HSliderValue.hpp"
 #include "BWidgets/DialValue.hpp"
 #include "BWidgets/ListBox.hpp"
+#include "BWidgets/PopupListBox.hpp"
 #include "BWidgets/ToggleButton.hpp"
 #include "BWidgets/TextButton.hpp"
 #include "Ports.hpp"
@@ -110,6 +112,7 @@ private:
 	void setMarker (const int markerNr, double value);
 	void setAutoMarkers ();
 	void rearrange_controllers ();
+	void recalculateEnterEdit ();
 	static void valueChangedCallback (BEvents::Event* event);
     static void markerClickedCallback (BEvents::Event* event);
 	static void markerDraggedCallback (BEvents::Event* event);
@@ -122,6 +125,8 @@ private:
 	static void helpButtonClickedCallback (BEvents::Event* event);
 	static void ytButtonClickedCallback (BEvents::Event* event);
 	static void stepControlLabelMessageCallback (BEvents::Event* event);
+	static void enterListBoxChangedCallback (BEvents::Event* event);
+    static void enterOkClickedCallback (BEvents::Event* event);
 	bool init_Stepshape ();
 	void destroy_Stepshape ();
 	void redrawStepshape ();
@@ -172,6 +177,11 @@ private:
 	std::array<BWidgets::Label, MAXSTEPS> stepPanControlLabel;
 	std::array<Marker, MAXSTEPS - 1> markerWidgets;
 	BWidgets::ListBox markerListBox;
+	BWidgets::Widget enterFrame;
+	BWidgets::PopupListBox enterPositionPopup;
+	BWidgets::Label enterEdit;
+	BWidgets::PopupListBox enterSequencesPopup;
+	BWidgets::TextButton enterOkButton;
 	BWidgets::RangeWidget sharedDataSelection;
 	std::array<HaloToggleButton, 4> sharedDataButtons;
 
@@ -214,6 +224,7 @@ private:
     BColors::ColorSet rdColors = {{{0.75, 0.0, 0.0, 1.0}, {1.0, 0.25, 0.25, 1.0}, {0.2, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::ColorSet txColors = {{{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.5, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::ColorSet bgColors = {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
+	BColors::ColorSet btColors = {{{0.0, 0.0, 0.0, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::Color ink = {0.0, 0.75, 0.2, 1.0};
 
 	BStyles::Border border = {{ink, 1.0}, 0.0, 2.0, 0.0};
@@ -260,31 +271,43 @@ private:
 	BStyles::Theme theme = BStyles::Theme ({
 		defaultStyles,
 		{"B.Choppr", 	{{"background", STYLEPTR (&BStyles::blackFill)},
-				 {"border", STYLEPTR (&BStyles::noBorder)}}},
-		{"main", 	{{"background", STYLEPTR (&widgetBg)},
-				 {"border", STYLEPTR (&BStyles::noBorder)}}},
-		{"widget", 	{{"uses", STYLEPTR (&defaultStyles)}}},
+						 {"border", STYLEPTR (&BStyles::noBorder)}}},
+		{"main",	 	{{"background", STYLEPTR (&widgetBg)},
+						 {"border", STYLEPTR (&BStyles::noBorder)}}},
+		{"widget",	 	{{"uses", STYLEPTR (&defaultStyles)}}},
 		{"mmonitor", 	{{"background", STYLEPTR (&BStyles::blackFill)},
-				 {"border", STYLEPTR (&BStyles::noBorder)}}},
+						 {"border", STYLEPTR (&BStyles::noBorder)}}},
  		{"smonitor", 	{{"background", STYLEPTR (&BStyles::blackFill)},
- 				 {"border", STYLEPTR (&border)}}},
+ 						 {"border", STYLEPTR (&border)}}},
+		{"button",	 	{{"background", STYLEPTR (&ink)},
+ 						 {"border", STYLEPTR (&BStyles::noBorder)},
+						 {"textcolors", STYLEPTR (&btColors)}}},
  		{"nbutton", 	{{"background", STYLEPTR (&BStyles::blackFill)},
- 				 {"border", STYLEPTR (&inactborder)}}},
+ 						 {"border", STYLEPTR (&inactborder)}}},
  		{"abutton", 	{{"background", STYLEPTR (&BStyles::blackFill)},
- 				 {"border", STYLEPTR (&actborder)}}},
+ 						 {"border", STYLEPTR (&actborder)}}},
 		{"rcontainer", 	{{"background", STYLEPTR (&BStyles::noFill)},
-				 {"border", STYLEPTR (&border)}}},
+						 {"border", STYLEPTR (&border)}}},
 		{"scontainer", 	{{"background", STYLEPTR (&BStyles::noFill)},
-				 {"border", STYLEPTR (&BStyles::noBorder)}}},
-                {"listbox",	{{"border", STYLEPTR (&border)},
- 				 {"background", STYLEPTR (&BStyles::blackFill)}}},
- 		{"listbox/item",{{"uses", STYLEPTR (&defaultStyles)},
- 				 {"border", STYLEPTR (&labelBorder)},
- 				 {"textcolors", STYLEPTR (&BColors::whites)},
- 				 {"font", STYLEPTR (&defaultFont)}}},
- 		{"listbox/button",{{"border", STYLEPTR (&BColors::darks)},
- 				 {"background", STYLEPTR (&BStyles::blackFill)},
- 			 	 {"bgcolors", STYLEPTR (&BColors::darks)}}},
+						 {"border", STYLEPTR (&BStyles::noBorder)}}},
+		{"menu",		{{"border", STYLEPTR (&border)},
+ 						 {"background", STYLEPTR (&BStyles::blackFill)}}},
+ 		{"menu/item",	{{"uses", STYLEPTR (&defaultStyles)},
+						 {"border", STYLEPTR (&labelBorder)},
+						 {"textcolors", STYLEPTR (&BColors::whites)},
+						 {"font", STYLEPTR (&leftFont)}}},
+ 		{"menu/button",	{{"border", STYLEPTR (&BStyles::noBorder)},
+ 						 {"background", STYLEPTR (&BStyles::blackFill)},
+ 						 {"bgcolors", STYLEPTR (&fgColors)}}},
+ 		{"menu/listbox",{{"border", STYLEPTR (&border)},
+ 						 {"background", STYLEPTR (&BStyles::blackFill)}}},
+ 		{"menu/listbox/item",	{{"uses", STYLEPTR (&defaultStyles)},
+								 {"border", STYLEPTR (&labelBorder)},
+								 {"textcolors", STYLEPTR (&BColors::whites)},
+								 {"font", STYLEPTR (&leftFont)}}},
+ 		{"menu/listbox/button",	{{"border", STYLEPTR (&BStyles::noBorder)},
+ 								 {"background", STYLEPTR (&BStyles::blackFill)},
+ 								 {"bgcolors", STYLEPTR (&fgColors)}}},
 		{"dial", 	{{"uses", STYLEPTR (&defaultStyles)},
 				 {"fgcolors", STYLEPTR (&fgColors)},
 				 {"bgcolors", STYLEPTR (&bgColors)},
@@ -293,7 +316,7 @@ private:
 		{"redbutton", 	{{"uses", STYLEPTR (&defaultStyles)},
 				 {"fgcolors", STYLEPTR (&rdColors)},
 				 {"bgcolors", STYLEPTR (&bgColors)}}},
-                {"halobutton", 	{{"uses", STYLEPTR (&defaultStyles)},
+        {"halobutton", 	{{"uses", STYLEPTR (&defaultStyles)},
  				 {"fgcolors", STYLEPTR (&bgColors)}}},
  		{"halobutton/focus", {{"uses", STYLEPTR (&focusStyles)}}},
 		{"dial/focus", 	{{"background", STYLEPTR (&screenBg)},
@@ -317,9 +340,9 @@ private:
 				 {"textcolors", STYLEPTR (&txColors)},
 				 {"font", STYLEPTR (&defaultFont)}}},
 		{"label",	{{"uses", STYLEPTR (&labelStyles)}}},
-                {"llabel",	{{"uses", STYLEPTR (&llStyles)}}},
-                {"mlabel",	{{"uses", STYLEPTR (&mlStyles)}}},
-                {"smlabel",	{{"uses", STYLEPTR (&smStyles)}}},
+		{"llabel",	{{"uses", STYLEPTR (&llStyles)}}},
+		{"mlabel",	{{"uses", STYLEPTR (&mlStyles)}}},
+		{"smlabel",	{{"uses", STYLEPTR (&smStyles)}}},
 		{"hilabel",	{{"uses", STYLEPTR (&labelStyles)},
 				 {"textcolors", STYLEPTR (&BColors::whites)}}},
 	});

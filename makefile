@@ -63,8 +63,10 @@ GUI_CXX_INCL = \
 	src/BWidgets/ToggleButton.cpp \
 	src/BWidgets/TextButton.cpp \
 	src/BWidgets/Button.cpp \
+	src/BWidgets/ItemBox.cpp \
 	src/BWidgets/ChoiceBox.cpp \
 	src/BWidgets/ListBox.cpp \
+	src/BWidgets/PopupListBox.cpp \
 	src/BWidgets/DrawingSurface.cpp \
 	src/BWidgets/DialValue.cpp \
 	src/BWidgets/Dial.cpp \
