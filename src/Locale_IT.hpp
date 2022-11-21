@@ -12,7 +12,7 @@
 #define BCHOPPR_LABEL_ENTER "Inserire"
 #define BCHOPPR_LABEL_NEW_POSITION "Nuova posizione:"
 #define BCHOPPR_LABEL_NEW_LENGTH "Nuova durata:"
-#define BCHOPPR_LABEL_SEQUENCES "sequenc(a/e)"
+#define BCHOPPR_LABEL_SEQUENCES "sequenz(a/e)"
 #define BCHOPPR_LABEL_STEPS "pass(o/i)"
 #define BCHOPPR_LABEL_APPLY "Applica"
 #define BCHOPPR_LABEL_MARKER "Marcatore"
