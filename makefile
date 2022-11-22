@@ -57,46 +57,22 @@ B_FILES = $(addprefix $(BUNDLE)/, $(FILES))
 DSP_INCL = src/Message.cpp
 
 GUI_CXX_INCL = \
-	src/BWidgets/BItems.cpp \
-	src/BWidgets/UpButton.cpp \
-	src/BWidgets/DownButton.cpp \
-	src/BWidgets/ToggleButton.cpp \
-	src/BWidgets/TextButton.cpp \
-	src/BWidgets/Button.cpp \
-	src/BWidgets/ItemBox.cpp \
-	src/BWidgets/ChoiceBox.cpp \
-	src/BWidgets/ListBox.cpp \
-	src/BWidgets/PopupListBox.cpp \
-	src/BWidgets/DrawingSurface.cpp \
-	src/BWidgets/DialValue.cpp \
-	src/BWidgets/Dial.cpp \
-	src/BWidgets/VSliderValue.cpp \
-	src/BWidgets/VSlider.cpp \
-	src/BWidgets/VScale.cpp \
-	src/BWidgets/HSwitch.cpp \
-	src/BWidgets/HSliderValue.cpp \
-	src/BWidgets/HSlider.cpp \
-	src/BWidgets/HScale.cpp \
-	src/BWidgets/RangeWidget.cpp \
-	src/BWidgets/ValueWidget.cpp \
-	src/BWidgets/Knob.cpp \
-	src/BWidgets/Label.cpp \
-	src/BWidgets/Window.cpp \
-	src/BWidgets/Widget.cpp \
-	src/BWidgets/BStyles.cpp \
-	src/BWidgets/BColors.cpp \
-	src/BUtilities/to_string.cpp \
-	src/BUtilities/stof.cpp \
-	src/BUtilities/vsystem.cpp
+	src/BWidgets/BUtilities/vsystem.cpp \
+	src/BWidgets/BUtilities/Urid.cpp \
+	src/BWidgets/BUtilities/Dictionary.cpp \
+	src/BWidgets/BWidgets/Supports/Closeable.cpp \
+	src/BWidgets/BWidgets/Supports/Messagable.cpp \
+	src/BWidgets/BWidgets/Window.cpp \
+	src/BWidgets/BWidgets/Widget.cpp 
 
 
 GUI_C_INCL = \
 	src/screen.c \
-	src/BWidgets/cairoplus.c \
-	src/BWidgets/pugl/implementation.c \
-	src/BWidgets/pugl/x11_stub.c \
-	src/BWidgets/pugl/x11_cairo.c \
-	src/BWidgets/pugl/x11.c
+	src/BWidgets/BUtilities/cairoplus.c \
+	src/BWidgets/BWidgets/pugl/implementation.c \
+	src/BWidgets/BWidgets/pugl/x11_stub.c \
+	src/BWidgets/BWidgets/pugl/x11_cairo.c \
+	src/BWidgets/BWidgets/pugl/x11.c
 
 ifeq ($(shell $(PKG_CONFIG) --exists 'lv2 >= 1.12.4' || echo no), no)
   $(error lv2 >= 1.12.4 not found. Please install lv2 >= 1.12.4 first.)
