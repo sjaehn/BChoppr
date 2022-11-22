@@ -1,0 +1,194 @@
+{
+    {
+        "Monitor",       
+        {
+            {"de_DE", "Monitor"},
+            {"it_IT", "Monitor"}
+        }
+    },
+
+    {
+        "Bypass",       
+        {
+            {"de_DE", "Bypass"},
+            {"it_IT", "Bypass"}
+        }
+    },
+
+    {
+        "Dry/wet",       
+        {
+            {"de_DE", "Mix"},
+            {"it_IT", "Secco/bagnato"}
+        }
+    },
+
+    {
+        "Help",           
+        {
+            {"de_DE", "Hilfe"},
+            {"it_IT", "Aiuto"}
+        }
+    },
+
+    {
+        "Tutorial",       
+        {
+            {"de_DE", "Tutorial"},
+            {"it_IT", "Tutorial"}
+        }
+    },
+
+    {
+        "Attack",       
+        {
+            {"de_DE", "Attack"},
+            {"it_IT", "Attacco"}
+            
+        }
+    },
+
+    {
+        "Decay",       
+        {
+            {"de_DE", "Decay"},
+            {"it_IT", "Decadimento"}
+        }
+    },
+
+    {
+        "Amp swing",       
+        {
+            {"de_DE", "Amp.-Pendel"},
+            {"it_IT", "Oscil. volume"}
+        }
+    },
+
+    {
+        "Step swing",           
+        {
+            {"de_DE", "Schrittpendel"},
+            {"it_IT", "Oscil. passi"}
+        }
+    },
+
+    {
+        "Auto",       
+        {
+            {"de_DE", "Auto"},
+            {"it_IT", "Auto"}
+        }
+    },
+
+    {
+        "Manual",       
+        {
+            {"de_DE", "Manuell"},
+            {"it_IT", "Manuale"}
+        }
+    },
+
+    {
+        "Enter",       
+        {
+            {"de_DE", "Eingabe"},
+            {"it_IT", "Inserire"}
+        }
+    },
+
+    {
+        "New position:",       
+        {
+            {"de_DE", "Neue Position:"},
+            {"it_IT", "Nuova posizione:"}
+        }
+    },
+
+    {
+        "New length:",       
+        {
+            {"de_DE", "Neue Länge:"},
+            {"it_IT", "Nuova durata:"}
+        }
+    },
+
+    {
+        "sequence(s)",       
+        {
+            {"de_DE", "Sequenz(en)"},
+            {"it_IT", "sequenz(a/e)"}
+        }
+    },
+
+    {
+        "step(s)",       
+        {
+            {"de_DE", "Schritt(e)"},
+            {"it_IT", "pass(o/i)"}
+        }
+    },
+
+    {
+        "Apply",       
+        {
+            {"de_DE", "Anwenden"},
+            {"it_IT", "Applica"}
+        }
+    },
+
+    {
+        "Marker",       
+        {
+            {"de_DE", "Marker"},
+            {"it_IT", "Marcatore"}
+        }
+    },
+
+    {
+        "Sequences per bar",       
+        {
+            {"de_DE", "Sequenzen pro Takt"},
+            {"it_IT", "Seq. per misura"}
+        }
+    },
+
+    {
+        "Number of steps",       
+        {
+            {"de_DE", "Anzahl Schritte"},
+            {"it_IT", "Numero di passi"}
+        }
+    },
+
+    {
+        "Step shape",       
+        {
+            {"de_DE", "Schrittform"},
+            {"it_IT", "Forma del passo"}
+        }
+    },
+
+    {
+        "Sequence monitor",       
+        {
+            {"de_DE", "Sequenzmonitor"},
+            {"it_IT", "Monitor sequenza"}
+        }
+    },
+
+    {
+        "Jack transport off or halted.",       
+        {
+            {"de_DE", "Jack-Transport ist angehalten."},
+            {"it_IT", "Trasp. Jack fermo"}
+        }
+    },
+
+    {
+        "Shared data",       
+        {
+            {"de_DE", "Gemeinsame Daten"},
+            {"it_IT", "Dati condivisi"}
+        }
+    }
+}
