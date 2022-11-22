@@ -1,0 +1,3 @@
+[submodule "src/BWidgets"]
+	path = src/BWidgets
+	url = https://github.com/sjaehn/BWidgets
