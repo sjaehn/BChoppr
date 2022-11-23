@@ -18,40 +18,35 @@
  * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
- #ifndef BCHOPPR_GUI_HPP_
- #define BCHOPPR_GUI_HPP_
+#ifndef BCHOPPR_GUI_HPP_
+#define BCHOPPR_GUI_HPP_
+
+#define BUTILITIES_DICTIONARY_DATAFILE "BChoppr_Dictionary.data"
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
-#include "BWidgets/BStyles.hpp"
-#include "BWidgets/Widget.hpp"
-#include "BWidgets/Window.hpp"
-#include "BWidgets/Label.hpp"
-#include "BWidgets/DrawingSurface.hpp"
-#include "BWidgets/HSwitch.hpp"
-#include "BWidgets/VSlider.hpp"
-#include "BWidgets/VSliderValue.hpp"
-#include "BWidgets/HSliderValue.hpp"
-#include "BWidgets/DialValue.hpp"
-#include "BWidgets/ListBox.hpp"
-#include "BWidgets/PopupListBox.hpp"
-#include "BWidgets/ToggleButton.hpp"
-#include "BWidgets/TextButton.hpp"
+#include "BWidgets/BUtilities/Dictionary.hpp"
+#include "BWidgets/BWidgets/Widget.hpp"
+#include "BWidgets/BWidgets/Window.hpp"
+#include "BWidgets/BWidgets/Label.hpp"
+#include "BWidgets/BWidgets/HSwitch.hpp"
+#include "BWidgets/BWidgets/VSlider.hpp"
+#include "BWidgets/BWidgets/ValueVSlider.hpp"
+#include "BWidgets/BWidgets/ValueHSlider.hpp"
+#include "BWidgets/BWidgets/ValueDial.hpp"
+#include "BWidgets/BWidgets/ListBox.hpp"
+#include "BWidgets/BWidgets/ComboBox.hpp"
+#include "BWidgets/BWidgets/Button.hpp"
+#include "BWidgets/BWidgets/TextButton.hpp"
+#include "BWidgets/BWidgets/Knob.hpp"
+#include "BWidgets/BWidgets/Image.hpp"
+#include "BWidgets/BWidgets/ImageButton.hpp"
 #include "Ports.hpp"
 #include "Marker.hpp"
-#include "LightButton.hpp"
 #include "SwingHSlider.hpp"
-#include "HaloButton.hpp"
-#include "HaloToggleButton.hpp"
 #include "definitions.hpp"
 #include "Urids.hpp"
-
-#ifdef LOCALEFILE
-#include LOCALEFILE
-#else
-#include "Locale_EN.hpp"
-#endif
 
 #ifndef MESSAGENR_
 #define MESSAGENR_
@@ -86,7 +81,7 @@ enum MessageNr
 const std::string messageStrings[MAX_MSG + 1] =
 {
 	"",
-	"*** " BCHOPPR_LABEL_JACK_STOP " ***"
+	"*** " + BUtilities::Dictionary::get ("Jack transport off or halted.") + " ***"
 };
 
 class BChoppr_GUI : public BWidgets::Window
@@ -99,15 +94,13 @@ public:
 	void send_record_off ();
 	void sendSharedDataNr ();
 	void sendController (const int nr, const float value);
-	virtual void onConfigureRequest (BEvents::ExposeEvent* event) override;
-	void applyTheme (BStyles::Theme& theme) override;
+	virtual void onConfigureRequest (BEvents::Event* event) override;
 
 	LV2UI_Controller controller;
 	LV2UI_Write_Function write_function;
 
 
 private:
-	void resizeGUI ();
 	float setController (const int nr, const double value);
 	void setMarker (const int markerNr, double value);
 	void setAutoMarkers ();
@@ -137,53 +130,52 @@ private:
 	void redrawSContainer ();
     void redrawButtons ();
 
-
-	BWidgets::Widget mContainer;
-    BWidgets::Widget rContainer;
-	BWidgets::DrawingSurface sContainer;
+	BWidgets::Image mContainer;
+	BWidgets::Widget rContainer;
+	BWidgets::Widget sContainer;
 	BWidgets::HSwitch monitorSwitch;
 	BWidgets::Label monitorLabel;
-	LightButton bypassButton;
+	BWidgets::Knob bypassButton;
 	BWidgets::Label bypassLabel;
-	BWidgets::DialValue drywetDial;
+	BWidgets::ValueDial drywetDial;
 	BWidgets::Label drywetLabel;
-	HaloButton helpButton;
-	HaloButton ytButton;
-	BWidgets::DrawingSurface monitorDisplay;
-	BWidgets::RangeWidget blendControl;
-	BWidgets::DrawingSurface rectButton;
-	BWidgets::DrawingSurface sinButton;
-	BWidgets::DrawingSurface stepshapeDisplay;
-	BWidgets::DialValue attackControl;
+	BWidgets::Button helpButton;
+	BWidgets::Button ytButton;
+	BWidgets::HScale blendDummy;
+	BWidgets::ImageButton rectButton;
+	BWidgets::ImageButton sinButton;
+	BWidgets::Image stepshapeDisplay;
+	BWidgets::ValueDial attackControl;
 	BWidgets::Label attackLabel;
-	BWidgets::DialValue releaseControl;
+	BWidgets::ValueDial releaseControl;
 	BWidgets::Label releaseLabel;
-	BWidgets::HSliderValue sequencesperbarControl;
+	BWidgets::Image monitorDisplay;
+	BWidgets::ValueHSlider sequencesperbarControl;
 	BWidgets::Label sequencesperbarLabel;
-    SwingHSlider ampSwingControl;
+	SwingHSlider ampSwingControl;
 	BWidgets::Label ampSwingLabel;
-    SwingHSlider swingControl;
+	SwingHSlider swingControl;
 	BWidgets::Label swingLabel;
 	BWidgets::TextButton markersAutoButton;
 	BWidgets::Label markersAutoLabel;
-	BWidgets::HSliderValue nrStepsControl;
+	BWidgets::ValueHSlider nrStepsControl;
 	BWidgets::Label nrStepsLabel;
 	BWidgets::Label stepshapeLabel;
 	BWidgets::Label sequencemonitorLabel;
 	BWidgets::Label messageLabel;
-	std::array<BWidgets::VSlider, MAXSTEPS> stepLevelControl;
-	std::array<BWidgets::Dial, MAXSTEPS> stepPanControl;
-    std::array<BWidgets::Label, MAXSTEPS> stepLevelControlLabel;
-	std::array<BWidgets::Label, MAXSTEPS> stepPanControlLabel;
-	std::array<Marker, MAXSTEPS - 1> markerWidgets;
+	std::array<BWidgets::VSlider*, MAXSTEPS> stepLevelControl;
+	std::array<BWidgets::Dial*, MAXSTEPS> stepPanControl;
+	std::array<BWidgets::EditLabel*, MAXSTEPS> stepLevelControlLabel;
+	std::array<BWidgets::EditLabel*, MAXSTEPS> stepPanControlLabel;
+	std::array<Marker*, MAXSTEPS - 1> markerWidgets;
 	BWidgets::ListBox markerListBox;
 	BWidgets::Widget enterFrame;
-	BWidgets::PopupListBox enterPositionPopup;
-	BWidgets::Label enterEdit;
-	BWidgets::PopupListBox enterSequencesPopup;
+	BWidgets::ComboBox enterPositionComboBox;
+	BWidgets::EditLabel enterEdit;
+	BWidgets::ComboBox enterSequencesComboBox;
 	BWidgets::TextButton enterOkButton;
-	BWidgets::RangeWidget sharedDataSelection;
-	std::array<HaloToggleButton, 4> sharedDataButtons;
+	std::array<BWidgets::Button*, 4> sharedDataButtons;
+	BWidgets::HScale sharedDataDummy;
 
 
 	cairo_surface_t* surface;
@@ -207,11 +199,8 @@ private:
 	}  mainMonitor;
 
 	std::string pluginPath;
-	double sz;
-	cairo_surface_t* bgImageSurface;
-
-        std::array<BWidgets::ValueWidget*, NrControllers> controllers;
-        float scale;
+	std::array<BWidgets::Widget*, NrControllers> controllers;
+    float scale;
 
 	LV2_Atom_Forge forge;
 	BChopprURIs uris;
@@ -220,6 +209,7 @@ private:
 
 
 	// Definition of styles
+	/*
 	BColors::ColorSet fgColors = {{{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.2, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
     BColors::ColorSet rdColors = {{{0.75, 0.0, 0.0, 1.0}, {1.0, 0.25, 0.25, 1.0}, {0.2, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BColors::ColorSet txColors = {{{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.5, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
@@ -346,6 +336,7 @@ private:
 		{"hilabel",	{{"uses", STYLEPTR (&labelStyles)},
 				 {"textcolors", STYLEPTR (&BColors::whites)}}},
 	});
+	*/
 };
 
 #endif /* BCHOPPR_GUI_HPP_ */
