@@ -21,14 +21,20 @@
 #ifndef BCHOPPR_GUI_HPP_
 #define BCHOPPR_GUI_HPP_
 
-#define BUTILITIES_DICTIONARY_DATAFILE "BChoppr_Dictionary.data"
 
+#include "BWidgets/BStyles/Status.hpp"
+#include "BWidgets/BStyles/Style.hpp"
+#include "BWidgets/BStyles/Types/Border.hpp"
+#include "BWidgets/BStyles/Types/ColorMap.hpp"
+#include "BWidgets/BStyles/Types/Fill.hpp"
+#include "BWidgets/BStyles/Types/Font.hpp"
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 #include <lv2/lv2plug.in/ns/ext/atom/atom.h>
 #include <lv2/lv2plug.in/ns/ext/atom/forge.h>
 #include "BWidgets/BUtilities/Dictionary.hpp"
 #include "BWidgets/BWidgets/Widget.hpp"
 #include "BWidgets/BWidgets/Window.hpp"
+#include "BWidgets/BWidgets/Frame.hpp"
 #include "BWidgets/BWidgets/Label.hpp"
 #include "BWidgets/BWidgets/HSwitch.hpp"
 #include "BWidgets/BWidgets/VSlider.hpp"
@@ -44,6 +50,7 @@
 #include "BWidgets/BWidgets/ImageButton.hpp"
 #include "Ports.hpp"
 #include "Marker.hpp"
+#include "Monitor.hpp"
 #include "SwingHSlider.hpp"
 #include "definitions.hpp"
 #include "Urids.hpp"
@@ -58,14 +65,10 @@ enum MessageNr
 };
 #endif /* MESSAGENR_ */
 
+#define URID(x) (BURID(BCHOPPR_GUI_URI x))
+
 #define SCALEMIN -60
 #define SCALEMAX 30
-#define CAIRO_BG_COLOR 0.0, 0.0, 0.0, 1.0
-#define CAIRO_BG_COLOR2 0.2, 0.2, 0.2, 1.0
-#define CAIRO_TRANSPARENT 0.0, 0.0, 0.0, 0.0
-#define CAIRO_FG_COLOR 1.0, 1.0, 1.0, 1.0
-#define CAIRO_INK1 0.0, 1.0, 0.4
-#define CAIRO_INK2 0.8, 0.6, 0.2
 
 #define BG_FILE "surface.png"
 #define HELP_URL "https://github.com/sjaehn/BChoppr/blob/master/README.md"
@@ -81,7 +84,7 @@ enum MessageNr
 const std::string messageStrings[MAX_MSG + 1] =
 {
 	"",
-	"*** " + BUtilities::Dictionary::get ("Jack transport off or halted.") + " ***"
+	"Jack transport off or halted."
 };
 
 class BChoppr_GUI : public BWidgets::Window
@@ -109,8 +112,6 @@ private:
 	static void valueChangedCallback (BEvents::Event* event);
     static void markerClickedCallback (BEvents::Event* event);
 	static void markerDraggedCallback (BEvents::Event* event);
-	static void monitorScrolledCallback (BEvents::Event* event);
-	static void monitorDraggedCallback (BEvents::Event* event);
 	static void listBoxChangedCallback (BEvents::Event* event);
 	static void markersAutoClickedCallback (BEvents::Event* event);
 	static void buttonClickedCallback (BEvents::Event* event);
@@ -123,25 +124,20 @@ private:
 	bool init_Stepshape ();
 	void destroy_Stepshape ();
 	void redrawStepshape ();
-	bool init_mainMonitor ();
-	void destroy_mainMonitor ();
-	void add_monitor_data (BChopprNotifications* notifications, uint32_t notificationsCount, uint32_t& end);
-	void redrawMainMonitor ();
 	void redrawSContainer ();
     void redrawButtons ();
 
-	BWidgets::Image mContainer;
+	BWidgets::Image bgImage;
 	BWidgets::Widget rContainer;
-	BWidgets::Widget sContainer;
+	BWidgets::Image sContainer;
 	BWidgets::HSwitch monitorSwitch;
 	BWidgets::Label monitorLabel;
 	BWidgets::Knob bypassButton;
 	BWidgets::Label bypassLabel;
-	BWidgets::ValueDial drywetDial;
+	BWidgets::Dial drywetDial;
 	BWidgets::Label drywetLabel;
 	BWidgets::Button helpButton;
 	BWidgets::Button ytButton;
-	BWidgets::HScale blendDummy;
 	BWidgets::ImageButton rectButton;
 	BWidgets::ImageButton sinButton;
 	BWidgets::Image stepshapeDisplay;
@@ -149,7 +145,7 @@ private:
 	BWidgets::Label attackLabel;
 	BWidgets::ValueDial releaseControl;
 	BWidgets::Label releaseLabel;
-	BWidgets::Image monitorDisplay;
+	Monitor monitorDisplay;
 	BWidgets::ValueHSlider sequencesperbarControl;
 	BWidgets::Label sequencesperbarLabel;
 	SwingHSlider ampSwingControl;
@@ -169,7 +165,7 @@ private:
 	std::array<BWidgets::EditLabel*, MAXSTEPS> stepPanControlLabel;
 	std::array<Marker*, MAXSTEPS - 1> markerWidgets;
 	BWidgets::ListBox markerListBox;
-	BWidgets::Widget enterFrame;
+	BWidgets::Frame enterFrame;
 	BWidgets::ComboBox enterPositionComboBox;
 	BWidgets::EditLabel enterEdit;
 	BWidgets::ComboBox enterSequencesComboBox;
@@ -189,15 +185,6 @@ private:
 	cairo_pattern_t* pat4;
 	cairo_pattern_t* pat5;
 
-	struct
-	{
-		bool record_on;
-		uint32_t width;
-		uint32_t height;
-		std::array<BChopprNotifications, MONITORBUFFERSIZE> data;
-		uint32_t horizonPos;
-	}  mainMonitor;
-
 	std::string pluginPath;
 	std::array<BWidgets::Widget*, NrControllers> controllers;
     float scale;
@@ -207,136 +194,146 @@ private:
 	LV2_URID_Map* map;
 
 
-
 	// Definition of styles
-	/*
-	BColors::ColorSet fgColors = {{{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.2, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-    BColors::ColorSet rdColors = {{{0.75, 0.0, 0.0, 1.0}, {1.0, 0.25, 0.25, 1.0}, {0.2, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-	BColors::ColorSet txColors = {{{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.5, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-	BColors::ColorSet bgColors = {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-	BColors::ColorSet btColors = {{{0.0, 0.0, 0.0, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-	BColors::Color ink = {0.0, 0.75, 0.2, 1.0};
+	BStyles::ColorMap fgColors = {{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.2, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap bgColors = {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
+	BStyles::ColorMap txColors = {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap monColors = {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 
-	BStyles::Border border = {{ink, 1.0}, 0.0, 2.0, 0.0};
-	BStyles::Border actborder = {{{CAIRO_INK1, 1.0}, 2.0}, 0.0, 1.0, 0.0};
-	BStyles::Border inactborder = {{BColors::darkgrey, 1.0}, 0.0, 2.0, 0.0};
-	BStyles::Border blindborder = {{{0.0, 0.0, 0.0, 0.0}, 1.0}, 0.0, 2.0, 0.0};
-	BStyles::Border labelBorder = BStyles::Border (BStyles::noLine, 0.0, 4.0);
-	BStyles::Border focusborder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.5), 2.0));
-	BStyles::Fill widgetBg = BStyles::noFill;
-	BStyles::Fill screenBg = BStyles::Fill (BColors::Color (0.0, 0.0, 0.0, 0.75));
-	BStyles::Border screenBorder = BStyles::Border (BStyles::Line (BColors::Color (0.0, 0.0, 0.0, 0.75), 4.0));
-	BStyles::Font defaultFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0,
-						   BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
-   	BStyles::Font leftFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0,
-   						   BStyles::TEXT_ALIGN_LEFT, BStyles::TEXT_VALIGN_MIDDLE);
-	BStyles::Font mdFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0,
-										BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
-	BStyles::Font smFont = BStyles::Font ("Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 8.0,
-											BStyles::TEXT_ALIGN_CENTER, BStyles::TEXT_VALIGN_MIDDLE);
+	BStyles::Border border = {{fgColors[BStyles::STATUS_NORMAL], 1.0}, 0.0, 2.0, 0.0};
 
-	BStyles::StyleSet defaultStyles = {"default", {{"background", STYLEPTR (&BStyles::noFill)},
-							{"border", STYLEPTR (&BStyles::noBorder)}}};
-	BStyles::StyleSet labelStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
-						    {"border", STYLEPTR (&BStyles::noBorder)},
-						    {"textcolors", STYLEPTR (&txColors)},
-						    {"font", STYLEPTR (&defaultFont)}}};
-        BStyles::StyleSet llStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
-                                                 {"border", STYLEPTR (&BStyles::noBorder)},
-                                                 {"textcolors", STYLEPTR (&txColors)},
-                                                 {"font", STYLEPTR (&leftFont)}}};
-        BStyles::StyleSet mlStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
-                                                 {"border", STYLEPTR (&BStyles::noBorder)},
-                                                 {"textcolors", STYLEPTR (&fgColors)},
-                                                 {"font", STYLEPTR (&mdFont)}}};
-        BStyles::StyleSet smStyles = {"labels", {{"background", STYLEPTR (&BStyles::noFill)},
-                                                 {"border", STYLEPTR (&BStyles::noBorder)},
-                                                 {"textcolors", STYLEPTR (&txColors)},
-                                                 {"font", STYLEPTR (&smFont)}}};
-        BStyles::StyleSet focusStyles = {"labels", {{"background", STYLEPTR (&screenBg)},
-                        			    {"border", STYLEPTR (&focusborder)},
-                        			    {"textcolors", STYLEPTR (&txColors)},
-                        			    {"font", STYLEPTR (&defaultFont)}}};
+	BStyles::Fill screenBg = BStyles::Fill (BStyles::Color (0.0, 0.0, 0.0, 0.75));
 
-	BStyles::Theme theme = BStyles::Theme ({
-		defaultStyles,
-		{"B.Choppr", 	{{"background", STYLEPTR (&BStyles::blackFill)},
-						 {"border", STYLEPTR (&BStyles::noBorder)}}},
-		{"main",	 	{{"background", STYLEPTR (&widgetBg)},
-						 {"border", STYLEPTR (&BStyles::noBorder)}}},
-		{"widget",	 	{{"uses", STYLEPTR (&defaultStyles)}}},
-		{"mmonitor", 	{{"background", STYLEPTR (&BStyles::blackFill)},
-						 {"border", STYLEPTR (&BStyles::noBorder)}}},
- 		{"smonitor", 	{{"background", STYLEPTR (&BStyles::blackFill)},
- 						 {"border", STYLEPTR (&border)}}},
-		{"button",	 	{{"background", STYLEPTR (&ink)},
- 						 {"border", STYLEPTR (&BStyles::noBorder)},
-						 {"textcolors", STYLEPTR (&btColors)}}},
- 		{"nbutton", 	{{"background", STYLEPTR (&BStyles::blackFill)},
- 						 {"border", STYLEPTR (&inactborder)}}},
- 		{"abutton", 	{{"background", STYLEPTR (&BStyles::blackFill)},
- 						 {"border", STYLEPTR (&actborder)}}},
-		{"rcontainer", 	{{"background", STYLEPTR (&BStyles::noFill)},
-						 {"border", STYLEPTR (&border)}}},
-		{"scontainer", 	{{"background", STYLEPTR (&BStyles::noFill)},
-						 {"border", STYLEPTR (&BStyles::noBorder)}}},
-		{"menu",		{{"border", STYLEPTR (&border)},
- 						 {"background", STYLEPTR (&BStyles::blackFill)}}},
- 		{"menu/item",	{{"uses", STYLEPTR (&defaultStyles)},
-						 {"border", STYLEPTR (&labelBorder)},
-						 {"textcolors", STYLEPTR (&BColors::whites)},
-						 {"font", STYLEPTR (&leftFont)}}},
- 		{"menu/button",	{{"border", STYLEPTR (&BStyles::noBorder)},
- 						 {"background", STYLEPTR (&BStyles::blackFill)},
- 						 {"bgcolors", STYLEPTR (&fgColors)}}},
- 		{"menu/listbox",{{"border", STYLEPTR (&border)},
- 						 {"background", STYLEPTR (&BStyles::blackFill)}}},
- 		{"menu/listbox/item",	{{"uses", STYLEPTR (&defaultStyles)},
-								 {"border", STYLEPTR (&labelBorder)},
-								 {"textcolors", STYLEPTR (&BColors::whites)},
-								 {"font", STYLEPTR (&leftFont)}}},
- 		{"menu/listbox/button",	{{"border", STYLEPTR (&BStyles::noBorder)},
- 								 {"background", STYLEPTR (&BStyles::blackFill)},
- 								 {"bgcolors", STYLEPTR (&fgColors)}}},
-		{"dial", 	{{"uses", STYLEPTR (&defaultStyles)},
-				 {"fgcolors", STYLEPTR (&fgColors)},
-				 {"bgcolors", STYLEPTR (&bgColors)},
-				 {"textcolors", STYLEPTR (&fgColors)},
-				 {"font", STYLEPTR (&defaultFont)}}},
-		{"redbutton", 	{{"uses", STYLEPTR (&defaultStyles)},
-				 {"fgcolors", STYLEPTR (&rdColors)},
-				 {"bgcolors", STYLEPTR (&bgColors)}}},
-        {"halobutton", 	{{"uses", STYLEPTR (&defaultStyles)},
- 				 {"fgcolors", STYLEPTR (&bgColors)}}},
- 		{"halobutton/focus", {{"uses", STYLEPTR (&focusStyles)}}},
-		{"dial/focus", 	{{"background", STYLEPTR (&screenBg)},
-				 {"border", STYLEPTR (&screenBorder)},
-				 {"textcolors", STYLEPTR (&txColors)},
-				 {"font", STYLEPTR (&defaultFont)}}},
-		{"slider",	{{"uses", STYLEPTR (&defaultStyles)},
-				 {"fgcolors", STYLEPTR (&fgColors)},
-				 {"bgcolors", STYLEPTR (&bgColors)},
-				 {"textcolors", STYLEPTR (&fgColors)},
-				 {"font", STYLEPTR (&defaultFont)}}},
-		{"slider/focus",{{"background", STYLEPTR (&screenBg)},
-				 {"border", STYLEPTR (&screenBorder)},
-				 {"textcolors", STYLEPTR (&txColors)},
-				 {"font", STYLEPTR (&defaultFont)}}},
-		{"switch",	{{"uses", STYLEPTR (&defaultStyles)},
-				 {"fgcolors", STYLEPTR (&fgColors)},
-				 {"bgcolors", STYLEPTR (&bgColors)}}},
-		{"switch/focus",{{"background", STYLEPTR (&screenBg)},
-				 {"border", STYLEPTR (&screenBorder)},
-				 {"textcolors", STYLEPTR (&txColors)},
-				 {"font", STYLEPTR (&defaultFont)}}},
-		{"label",	{{"uses", STYLEPTR (&labelStyles)}}},
-		{"llabel",	{{"uses", STYLEPTR (&llStyles)}}},
-		{"mlabel",	{{"uses", STYLEPTR (&mlStyles)}}},
-		{"smlabel",	{{"uses", STYLEPTR (&smStyles)}}},
-		{"hilabel",	{{"uses", STYLEPTR (&labelStyles)},
-				 {"textcolors", STYLEPTR (&BColors::whites)}}},
-	});
-	*/
+	BStyles::Font defaultFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0, BStyles::Font::TEXT_ALIGN_CENTER, BStyles::Font::TEXT_VALIGN_MIDDLE);
+	BStyles::Font smFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0, BStyles::Font::TEXT_ALIGN_CENTER, BStyles::Font::TEXT_VALIGN_MIDDLE);
+	BStyles::Theme theme =
+	{
+		// rcontainer
+		{
+			URID ("/rcontainer"), 
+			BStyles::Style ({{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}})
+		},
+
+		// smonitor
+		{
+			URID ("/smonitor"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(screenBg)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)},
+				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(monColors)},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::greys)}
+			})
+		},
+
+		// mmonitor
+		{
+			URID ("/mmonitor"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(BStyles::blackFill)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(BStyles::noBorder)},
+				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(monColors)},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::greys)}
+			})
+		},
+
+		// redbutton
+		{
+			URID ("/redbutton"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(bgColors)},
+				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::reds)}
+			})
+		},
+
+		// invbutton
+		{
+			URID ("/invbutton"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})}
+			})
+		},
+
+		// halobutton
+		{
+			URID ("/halobutton"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}
+			})
+		},
+
+		// blendbutton
+		{
+			URID ("/blendbutton"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>({BStyles::invisible})},
+				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
+			})
+		},
+
+		// label
+		{
+			URID ("/label"), 
+			BStyles::Style
+			({	
+				{BURID(BSTYLES_STYLEPROPERTY_FONT_URI), BUtilities::makeAny<BStyles::Font>(defaultFont)},
+				{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
+			})
+		},
+
+		// smlabel
+		{
+			URID ("/smlabel"), 
+			BStyles::Style
+			({	
+				{BURID(BSTYLES_STYLEPROPERTY_FONT_URI), BUtilities::makeAny<BStyles::Font>(smFont)},
+				{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
+			})
+		},
+
+		// dial
+		{
+			URID ("/dial"), 
+			BStyles::Style
+			({	
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::darks)},
+				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(fgColors)},
+				{URID ("/dial/label"), BUtilities::makeAny<BStyles::Style>
+					({
+						{BURID(BSTYLES_STYLEPROPERTY_FONT_URI), BUtilities::makeAny<BStyles::Font>(smFont)},
+						{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
+					})}
+			})
+		},
+
+		// menu
+		{
+			URID ("/menu"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(screenBg)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}
+			})
+		},
+
+		// menu
+		{
+			URID ("/menu/listbox"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(screenBg)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}
+			})
+		}
+
+	};
 };
 
 #endif /* BCHOPPR_GUI_HPP_ */

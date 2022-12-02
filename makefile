@@ -25,7 +25,7 @@ STRIPFLAGS ?=-s
 LDFLAGS ?=-Wl,-Bstatic -Wl,-Bdynamic -Wl,--as-needed
 
 override CFLAGS += -std=c99 -fvisibility=hidden -fPIC
-override CXXFLAGS += -std=c++11 -fvisibility=hidden -fPIC
+override CXXFLAGS += -std=c++11 -fvisibility=hidden -fPIC -DBUTILITIES_DICTIONARY_DATAFILE="\"../../BChoppr_Dictionary.data\""
 override LDFLAGS += -shared -pthread
 
 override GUIPPFLAGS += -DPUGL_HAVE_CAIRO
@@ -33,10 +33,6 @@ DSPCFLAGS += `$(PKG_CONFIG) --cflags $(LV2_LIBS)`
 GUICFLAGS += `$(PKG_CONFIG) --cflags $(GUI_LIBS)`
 DSPLIBS += -lm `$(PKG_CONFIG) --libs $(LV2_LIBS)`
 GUILIBS += -lm `$(PKG_CONFIG) --libs $(GUI_LIBS)`
-
-ifeq ($(shell test -e src/Locale_$(LANGUAGE).hpp && echo -n yes),yes)
-  override GUIPPFLAGS += -DLOCALEFILE=\"Locale_$(LANGUAGE).hpp\"
-endif
 
 ifdef WWW_BROWSER_CMD
   override GUIPPFLAGS += -DWWW_BROWSER_CMD=\"$(WWW_BROWSER_CMD)\"

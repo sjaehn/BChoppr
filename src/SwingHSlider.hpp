@@ -20,7 +20,12 @@
 #ifndef SWINGHSLIDER_HPP_
 #define SWINGHSLIDER_HPP_
 
+#include "BWidgets/BUtilities/to_string.hpp"
 #include "BWidgets/BWidgets/ValueHSlider.hpp"
+#include <cmath>
+#include <cstddef>
+#include <math.h>
+#include <string>
 
 #ifndef DEFAULT_SWINGHSLIDER_WIDTH
 #define DEFAULT_SWINGHSLIDER_WIDTH 80.0
@@ -36,6 +41,10 @@
 class SwingHSlider : public BWidgets::ValueHSlider
 {
 public:
+
+	static std::string ratioToString (const double& x);
+	
+	static double stringToRatio (const std::string& s);
 
 	/**
 	 *  @brief  Constructs a default %SwingHSlider object.
@@ -55,11 +64,11 @@ public:
 	 *  @param min  Lower value limit.
 	 *  @param max  Upper value limit.
 	 *  @param step  Optional, value increment steps.
-	 *  @param urid  Optional, URID (default = URID_UNKNOWN_URID).
+	 *  @param urid  Optional, URID (default = BUTILITIES_URID_UNKNOWN_URID).
 	 *  @param title  Optional, %Widget title (default = "").
 	 */
 	SwingHSlider	(const double value, const double min, const double max, double step = 0.0, 
-					 uint32_t urid = URID_UNKNOWN_URID, std::string title = "");
+					 uint32_t urid = BUTILITIES_URID_UNKNOWN_URID, std::string title = "");
 
 	/**
 	 *  @brief  Creates a %SwingHSlider.
@@ -79,7 +88,7 @@ public:
 	 *  which will be displayed as a label.
 	 *  @param reDisplayFunc  Optional, function to convert the string from
 	 *  the (edited) label to the value.
-	 *  @param urid  Optional, URID (default = URID_UNKNOWN_URID).
+	 *  @param urid  Optional, URID (default = BUTILITIES_URID_UNKNOWN_URID).
 	 *  @param title  Optional, %SwingHSlider title (default = "").
 	 *
 	 *  The optional parameters @a displayFunc and @a reDisplayFunc can be used
@@ -95,7 +104,7 @@ public:
 					 std::function<double (const double& x)> reTransferFunc = ValueTransferable<double>::noTransfer,
 					 std::function<std::string (const double& x)> displayFunc = valueToString,
 					 std::function<double (const std::string& s)> reDisplayFunc = stringToValue,
-					 uint32_t urid = URID_UNKNOWN_URID, std::string title = "");
+					 uint32_t urid = BUTILITIES_URID_UNKNOWN_URID, std::string title = "");
 
 	/**
 	 *  @brief  Creates a clone of the %SwingHSlider. 
@@ -148,7 +157,7 @@ inline SwingHSlider::SwingHSlider () :
 					 ValueTransferable<double>::noTransfer, 
 					 valueToString,
 					 stringToValue,
-					 URID_UNKNOWN_URID, "")
+					 BUTILITIES_URID_UNKNOWN_URID, "")
 {
 
 }
@@ -215,6 +224,9 @@ inline void SwingHSlider::draw (const BUtilities::Area<>& area)
 {
 	if ((!surface_) || (cairo_surface_status (surface_) != CAIRO_STATUS_SUCCESS)) return;
 
+	// Draw super class widget elements first
+	Widget::draw (area);
+
 	// Draw only if minimum requirements satisfied
 	if ((getHeight () >= 1) && (getWidth () >= 1))
 	{
@@ -251,197 +263,27 @@ inline void SwingHSlider::draw (const BUtilities::Area<>& area)
 	}
 }
 
-/*
-	SwingHSlider ();
-	SwingHSlider (const double x, const double y, const double width, const double height, const std::string& name,
-		      const double value, const double min, const double max, const double step, std::string format = "%1.2f",
-	      	      std::function<double (const double val, const double min, const double max)> valfunc = [] (const double val, const double min, const double max)
-		      {return (val >= 1.0 ? 0.5 + 0.5 * (val - 1.0) / (max - 1.0) : 0.5 - 0.5 * (1.0 / val - 1.0) / (1.0 / min - 1.0));},
-	      	      std::function<double (const double frac, const double min, const double max)> fracfunc = [] (const double frac, const double min, const double max)
-		      {
-			      return
-		      		(
-		      			frac >= 0.5 ?
-		      			(2.0 * frac - 1.0) * (max - 1.0) + 1.0 :
-		      			1.0 / ((1.0 - 2.0 * frac) * (1.0 / min - 1.0) + 1.0)
-		      		);
-		      }) :
-	HSliderValue ( x, y, width, height, name, value, min, max, step, format),
-	valueToFraction_ (valfunc),
-	fractionToValue_ (fracfunc)
-	{
-		valueDisplay.setCallbackFunction(BEvents::EventType::MESSAGE_EVENT, displayMessageCallback);
-	}
+inline std::string SwingHSlider::ratioToString (const double& x)
+{
+	if (x == 0) return "0";
 
-	virtual Widget* clone () const override {return new SwingHSlider (*this);}
+	std::string sig = (x < 0 ? "-" : "");
+	const double value = (fabs(x) < 1.0 ? 1 / fabs(x) : fabs(x));
+	const int digitsPre = (value <= 1.0 ? 1 : log10 (value) + 1);
+	const int digitsPost = std::max (4 - digitsPre, 0);
+	
+	if (value == 1) return sig + "1 : 1";
+	if (fabs(x) > 1) return sig + BUtilities::to_string(value, "%1." + std::to_string(digitsPost) + "f") + " : 1";
+	return sig + "1 : " + BUtilities::to_string(value, "%1." + std::to_string(digitsPost) + "f");
+}
 
-	virtual void setValue (const double val) override
-	{
-		{
-			HSlider::setValue (val);
-			std::string valstr =
-			(
-				val < 1.0 ?
-				"1 : " + BUtilities::to_string (1.0 / getValue(), valFormat) :
-				(
-					val == 1.0 ?
-					"1 : 1" :
-					BUtilities::to_string (getValue(), valFormat) + " : 1"
-				)
-			);
-			valueDisplay.setText (valstr);
-			focusLabel.setText (valstr);
-
-		}
-	}
-
-	virtual void onButtonPressed (BEvents::PointerEvent* event) override
-	{
-		if
-		(
-			main_ &&
-			isVisible () &&
-			(getHeight () >= 1) &&
-			(getWidth () >= 1) &&
-			(scaleArea.getWidth () > 0) &&
-			(event->getButton() == BDevices::LEFT_BUTTON)
-		)
-		{
-			double min = getMin ();
-			double max = getMax ();
-
-			// Use pointer coords directly if hardSetable , otherwise apply only
-			// X movement (drag mode)
-			if (hardChangeable)
-			{
-				double frac = (event->getPosition ().x - scaleArea.getX ()) / scaleArea.getWidth ();
-				if (getStep () < 0) frac = 1 - frac;
-				double hardValue = fractionToValue_ (frac, getMin(), getMax());
-				softValue = 0;
-				setValue (hardValue);
-			}
-			else
-			{
-				if (min != max)
-				{
-					double deltaFrac = event->getDelta ().x / scaleArea.getWidth ();
-					if (getStep () < 0) deltaFrac = -deltaFrac;
-					softValue += deltaFrac;
-					double newValue = fractionToValue_ (valueToFraction_ (getValue(), getMin(), getMax()) + softValue, getMin(), getMax());
-					setValue (newValue);
-				}
-			}
-		}
-	}
-
-	virtual void onWheelScrolled (BEvents::WheelEvent* event) override
-	{
-		double min = getMin ();
-		double max = getMax ();
-
-		if (min != max)
-		{
-			double step = (getStep () != 0.0 ? getStep () : 1.0 / scaleArea.getWidth ());
-			double frac = valueToFraction_ (getValue(), getMin(), getMax()) + event->getDelta ().y * step;
-			double newValue = fractionToValue_ (frac, getMin(), getMax());
-			setValue (newValue);
-		}
-	}
-
-	virtual void update () override
-	{
-		HSliderValue::update();
-		std::string valstr =
-		(
-			value < 1.0 ?
-			"1 : " + BUtilities::to_string (1/value, valFormat) :
-			(
-				value == 1.0 ?
-				"1 : 1" :
-				BUtilities::to_string (value, valFormat) + " : 1"
-			)
-		);
-		valueDisplay.setText (valstr);
-		focusLabel.setText (valstr);
-	}
-
-protected:
-	std::function<double (const double val, const double min, const double max)> valueToFraction_;
-	std::function<double (const double frac, const double min, const double max)> fractionToValue_;
-
-	virtual void updateCoords () override
-	{
-		double w = getEffectiveWidth ();
-		double h = getEffectiveHeight () / 2;
-
-		knobRadius = (h < w / 2 ? h / 2 : w / 4);
-		scaleArea = BUtilities::RectArea
-		(
-			getXOffset () + knobRadius,
-			getYOffset () + h + knobRadius / 2,
-			w - 2 * knobRadius,
-			knobRadius
-		);
-
-		scaleXValue = scaleArea.getX() + valueToFraction_ (getValue(), getMin(), getMax()) * scaleArea.getWidth();
-
-		knobPosition = BUtilities::Point (scaleXValue, scaleArea.getY() + scaleArea.getHeight() / 2);
-
-		double dh = knobRadius * 2;
-		double dw = 4.0 * dh;
-		double dy = getYOffset () + h - dh;
-		double dx = LIMIT (scaleXValue - dw / 2, getXOffset (), getXOffset () + getEffectiveWidth () - dw);
-		displayArea = BUtilities::RectArea (dx, dy, dw, dh);
-	}
-
-	static void displayMessageCallback (BEvents::Event* event)
-	{
-		if (event && event->getWidget())
-		{
-			BWidgets::Label* l = (BWidgets::Label*)event->getWidget();
-			SwingHSlider* d = (SwingHSlider*)l->getParent();
-			if (d)
-			{
-				const std::string s = l->getText();
-				const size_t p = s.find (":");
-				if ((p == std::string::npos) || (p >= s.size() - 1))
-				{
-					fprintf (stderr, "Invalid ratio format for %s\n", s.c_str());
-					d->update();
-					return;
-				}
-
-				double v1;
-				try {v1 = BUtilities::stof (s);}
-				catch (std::invalid_argument &ia)
-				{
-					fprintf (stderr, "%s\n", ia.what());
-					d->update();
-					return;
-				}
-
-				double v2;
-				try {v2 = BUtilities::stof (s.substr (p + 2));}
-				catch (std::invalid_argument &ia)
-				{
-					fprintf (stderr, "%s\n", ia.what());
-					d->update();
-					return;
-				}
-
-				if (v2 == 0)
-				{
-					fprintf (stderr, "Division by zero\n");
-					d->update();
-					return;
-				}
-
-				d->setValue (v1 / v2);
-				d->update();
-			}
-		}
-	}
-};
-*/
+inline double SwingHSlider::stringToRatio (const std::string& s)
+{
+	const size_t colonPos = s.find(":");
+	if (colonPos == std::string::npos) return std::stod (s);
+	const std::string pre = s.substr(0, colonPos);
+	const std::string post = s.substr (colonPos + 1, std::string::npos);
+	return std::stod(pre) / std::stod(post);
+}
 
 #endif /* SWINGHSLIDER_HPP_ */

@@ -190,5 +190,12 @@
             {"de_DE", "Gemeinsame Daten"},
             {"it_IT", "Dati condivisi"}
         }
+    },
+
+    {
+        "Level",       
+        {
+            {"de_DE", "Lautstärke"}
+        }
     }
 }

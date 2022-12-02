@@ -23,61 +23,73 @@
 #include "BWidgets/BEvents/Event.hpp"
 #include "BWidgets/BEvents/ExposeEvent.hpp"
 #include "BWidgets/BStyles/Status.hpp"
+#include "BWidgets/BStyles/Types/Color.hpp"
+#include "BWidgets/BStyles/Types/Fill.hpp"
+#include "BWidgets/BUtilities/Dictionary.hpp"
+#include "BWidgets/BUtilities/cairoplus.h"
+#include "BWidgets/BUtilities/to_string.hpp"
+#include "BWidgets/BWidgets/ImageButton.hpp"
+#include "BWidgets/BWidgets/Supports/ValueTransferable.hpp"
+#include "SwingHSlider.hpp"
 #include "screen.h"
 #include "BWidgets/BUtilities/stof.hpp"
 #include "BWidgets/BUtilities/vsystem.hpp"
-
-#define URID(x) (BUtilities::Urid::urid (BCHOPPR_GUI_URI x))
-#define DICT(x) (BUtilities::Dictionary::get(x))
-#define NOTRANSFER (BWidgets::ValueTransferable<double>::noTransfer)
-#define VALUETOSTRING (BWidgets::ValueDial::valueToString)
-#define STRINGTOVALUE (BWidgets::ValueDial::stringToValue)
+#include <cairo/cairo.h>
+#include <cstdio>
+#include <string>
 
 BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *features, PuglNativeView parentWindow) :
 	Window (820, 560, parentWindow, URID (), "B.Choppr", true, PUGL_MODULE, 0),
 	controller (NULL), write_function (NULL),
 
-	mContainer (0, 0, 820, 560, URID ("/mcontainer")),
+	bgImage (0, 0, 820, 560, URID ("/bgimage")),
 	rContainer (260, 80, 540, 350, URID ("/rcontainer")),
 	sContainer (3, 165, 534, 182, URID ("/scontainer")),
-	monitorSwitch (660, 15, 40, 16, true, false, URID ("/slider")),
-	monitorLabel (660, 35, 40, 20, DICT ("Monitor"), URID ("/smlabel")),
-	bypassButton (722, 15, 16, 16, 2, true, false, URID ("/redbutton")),
-	bypassLabel (710, 35, 40, 20, DICT ("Bypass"), URID ("/smlabel")),
-	drywetDial (763, 5, 33, 40, 1.0, 0.0, 1.0, 0.0, NOTRANSFER, NOTRANSFER, VALUETOSTRING, STRINGTOVALUE, URID ("/dial")),
-	drywetLabel (750, 35, 60, 20, DICT ("Dry/wet"), URID ("/smlabel")),
-	helpButton (20, 80, 24, 24, false, false, URID ("/halobutton"), DICT ("Help")),
-	ytButton (50, 80, 24, 24, false, false, URID ("/halobutton"), DICT ("Tutorial")),
-	blendDummy	(0, 0, 0, 0, 1.0, 1.0, 2.0, 1.0),
-	rectButton (40, 240, 60, 40, NULL, true, true, URID ("/abutton")),
-	sinButton (140, 240, 60, 40, NULL, true, false, URID ("/abutton")),
+	monitorSwitch (660, 15, 40, 16, true, false, URID ("/dial"), BDICT ("Monitor")),
+	monitorLabel (660, 35, 40, 20, BDICT ("Monitor"), URID ("/smlabel")),
+	bypassButton (722, 15, 16, 16, 2, true, false, URID ("/redbutton"), BDICT ("Bypass")),
+	bypassLabel (710, 35, 40, 20, BDICT ("Bypass"), URID ("/smlabel")),
+	drywetDial (763, 5, 33, 40, 1.0, 0.0, 1.0, 0.0, BNOTRANSFERD, BNOTRANSFERD, URID ("/dial"), BDICT ("Dry/wet")),
+	drywetLabel (750, 35, 60, 20, BDICT ("Dry/wet"), URID ("/smlabel")),
+	helpButton (20, 80, 24, 24, false, false, URID ("/invbutton"), BDICT ("Help")),
+	ytButton (50, 80, 24, 24, false, false, URID ("/invbutton"), BDICT ("Tutorial")),
+	rectButton (40, 240, 60, 40, NULL, true, true, URID ("/blendbutton")),
+	sinButton (140, 240, 60, 40, NULL, true, false, URID ("/blendbutton")),
 	stepshapeDisplay (30, 290, 180, 140, URID ("/smonitor")),
-	attackControl (40, 445, 50, 60, 0.2, 0.01, 1.0, 0.01, NOTRANSFER, NOTRANSFER, VALUETOSTRING, STRINGTOVALUE, URID ("/dial")),
-	attackLabel (20, 500, 90, 20, DICT ("Attack"), URID ("/label")),
-	releaseControl (150, 445, 50, 60, 0.2, 0.01, 1.0, -0.01, NOTRANSFER, NOTRANSFER, VALUETOSTRING, STRINGTOVALUE, URID ("/dial")),
-	releaseLabel (130, 500, 90, 20, DICT ("Decay"), URID ("/label")),
+	attackControl (40, 440, 50, 60, 0.2, 0.01, 1.0, 0.01, BNOTRANSFERD, BNOTRANSFERD, BDOUBLE_TO_STRING, BSTRING_TO_DOUBLE, URID ("/dial"), BDICT ("Attack")),
+	attackLabel (20, 500, 90, 20, BDICT ("Attack"), URID ("/label")),
+	releaseControl (150, 440, 50, 60, 0.2, 0.01, 1.0, -0.01, BNOTRANSFERD, BNOTRANSFERD, BDOUBLE_TO_STRING, BSTRING_TO_DOUBLE, URID ("/dial"), BDICT ("Decay")),
+	releaseLabel (130, 500, 90, 20, BDICT ("Decay"), URID ("/label")),
 	monitorDisplay (3, 3, 534, 162, URID ("/mmonitor")),
-	sequencesperbarControl (260, 442, 120, 28, 1.0, 1.0, 8.0, 1.0, NOTRANSFER, NOTRANSFER,
-							[] (const double& x) {return BUtilities::to_string (x, "%1.0f");}, STRINGTOVALUE, URID ("/dial")),
-	sequencesperbarLabel (260, 470, 120, 20, DICT ("Sequences per bar"), URID ("/label")),
-	ampSwingControl (420, 442, 110, 28, 1.0, 0.001, 1000.0, 0.0, NOTRANSFER, NOTRANSFER, VALUETOSTRING, STRINGTOVALUE, URID ("/dial")),
-	ampSwingLabel (420, 470, 110, 20, DICT ("Amp swing"), URID ("/label")),
-	swingControl (565, 442, 110, 28, 1.0, 1.0 / 3.0, 3.0, 0.0, NOTRANSFER, NOTRANSFER, VALUETOSTRING, STRINGTOVALUE, URID ("/dial")),
-	swingLabel (565, 470, 110, 20, DICT ("Step swing"), URID ("/label")),
-	markersAutoButton (715, 450, 80, 20, DICT ("Auto"), true, false, URID ("/button")),
-	markersAutoLabel (715, 470, 80, 20, DICT ("Marker"), URID ("/label")),
-	nrStepsControl (260, 502, 540, 28, 1.0, 1.0, MAXSTEPS, 1.0, NOTRANSFER, NOTRANSFER,
-					[] (const double& x) {return BUtilities::to_string (x, "%1.0f");}, STRINGTOVALUE, URID ("/dial")),
-	nrStepsLabel (260, 530, 540, 20, DICT ("Number of steps"), URID ("/label")),
-	stepshapeLabel (33, 293, 120, 20, DICT ("Step shape"), URID ("/llabel")),
-	sequencemonitorLabel (263, 83, 120, 20, DICT ("Sequence monitor"), URID ("/llabel")),
+	sequencesperbarControl (260, 442, 120, 28, 1.0, 1.0, 8.0, 1.0, BNOTRANSFERD, BNOTRANSFERD,
+							[] (const double& x) {return BUtilities::to_string (x, "%1.0f");}, 
+							BSTRING_TO_DOUBLE, URID ("/dial"), BDICT ("Sequences per bar")),
+	sequencesperbarLabel (260, 470, 120, 20, BDICT ("Sequences per bar"), URID ("/label")),
+	ampSwingControl (420, 442, 110, 28, 1.0, 0.001, 1000.0, 0.0, 
+					 [] (const double& x) {return log(x);}, 
+					 [] (const double& x) {return exp(x);}, 
+					 SwingHSlider::ratioToString, SwingHSlider::stringToRatio, URID ("/dial"), BDICT ("Amp swing")),
+	ampSwingLabel (420, 470, 110, 20, BDICT ("Amp swing"), URID ("/label")),
+	swingControl (565, 442, 110, 28, 1.0, 1.0 / 3.0, 3.0, 0.0, 
+				  [] (const double& x) {return (x >= 1.0 ? 0.5 * (x - 1.0) : 0.5 * (1.0 - 1.0 / x));}, 
+				  [] (const double& x) {return (x >= 0 ? 1.0 + 2.0 * x : -1.0 / (2.0 * x - 1.0));},
+				  SwingHSlider::ratioToString, SwingHSlider::stringToRatio, URID ("/dial"), BDICT ("Step swing")),
+	swingLabel (565, 470, 110, 20, BDICT ("Step swing"), URID ("/label")),
+	markersAutoButton (715, 450, 80, 20, BDICT ("Auto"), false, false, URID ("/button"), BDICT ("Marker")),
+	markersAutoLabel (715, 470, 80, 20, BDICT ("Marker"), URID ("/label")),
+	nrStepsControl (260, 502, 540, 28, 1.0, 1.0, MAXSTEPS, 1.0, BNOTRANSFERD, BNOTRANSFERD,
+					[] (const double& x) {return BUtilities::to_string (x, "%1.0f");}, BSTRING_TO_DOUBLE, 
+					URID ("/dial"), BDICT ("Number of steps")),
+	nrStepsLabel (260, 530, 540, 20, BDICT ("Number of steps"), URID ("/label")),
+	stepshapeLabel (33, 293, 120, 20, BDICT ("Step shape"), URID ("/llabel")),
+	sequencemonitorLabel (263, 83, 120, 20, BDICT ("Sequence monitor"), URID ("/llabel")),
 	messageLabel (420, 83, 280, 20, "", URID ("/label")),
-	markerListBox (12, -68, 66, 86, {DICT ("Auto"), DICT ("Manual"), DICT ("Enter")}, 0, URID ("/menu")),
+	markerListBox (12, -68, 66, 86, {BDICT ("Auto"), BDICT ("Manual"), BDICT ("Enter")}, 0, URID ("/menu")),
 	enterFrame (66, 52, 320, 70, URID ("/menu")),
-	enterPositionComboBox (10, 10, 120, 20, 0, 20, 120, 64, {DICT ("New position:"), DICT ("New length:")}, 1, URID ("/menu")),
+	enterPositionComboBox (10, 10, 120, 20, 0, 20, 120, 64, {BDICT ("New position:"), BDICT ("New length:")}, 1, URID ("/menu")),
 	enterEdit (140, 10, 60, 20, "0.000", URID ("/lflabel")),
-	enterSequencesComboBox (210, 10, 100, 20, 0, 20, 100, 64, {DICT ("sequence(s)"), DICT ("step(s)")}, 1, URID ("/menu")),
-	enterOkButton (120, 40, 80, 20, DICT ("Apply"), false, false, URID ("/button")),
+	enterSequencesComboBox (210, 10, 100, 20, 0, 20, 100, 64, {BDICT ("sequence(s)"), BDICT ("step(s)")}, 1, URID ("/menu")),
+	enterOkButton (120, 40, 80, 20, BDICT ("Apply"), false, false, URID ("/button")),
 	sharedDataDummy (28, 528, 194, 24, 0.0, 0.0, 4.0, 1.0),
 
 	surface (NULL), cr1 (NULL), cr2 (NULL), cr3 (NULL), cr4 (NULL), pat1 (NULL), pat2 (NULL), pat3 (NULL), pat4 (NULL), pat5 (NULL),
@@ -86,18 +98,19 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	map (NULL)
 
 {
-	if (!init_mainMonitor () || !init_Stepshape ())
+	if (!init_Stepshape ())
 	{
 		std::cerr << "BChoppr.lv2#GUI: Failed to init monitor." <<  std::endl;
-		destroy_mainMonitor ();
 		destroy_Stepshape ();
 		throw std::bad_alloc ();
 	}
 
 	// Initialize and configure images
-	monitorDisplay.createImage (BStyles::STATUS_NORMAL);
+	sContainer.createImage (BStyles::STATUS_NORMAL);
 	rectButton.image.createImage (BStyles::STATUS_NORMAL);
+	rectButton.image.createImage (BStyles::STATUS_ACTIVE);
 	sinButton.image.createImage (BStyles::STATUS_NORMAL);
+	sinButton.image.createImage (BStyles::STATUS_ACTIVE);
 	stepshapeDisplay.createImage (BStyles::STATUS_NORMAL);
 
 	//Initialialize and configure step controllers
@@ -105,23 +118,23 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	double sx = sContainer.getXOffset();
 	for (int i = 0; i < MAXSTEPS; ++i)
 	{
-		stepLevelControl[i] = new BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 75, 1.0, 0.0, 1.0, 0.01, NOTRANSFER, NOTRANSFER, URID ("/dial"));
+		stepLevelControl[i] = new BWidgets::VSlider ((i + 0.5) * sw / MAXSTEPS + sx - 7, 60, 14, 75, 1.0, 0.0, 1.0, 0.01, 
+													 BNOTRANSFERD, BNOTRANSFERD, URID ("/dial"), BDICT("Level") + " " + std::to_string(i + 1));
 		stepLevelControl[i]->setClickable (false);
 		stepLevelControl[i]->setScrollable (true);
 		sContainer.add (stepLevelControl[i]);
 
-		stepLevelControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "1.00", URID ("/dial"));
-		stepLevelControlLabel[i]->setStatus (BStyles::Status::STATUS_ACTIVE);
+		stepLevelControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "1.00", URID ("/smlabel"));
 		stepLevelControlLabel[i]->setCallbackFunction(BEvents::Event::MESSAGE_EVENT, stepControlLabelMessageCallback);
 		sContainer.add (stepLevelControlLabel[i]);
 
-		stepPanControl[i] = new BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 15, 135, 30, 30, 0.0, -1.0, 1.0, 0.01, NOTRANSFER, NOTRANSFER, URID ("/dial"));
+		stepPanControl[i] = new BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 15, 135, 30, 30, 0.0, -1.0, 1.0, 0.01, 
+												BNOTRANSFERD, BNOTRANSFERD, URID ("/dial"), BDICT("Panning") + " " + std::to_string(i + 1));
 		stepPanControl[i]->setClickable (false);
 		stepPanControl[i]->setScrollable (true);
 		sContainer.add (stepPanControl[i]);
 
-		stepPanControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 165, 20, "1.00", URID ("/dial"));
-		stepPanControlLabel[i]->setStatus (BStyles::Status::STATUS_ACTIVE);
+		stepPanControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 165, 20, "1.00", URID ("/smlabel"));
 		stepPanControlLabel[i]->setCallbackFunction(BEvents::Event::MESSAGE_EVENT, stepControlLabelMessageCallback);
 		sContainer.add (stepPanControlLabel[i]);
 
@@ -131,7 +144,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	//Initialialize and configure markers
 	for (int i = 0; i < MAXSTEPS - 1; ++i)
 	{
-		markerWidgets[i] = new Marker ((i + 1) * sw / MAXSTEPS + sx - 5, 10, 10, 16, (double(i) + 1.0) / MAXSTEPS, 0.0, 1.0, 0.0);
+		markerWidgets[i] = new Marker ((i + 1) * sw / MAXSTEPS + sx - 5, 10, 10, 16, (double(i) + 1.0) / MAXSTEPS, 0.0, 1.0, 0.0,
+									   BNOTRANSFERD, BNOTRANSFERD, URID ("/marker"), BDICT ("Marker") + " " + std::to_string(i + 1));
 		markerWidgets[i]->setHasValue (false);
 		markerWidgets[i]->setCallbackFunction (BEvents::Event::BUTTON_PRESS_EVENT, BChoppr_GUI::markerClickedCallback);
 		markerWidgets[i]->setCallbackFunction (BEvents::Event::POINTER_DRAG_EVENT, BChoppr_GUI::markerDraggedCallback);
@@ -141,14 +155,14 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	// Inititaize shared data buttons
 	for (int i = 0; i < 4; ++i) 
 	{
-		sharedDataButtons[i] = new BWidgets::Button (50 * i, 0, 44, 24, true, false, URID ("/button"), DICT ("Shared data") + " " + std::to_string (i + 1));
-		sharedDataDummy.add (sharedDataButtons[i]);
+		sharedDataButtons[i] = new BWidgets::Button (28 + 50 * i, 528, 44, 24, true, false, 
+													 URID ("/halobutton"), BDICT ("Shared data") + " " + std::to_string (i + 1));
 	}
 
 	// Link controllers
 	controllers[Bypass - Controllers] = &bypassButton;
 	controllers[DryWet - Controllers] = &drywetDial;
-	controllers[Blend - Controllers] = &blendDummy;
+	controllers[Blend - Controllers] = &rectButton;
 	controllers[Attack - Controllers] = &attackControl;
 	controllers[Release - Controllers] = &releaseControl;
 	controllers[SequencesPerBar - Controllers] = &sequencesperbarControl;
@@ -162,22 +176,20 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	// Set callbacks
 	for (int i = 0; i < NrControllers; ++i) controllers[i]->setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 	monitorSwitch.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
-	monitorDisplay.setCallbackFunction (BEvents::Event::WHEEL_SCROLL_EVENT, BChoppr_GUI::monitorScrolledCallback);
-	monitorDisplay.setCallbackFunction (BEvents::Event::POINTER_DRAG_EVENT, BChoppr_GUI::monitorDraggedCallback);
 	markerListBox.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::listBoxChangedCallback);
 	enterPositionComboBox.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::enterListBoxChangedCallback);
 	enterSequencesComboBox.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::enterListBoxChangedCallback);
 	enterOkButton.setCallbackFunction(BEvents::Event::BUTTON_CLICK_EVENT, enterOkClickedCallback);
 	markersAutoButton.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::markersAutoClickedCallback);
-	rectButton.setCallbackFunction (BEvents::Event::BUTTON_PRESS_EVENT, BChoppr_GUI::buttonClickedCallback);
-	sinButton.setCallbackFunction (BEvents::Event::BUTTON_PRESS_EVENT, BChoppr_GUI::buttonClickedCallback);
+	rectButton.setCallbackFunction (BEvents::Event::BUTTON_CLICK_EVENT, BChoppr_GUI::buttonClickedCallback);
+	sinButton.setCallbackFunction (BEvents::Event::BUTTON_CLICK_EVENT, BChoppr_GUI::buttonClickedCallback);
 	helpButton.setCallbackFunction(BEvents::Event::BUTTON_PRESS_EVENT, helpButtonClickedCallback);
 	ytButton.setCallbackFunction(BEvents::Event::BUTTON_PRESS_EVENT, ytButtonClickedCallback);
-	for (BWidgets::Button* s: sharedDataButtons) s->setCallbackFunction (BEvents::Event::BUTTON_PRESS_EVENT, BChoppr_GUI::sharedDataClickedCallback);
+	for (BWidgets::Button* s: sharedDataButtons) s->setCallbackFunction (BEvents::Event::BUTTON_CLICK_EVENT, BChoppr_GUI::sharedDataClickedCallback);
 	sharedDataDummy.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
 
 	// Configure widgets
-	mContainer.loadImage(BStyles::STATUS_NORMAL,pluginPath + BG_FILE);
+	bgImage.loadImage(BStyles::STATUS_NORMAL,pluginPath + BG_FILE);
 	drywetDial.setScrollable (true);
 	drywetDial.setClickable (false);
 	attackControl.setScrollable (true);
@@ -193,14 +205,11 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	markerListBox.setStacking (STACKING_ESCAPE);
 	enterFrame.setStacking (STACKING_ESCAPE);
 	enterFrame.hide();
-	blendDummy.hide();
 	sharedDataDummy.hide();
+	setTheme (theme);
 
 	setAutoMarkers ();
 	rearrange_controllers ();
-	redrawMainMonitor ();
-	redrawSContainer ();
-	redrawButtons ();
 
 	// Pack widgets
 	enterFrame.add (&enterPositionComboBox);
@@ -210,38 +219,41 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	markerListBox.add (&enterFrame);
 	rContainer.add (&monitorDisplay);
 	rContainer.add (&sContainer);
-	mContainer.add (&blendDummy);
-	mContainer.add (&monitorSwitch);
-	mContainer.add (&monitorLabel);
-	mContainer.add (&bypassButton);
-	mContainer.add (&bypassLabel);
-	mContainer.add (&drywetDial);
-	mContainer.add (&drywetLabel);
-	mContainer.add (&helpButton);
-	mContainer.add (&ytButton);
-	mContainer.add (&rectButton);
-	mContainer.add (&sinButton);
-	mContainer.add (&stepshapeDisplay);
-	mContainer.add (&attackControl);
-	mContainer.add (&attackLabel);
-	mContainer.add (&releaseControl);
-	mContainer.add (&releaseLabel);
-	mContainer.add (&sequencesperbarControl);
-	mContainer.add (&sequencesperbarLabel);
-	mContainer.add (&ampSwingControl);
-	mContainer.add (&ampSwingLabel);
-	mContainer.add (&swingControl);
-	mContainer.add (&swingLabel);
-	mContainer.add (&markersAutoButton);
-	mContainer.add (&markersAutoLabel);
-	mContainer.add (&nrStepsControl);
-	mContainer.add (&nrStepsLabel);
-	mContainer.add (&stepshapeLabel);
-	mContainer.add (&sequencemonitorLabel);
-	mContainer.add (&messageLabel);
-	mContainer.add (&sharedDataDummy);
-	mContainer.add (&rContainer);
-	add (&mContainer);
+	add (&bgImage);
+	add (&monitorSwitch);
+	add (&monitorLabel);
+	add (&bypassButton);
+	add (&bypassLabel);
+	add (&drywetDial);
+	add (&drywetLabel);
+	add (&helpButton);
+	add (&ytButton);
+	add (&rectButton);
+	add (&sinButton);
+	add (&stepshapeDisplay);
+	add (&attackControl);
+	add (&attackLabel);
+	add (&releaseControl);
+	add (&releaseLabel);
+	add (&sequencesperbarControl);
+	add (&sequencesperbarLabel);
+	add (&ampSwingControl);
+	add (&ampSwingLabel);
+	add (&swingControl);
+	add (&swingLabel);
+	add (&markersAutoButton);
+	add (&markersAutoLabel);
+	add (&nrStepsControl);
+	add (&nrStepsLabel);
+	add (&stepshapeLabel);
+	add (&sharedDataDummy);
+	for (BWidgets::Button* b : sharedDataButtons) add (b);
+	add (&rContainer);
+	add (&sequencemonitorLabel);
+	add (&messageLabel);
+
+	redrawSContainer ();
+	redrawButtons ();
 
 	//Scan host features for URID map
 	LV2_URID_Map* m = NULL;
@@ -262,7 +274,6 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 BChoppr_GUI::~BChoppr_GUI()
 {
 	send_record_off ();
-	destroy_mainMonitor ();
 	destroy_Stepshape ();
 
 	for (BWidgets::VSlider* v : stepLevelControl) if (v) delete v;
@@ -307,7 +318,7 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 						for (int i = 0; i < 4; ++i)
 						{
 							sharedDataButtons[i]->setValueable (false);
-							sharedDataButtons[i]->setValue (i == nr - 1 ? 1 : 0);
+							sharedDataButtons[i]->setValue (i == nr - 1);
 							sharedDataButtons[i]->setValueable (true);
 						}
 
@@ -339,7 +350,6 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 						setAutoMarkers ();
 						rearrange_controllers ();
 						redrawSContainer ();
-						redrawMainMonitor ();
 					}
 
 					else setController (nr, val);
@@ -347,7 +357,7 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 			}
 
 			// Monitor notification
-			else if (obj->body.otype == uris.notify_event)
+			else if ((obj->body.otype == uris.notify_event) && monitorSwitch.getValue ())
 			{
 				const LV2_Atom* data = NULL;
 				lv2_atom_object_get(obj, uris.notify_key, &data, 0);
@@ -360,8 +370,9 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 						BChopprNotifications* notifications = (BChopprNotifications*) (&vec->body + 1);
 						if (notificationsCount > 0)
 						{
-							add_monitor_data (notifications, notificationsCount, mainMonitor.horizonPos);
-							redrawMainMonitor ();
+							std::vector<BChopprNotifications> ndata;
+							for (uint32_t i = 0; i < notificationsCount; ++i) ndata.push_back(notifications[i]);
+							monitorDisplay.pushData (ndata);
 						}
 					}
 				}
@@ -376,7 +387,9 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 				if (data && (data->type == uris.atom_Int))
 				{
 					const int messageNr = ((LV2_Atom_Int*)data)->body;
-					std::string msg = ((messageNr >= NO_MSG) && (messageNr <= MAX_MSG) ? messageStrings[messageNr] : "");
+					std::string msg = ((messageNr >= NO_MSG) && (messageNr <= MAX_MSG) ? 
+									   (messageStrings[messageNr] != "" ? "*** " + BDICT(messageStrings[messageNr]) + " ***" : "") : 
+									   "");
 					messageLabel.setText (msg);
 				}
 			}
@@ -394,7 +407,6 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 			setAutoMarkers ();
 			rearrange_controllers ();
 			redrawSContainer ();
-			redrawMainMonitor();
 		}
 
 		else setController (nr, val);
@@ -489,11 +501,7 @@ float BChoppr_GUI::setController (const int nr, const double value)
 	// Switch on Valueable again
 	v->setValueable (true);
 
-	if (ctrl == Blend)
-	{
-		redrawButtons ();
-		redrawStepshape ();
-	}
+	if (ctrl == Blend) redrawStepshape ();
 
 	else if ((ctrl == Attack) || (ctrl == Release)) redrawStepshape ();
 
@@ -504,7 +512,6 @@ float BChoppr_GUI::setController (const int nr, const double value)
 		setAutoMarkers();
 		rearrange_controllers();
 		redrawSContainer();
-		redrawMainMonitor();
 	}
 
 	else if (ctrl == NrSteps)
@@ -512,7 +519,6 @@ float BChoppr_GUI::setController (const int nr, const double value)
 		setAutoMarkers();
 		rearrange_controllers();
 		redrawSContainer();
-		redrawMainMonitor();
 	}
 
 	else if ((ctrl >= StepPositions) and (ctrl < StepPositions + MAXSTEPS - 1))
@@ -546,7 +552,7 @@ void BChoppr_GUI::setMarker (const int markerNr, double value)
 	else
 	{
 		// Set value and switch off automatic
-		value = (std::max (value, MINMARKERVALUE), 1.0);
+		value = std::min (std::max (value, MINMARKERVALUE), 1.0);
 		markerWidgets[markerNr]->setHasValue (true);
 		markerWidgets[markerNr]->setValue (value);
 
@@ -570,6 +576,11 @@ void BChoppr_GUI::setMarker (const int markerNr, double value)
 			}
 		}
 	}
+
+	std::vector<double> steps;
+	const int nrMarkers = nrStepsControl.getValue() - 1;
+	for (int i = 0; i < nrMarkers; ++i) steps.push_back(markerWidgets[i]->getValue());
+	monitorDisplay.setSteps(steps);
 }
 
 void BChoppr_GUI::setAutoMarkers ()
@@ -588,6 +599,7 @@ void BChoppr_GUI::setAutoMarkers ()
 				double diff = suc - anc;
 				double dist = i - start + 1.0 + (int (i - start) & 1 ? ((start & 1) ? 2.0 - swing : swing) : 1.0);
 				double step = (diff < 0 ? 0 : diff / dist);
+				
 				for (int j = start; j <= i; ++j)
 				{
 					double f = ((j & 1) ? 2.0 - swing : swing);
@@ -598,6 +610,10 @@ void BChoppr_GUI::setAutoMarkers ()
 		}
 		else start = i + 1;
 	}
+
+	std::vector<double> steps;
+	for (int i = 0; i < nrMarkers; ++i) steps.push_back(markerWidgets[i]->getValue());
+	monitorDisplay.setSteps(steps);
 }
 
 void BChoppr_GUI::rearrange_controllers ()
@@ -722,7 +738,7 @@ void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 					BWidgets::ValueableTyped<double>* vd = dynamic_cast<BWidgets::ValueableTyped<double>*>(widget);
 					float value = 0.0f;
 					if ((controllerNr == Bypass - Controllers) && vb) value = vb->getValue();
-					else if ((controllerNr == Blend - Controllers) && vb) value = (vb->getValue() ? 2.0f : 1.0f);
+					else if ((controllerNr == Blend - Controllers) && vb) value = (vb->getValue() ? 1.0 : 2.0);
 					else if (vd) value = vd->getValue();
 					else return;
 					value = ui->setController (controllerNr, value);
@@ -738,7 +754,7 @@ void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 					for (int i = 0; i < 4; ++i)
 					{
 						ui->sharedDataButtons[i]->setValueable (false);
-						ui->sharedDataButtons[i]->setValue (i == val ? 1 : 0);
+						ui->sharedDataButtons[i]->setValue (i == val);
 						ui->sharedDataButtons[i]->setValueable (true);
 					}
 
@@ -748,17 +764,8 @@ void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 				// monitor on/off changed
 				else if (widget == &ui->monitorSwitch)
 				{
-					int value = INT (ui->monitorSwitch.getValue ());
-					if (value == 1)
-					{
-						ui->mainMonitor.record_on = true;
-						ui->send_record_on ();
-					}
-					else
-					{
-						ui->mainMonitor.record_on = false;
-						ui->send_record_off ();
-					}
+					if (ui->monitorSwitch.getValue ()) ui->send_record_on ();
+					else ui->send_record_off ();
 					return;
 				}
 			}
@@ -834,7 +841,7 @@ void BChoppr_GUI::markerDraggedCallback (BEvents::Event* event)
 		{
 			double x0 = ui->sContainer.getXOffset();
 			double w = ui->sContainer. getEffectiveWidth();
-			double frac = (w > 0 ? (pev->getPosition().x + marker->getPosition().x - x0) / w : MINMARKERVALUE);
+			double frac = (w > 0 ? (5 + pev->getDelta().x + marker->getPosition().x - x0) / w : MINMARKERVALUE);
 			frac = std::min (std::max (frac, MINMARKERVALUE), 1.0);
 
 			// Limit to antecessors value
@@ -861,38 +868,9 @@ void BChoppr_GUI::markerDraggedCallback (BEvents::Event* event)
 			ui->setAutoMarkers();
 			ui->rearrange_controllers();
 			ui->redrawSContainer();
-			ui->redrawMainMonitor();
 			break;
 		}
 	}
-}
-
-void BChoppr_GUI::monitorScrolledCallback (BEvents::Event* event)
-{
-	if (!event) return;
-	BEvents::WheelEvent* wev = (BEvents::WheelEvent*) event;
-	BWidgets::Widget* widget = event->getWidget();
-	if (!widget) return;
-	BChoppr_GUI* ui = (BChoppr_GUI*)widget->getMainWindow();
-	if (!ui) return;
-
-	ui->scale += 0.1 * wev->getDelta().y * ui->scale;
-	if (ui->scale < 0.0001f) ui->scale = 0.0001f;
-	ui->redrawMainMonitor ();
-}
-
-void BChoppr_GUI::monitorDraggedCallback (BEvents::Event* event)
-{
-	if (!event) return;
-	BEvents::PointerEvent* wev = (BEvents::PointerEvent*) event;
-	BWidgets::Widget* widget = event->getWidget();
-	if (!widget) return;
-	BChoppr_GUI* ui = (BChoppr_GUI*)widget->getMainWindow();
-	if (!ui) return;
-
-	ui->scale += 0.01 * wev->getDelta().y * ui->scale;
-	if (ui->scale < 0.0001f) ui->scale = 0.0001f;
-	ui->redrawMainMonitor ();
 }
 
 void BChoppr_GUI::listBoxChangedCallback (BEvents::Event* event)
@@ -938,14 +916,12 @@ void BChoppr_GUI::listBoxChangedCallback (BEvents::Event* event)
 
 		default:	return;
 	}
-
-	ui->redrawMainMonitor();
 }
 
 void BChoppr_GUI::markersAutoClickedCallback (BEvents::Event* event)
 {
 	if (!event) return;
-	BEvents::ValueChangeTypedEvent<size_t>* vev = dynamic_cast<BEvents::ValueChangeTypedEvent<size_t>*>(event);
+	BEvents::ValueChangeTypedEvent<bool>* vev = dynamic_cast<BEvents::ValueChangeTypedEvent<bool>*>(event);
 	if (!vev) return;
 	if (vev->getValue() == 0.0) return;
 	BWidgets::TextButton* tb = (BWidgets::TextButton*) vev->getWidget();
@@ -958,7 +934,6 @@ void BChoppr_GUI::markersAutoClickedCallback (BEvents::Event* event)
 	ui->setAutoMarkers();
 	ui->rearrange_controllers();
 	ui->redrawSContainer();
-	ui->redrawMainMonitor();
 }
 
 // TODO
@@ -970,8 +945,17 @@ void BChoppr_GUI::buttonClickedCallback (BEvents::Event* event)
 	BChoppr_GUI* ui = (BChoppr_GUI*) w->getMainWindow();
 	if (!ui) return;
 
-	if (w == &ui->rectButton) ui->sinButton.setValue (false);
-	else if (w == &ui->sinButton) ui->sinButton.setValue (true);
+	if (w == &ui->rectButton) 
+	{
+		ui->rectButton.setValue (true);
+		ui->sinButton.setValue (false);
+	}
+
+	else if (w == &ui->sinButton) 
+	{
+		ui->rectButton.setValue (false);
+		ui->sinButton.setValue (true);
+	}
 }
 
 // TODO
@@ -983,13 +967,17 @@ void BChoppr_GUI::sharedDataClickedCallback (BEvents::Event* event)
 	BChoppr_GUI* ui = (BChoppr_GUI*) widget->getMainWindow();
 	if (!ui) return;
 
+	double value = 0.0;
 	if (widget->getValue())
 	{
 		for (size_t i = 0; i < ui->sharedDataButtons.size(); ++i)
 		{
 			if (widget != ui->sharedDataButtons[i]) ui->sharedDataButtons[i]->setValue (false);
+			else (value = i + 1);
 		}
 	}
+
+	ui->sharedDataDummy.setValue(value);
 }
 
 void BChoppr_GUI::helpButtonClickedCallback (BEvents::Event* event)
@@ -1138,7 +1126,6 @@ void BChoppr_GUI::enterOkClickedCallback (BEvents::Event* event)
 			ui->setAutoMarkers();
 			ui->rearrange_controllers();
 			ui->redrawSContainer();
-			ui->redrawMainMonitor();
 			break;
 		}
 	}
@@ -1160,17 +1147,18 @@ void BChoppr_GUI::destroy_Stepshape ()
 
 void BChoppr_GUI::redrawStepshape ()
 {
-	/*double width = stepshapeDisplay.getEffectiveWidth ();
-	double height = stepshapeDisplay.getEffectiveHeight ();
-
-	cairo_t* cr = cairo_create (stepshapeDisplay.getDrawingSurface ());
+	cairo_surface_t* surface = stepshapeDisplay.getImageSurface (BStyles::STATUS_NORMAL);
+	cairo_t* cr = cairo_create (stepshapeDisplay.getImageSurface (BStyles::STATUS_NORMAL));
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
+	const double width = cairo_image_surface_get_width (surface);
+	const double height = cairo_image_surface_get_height(surface);
+	const BStyles::Color fgColor = stepshapeDisplay.getFgColors()[BStyles::STATUS_NORMAL];
 
 	// Draw background
-	cairo_set_source_rgba (cr, CAIRO_BG_COLOR);
+	cairo_set_source_rgba (cr, CAIRO_RGBA(BStyles::black));
 	cairo_rectangle (cr, 0.0, 0.0, width, height);
 	cairo_fill (cr);
-	cairo_set_source_rgba (cr, CAIRO_RGBA (BColors::grey));
+	cairo_set_source_rgba (cr, CAIRO_RGBA (BStyles::grey));
 	cairo_set_line_width (cr, 1);
 	cairo_move_to (cr, 0, 0.2 * height);
 	cairo_line_to (cr, width, 0.2 * height);
@@ -1187,7 +1175,7 @@ void BChoppr_GUI::redrawStepshape ()
 	cairo_stroke (cr);
 
 	// Draw step shape
-	cairo_set_source_rgba (cr, CAIRO_INK1, 1.0);
+	cairo_set_source_rgba (cr, CAIRO_RGBA(fgColor));
 	cairo_set_line_width (cr, 3);
 
 	cairo_move_to (cr, 0, 0.9 * height);
@@ -1196,7 +1184,7 @@ void BChoppr_GUI::redrawStepshape ()
 	const float attack = attackControl.getValue();
 	const float release = releaseControl.getValue();
 
-	if (blendControl.getValue() == 1)
+	if (rectButton.getValue())
 	{
 		if ((attack + release) > 1)
 		{
@@ -1212,7 +1200,7 @@ void BChoppr_GUI::redrawStepshape ()
 		}
 	}
 
-	else if (blendControl.getValue() == 2)
+	else if (sinButton.getValue())
 	{
 		for (double i = 0.0; i <= 1.0; i += 0.025)
 		{
@@ -1228,8 +1216,8 @@ void BChoppr_GUI::redrawStepshape ()
 
 	cairo_stroke_preserve (cr);
 
-	cairo_pattern_add_color_stop_rgba (pat5, 0.1, CAIRO_INK1, 1);
-	cairo_pattern_add_color_stop_rgba (pat5, 0.9, CAIRO_INK1, 0);
+	cairo_pattern_add_color_stop_rgba (pat5, 0.1, CAIRO_RGB(fgColor), 1);
+	cairo_pattern_add_color_stop_rgba (pat5, 0.9, CAIRO_RGB(fgColor), 0);
 	cairo_set_source (cr, pat5);
 	cairo_line_to(cr, 0, 0.9 * height);
 	cairo_set_line_width (cr, 0);
@@ -1238,227 +1226,20 @@ void BChoppr_GUI::redrawStepshape ()
 	cairo_destroy (cr);
 
 	stepshapeDisplay.update ();
-	*/
-}
-
-bool BChoppr_GUI::init_mainMonitor ()
-{
-	//Initialize mainMonitor
-	mainMonitor.record_on = true;
-	mainMonitor.width = 0;
-	mainMonitor.height = 0;
-	mainMonitor.data.fill (defaultNotification);
-	mainMonitor.horizonPos = 0;
-
-	//Initialize mainMonitors cairo data
-	double width = monitorDisplay.getEffectiveWidth ();
-	double height = monitorDisplay.getEffectiveHeight ();
-	surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
-	cr1 = cairo_create (surface);
-	cr2 = cairo_create (surface);
-	cr3 = cairo_create (surface);
-	cr4 = cairo_create (surface);
-	pat1 = cairo_pattern_create_linear (0, height, 0, 0);
-	cairo_pattern_add_color_stop_rgba (pat1, 0.1, CAIRO_INK1, 1);
-	cairo_pattern_add_color_stop_rgba (pat1, 0.6, CAIRO_INK1, 0);
-	pat2 = cairo_pattern_create_linear (0, height, 0, 0);
-	cairo_pattern_add_color_stop_rgba (pat2, 0.1, CAIRO_INK2, 1);
-	cairo_pattern_add_color_stop_rgba (pat2, 0.6, CAIRO_INK2, 0);
-	pat3 = cairo_pattern_create_linear (0, 0, 0, height);
-	cairo_pattern_add_color_stop_rgba (pat3, 0.1, CAIRO_INK1, 1);
-	cairo_pattern_add_color_stop_rgba (pat3, 0.6, CAIRO_INK1, 0);
-	pat4 = cairo_pattern_create_linear (0, 0, 0, height);
-	cairo_pattern_add_color_stop_rgba (pat4, 0.1, CAIRO_INK2, 1);
-	cairo_pattern_add_color_stop_rgba (pat4, 0.6, CAIRO_INK2, 0);
-
-	return (pat4 && (cairo_pattern_status (pat4) == CAIRO_STATUS_SUCCESS) &&
-			pat3 && (cairo_pattern_status (pat3) == CAIRO_STATUS_SUCCESS) &&
-			pat2 && (cairo_pattern_status (pat2) == CAIRO_STATUS_SUCCESS) &&
-			pat1 && (cairo_pattern_status (pat1) == CAIRO_STATUS_SUCCESS) &&
-			cr4 && (cairo_status (cr4) == CAIRO_STATUS_SUCCESS) &&
-			cr3 && (cairo_status (cr3) == CAIRO_STATUS_SUCCESS)&&
-			cr2 && (cairo_status (cr2) == CAIRO_STATUS_SUCCESS) &&
-			cr1 && (cairo_status (cr1) == CAIRO_STATUS_SUCCESS) &&
-			surface && (cairo_surface_status (surface) == CAIRO_STATUS_SUCCESS));
-}
-
-void BChoppr_GUI::destroy_mainMonitor ()
-{
-	//Destroy also mainMonitors cairo data
-	if (pat4 && (cairo_pattern_status (pat4) == CAIRO_STATUS_SUCCESS)) cairo_pattern_destroy (pat4);
-	if (pat3 && (cairo_pattern_status (pat3) == CAIRO_STATUS_SUCCESS)) cairo_pattern_destroy (pat3);
-	if (pat2 && (cairo_pattern_status (pat2) == CAIRO_STATUS_SUCCESS)) cairo_pattern_destroy (pat2);
-	if (pat1 && (cairo_pattern_status (pat1) == CAIRO_STATUS_SUCCESS)) cairo_pattern_destroy (pat1);
-	if (cr4 && (cairo_status (cr4) == CAIRO_STATUS_SUCCESS)) cairo_destroy (cr4);
-	if (cr3 && (cairo_status (cr3) == CAIRO_STATUS_SUCCESS)) cairo_destroy (cr3);
-	if (cr2 && (cairo_status (cr2) == CAIRO_STATUS_SUCCESS)) cairo_destroy (cr2);
-	if (cr1 && (cairo_status (cr1) == CAIRO_STATUS_SUCCESS)) cairo_destroy (cr1);
-	if (surface && (cairo_surface_status (surface) == CAIRO_STATUS_SUCCESS)) cairo_surface_destroy (surface);
-}
-
-void BChoppr_GUI::add_monitor_data (BChopprNotifications* notifications, uint32_t notificationsCount, uint32_t& end)
-{
-	for (uint32_t i = 0; i < notificationsCount; ++i)
-	{
-		int monitorpos = notifications[i].position;
-		if (monitorpos >= MONITORBUFFERSIZE) monitorpos = MONITORBUFFERSIZE;
-		if (monitorpos < 0) monitorpos = 0;
-
-		mainMonitor.data[monitorpos].input1 = notifications[i].input1;
-		mainMonitor.data[monitorpos].input2 = notifications[i].input2;
-		mainMonitor.data[monitorpos].output1 = notifications[i].output1;
-		mainMonitor.data[monitorpos].output2 = notifications[i].output2;
-		mainMonitor.horizonPos = monitorpos;
-	}
-}
-
-void BChoppr_GUI::redrawMainMonitor ()
-{
-	/*
-	double width = monitorDisplay.getEffectiveWidth ();
-	double height = monitorDisplay.getEffectiveHeight ();
-
-	cairo_t* cr = cairo_create (monitorDisplay.getDrawingSurface ());
-	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
-
-	// Draw background
-	cairo_set_source_rgba (cr, CAIRO_BG_COLOR);
-	cairo_rectangle (cr, 0, 0, width, height);
-	cairo_fill (cr);
-
-	cairo_set_source_rgba (cr, CAIRO_RGBA (BColors::grey));
-	cairo_set_line_width (cr, 1);
-	cairo_move_to (cr, 0, 0.1 * height);
-	cairo_line_to (cr, width, 0.1 * height);
-	cairo_move_to (cr, 0, 0.5 * height);
-	cairo_line_to (cr, width, 0.5 * height);
-	cairo_move_to (cr, 0, 0.9 * height);
-	cairo_line_to (cr, width, 0.9 * height);
-
-	uint32_t steps = (uint32_t) nrStepsControl.getValue() - 1;
-	for (uint32_t i = 0; i < steps; ++i)
-	{
-		cairo_move_to (cr, markerWidgets[i].getValue() * width, 0);
-		cairo_rel_line_to (cr, 0, height);
-	}
-	cairo_stroke (cr);
-
-	if (mainMonitor.record_on)
-	{
-		cairo_surface_clear (surface);
-
-		// Draw input (cr, cr3) and output (cr2, cr4) curves
-		cairo_move_to (cr1, 0, height * (0.5  + (0.4 * LIM ((mainMonitor.data[0].input2 / scale), 0.0f, 1.0f))));
-		cairo_move_to (cr2, 0, height * (0.5  + (0.4 * LIM ((mainMonitor.data[0].output2 / scale), 0.0f, 1.0f))));
-		cairo_move_to (cr3, 0, height * (0.5  - (0.4 * LIM ((mainMonitor.data[0].input1 / scale), 0.0f, 1.0f))));
-		cairo_move_to (cr4, 0, height * (0.5  - (0.4 * LIM ((mainMonitor.data[0].output1 / scale), 0.0f, 1.0f))));
-
-		for (int i = 0; i < MONITORBUFFERSIZE; ++i)
-		{
-			double pos = ((double) i) / (MONITORBUFFERSIZE - 1.0f);
-			cairo_line_to (cr1, pos * width, height * (0.5  + (0.4 * LIM ((mainMonitor.data[i].input2 / scale), 0.0f, 1.0f))));
-			cairo_line_to (cr2, pos * width, height * (0.5  + (0.4 * LIM ((mainMonitor.data[i].output2 / scale), 0.0f, 1.0f))));
-			cairo_line_to (cr3, pos * width, height * (0.5  - (0.4 * LIM ((mainMonitor.data[i].input1 / scale), 0.0f, 1.0f))));
-			cairo_line_to (cr4, pos * width, height * (0.5  - (0.4 * LIM ((mainMonitor.data[i].output1 / scale), 0.0f, 1.0f))));
-		}
-
-		// Visualize input (cr, cr3) and output (cr2, cr4) curves
-		cairo_set_source_rgba (cr1, CAIRO_INK1, 1.0);
-		cairo_set_line_width (cr1, 3);
-		cairo_set_source_rgba (cr2, CAIRO_INK2, 1.0);
-		cairo_set_line_width (cr2, 3);
-		cairo_stroke_preserve (cr1);
-		cairo_stroke_preserve (cr2);
-		cairo_set_source_rgba (cr3, CAIRO_INK1, 1.0);
-		cairo_set_line_width (cr3, 3);
-		cairo_set_source_rgba (cr4, CAIRO_INK2, 1.0);
-		cairo_set_line_width (cr4, 3);
-		cairo_stroke_preserve (cr3);
-		cairo_stroke_preserve (cr4);
-
-		// Visualize input (cr, cr3) and output (cr2, cr4) areas under the curves
-		cairo_line_to (cr1, width, height * 0.5);
-		cairo_line_to (cr1, 0, height * 0.5);
-		cairo_close_path (cr1);
-		cairo_line_to (cr2, width, height * 0.5);
-		cairo_line_to (cr2, 0, height * 0.5);
-		cairo_close_path (cr2);
-		cairo_set_source (cr1, pat1);
-		cairo_set_line_width (cr1, 0);
-		cairo_set_source (cr2, pat2);
-		cairo_set_line_width (cr2, 0);
-		cairo_fill (cr1);
-		cairo_fill (cr2);
-		cairo_line_to (cr3, width, height * 0.5);
-		cairo_line_to (cr3, 0, height * 0.5);
-		cairo_close_path (cr3);
-		cairo_line_to (cr4, width, height * 0.5);
-		cairo_line_to (cr4, 0, height * 0.5);
-		cairo_close_path (cr4);
-		cairo_set_source (cr3, pat3);
-		cairo_set_line_width (cr3, 0);
-		cairo_set_source (cr4, pat4);
-		cairo_set_line_width (cr4, 0);
-		cairo_fill (cr3);
-		cairo_fill (cr4);
-
-		// Draw fade out
-		double horizon = ((double) mainMonitor.horizonPos) / (MONITORBUFFERSIZE - 1.0f);
-		cairo_pattern_t* pat6 = cairo_pattern_create_linear (horizon * width, 0, horizon * width + 63, 0);
-		if (cairo_pattern_status (pat6) == CAIRO_STATUS_SUCCESS)
-		{
-			cairo_pattern_add_color_stop_rgba (pat6, 0.0, CAIRO_BG_COLOR);
-			cairo_pattern_add_color_stop_rgba (pat6, 1.0, CAIRO_TRANSPARENT);
-			cairo_set_line_width (cr1, 0.0);
-			cairo_set_source (cr1, pat6);
-			cairo_rectangle (cr1, horizon * width, 0, 63, height);
-			cairo_fill (cr1);
-			cairo_pattern_destroy (pat6);
-		}
-
-		if (horizon * width > width - 63)
-		{
-			cairo_pattern_t* pat6 = cairo_pattern_create_linear ((horizon - 1) * width, 0, (horizon - 1) * width + 63, 0);
-			if (cairo_pattern_status (pat6) == CAIRO_STATUS_SUCCESS)
-			{
-				cairo_pattern_add_color_stop_rgba (pat6, 0.0, CAIRO_BG_COLOR);
-				cairo_pattern_add_color_stop_rgba (pat6, 1.0, CAIRO_TRANSPARENT);
-				cairo_set_line_width (cr1, 0.0);
-				cairo_set_source (cr1, pat6);
-				cairo_rectangle (cr1, (horizon - 1) * width, 0, 63, height);
-				cairo_fill (cr1);
-				cairo_pattern_destroy (pat6);
-			}
-		}
-
-		// Draw horizon line
-		cairo_set_source_rgba (cr1, CAIRO_FG_COLOR);
-		cairo_set_line_width (cr1, 1);
-		cairo_move_to (cr1, horizon * width, 0);
-		cairo_line_to (cr1, horizon * width, height);
-		cairo_stroke (cr1);
-	}
-
-	cairo_set_source_surface (cr, surface, 0, 0);
-	cairo_paint (cr);
-
-	cairo_destroy (cr);
-	monitorDisplay.update ();
-	*/
 }
 
 void BChoppr_GUI::redrawSContainer ()
 {
-	/*
-	double width = sContainer.getEffectiveWidth ();
-	double height = sContainer.getEffectiveHeight ();
-
-	cairo_surface_clear (sContainer.getDrawingSurface ());
-	cairo_t* cr = cairo_create (sContainer.getDrawingSurface ());
+	cairo_surface_t* surface = sContainer.getImageSurface (BStyles::STATUS_NORMAL);
+	cairoplus_surface_clear (surface);
+	cairo_t* cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
+	double width = cairo_image_surface_get_width(surface);
+	double height = cairo_image_surface_get_height(surface);
+
 	cairo_pattern_t* pat = cairo_pattern_create_linear (0, 0, 0, height);
-	cairo_pattern_add_color_stop_rgba (pat, 0.0, CAIRO_RGBA (BColors::black));
+	cairo_pattern_add_color_stop_rgba (pat, 0.0, CAIRO_RGBA (BStyles::black));
 	cairo_pattern_add_color_stop_rgba (pat, 1.0, 0.0, 0.0, 0.0, 0.5);
 	cairo_rectangle (cr, 0, 0, width, height);
 	cairo_set_source (cr, pat);
@@ -1468,64 +1249,128 @@ void BChoppr_GUI::redrawSContainer ()
 	for (int i = 0; i < nrStepsControl.getValue() - 1; ++i)
 	{
 		cairo_set_line_width (cr, 1.0);
-		cairo_set_source_rgba (cr, CAIRO_RGBA (BColors::grey));
-		cairo_move_to (cr, markerWidgets[i].getValue() * width, 0);
-		cairo_rel_line_to (cr, 0, 30 * sz);
-		cairo_line_to (cr, (i + 1) / nrStepsControl.getValue() * width, 40 * sz);
-		cairo_rel_line_to (cr, 0, 145 * sz);
+		cairo_set_source_rgba (cr, CAIRO_RGBA (BStyles::grey));
+		cairo_move_to (cr, markerWidgets[i]->getValue() * width, 0);
+		cairo_rel_line_to (cr, 0, 30);
+		cairo_line_to (cr, (i + 1) / nrStepsControl.getValue() * width, 40);
+		cairo_rel_line_to (cr, 0, 145);
 		cairo_stroke (cr);
 	}
 
 	cairo_destroy (cr);
 	sContainer.update();
-	*/
 }
 
 void BChoppr_GUI::redrawButtons ()
 {
-	/*
-	// rectButton
-	double width = rectButton.getEffectiveWidth ();
-	double height = rectButton.getEffectiveHeight ();
 
-	cairo_surface_clear (rectButton.getDrawingSurface ());
-	cairo_t* cr = cairo_create (rectButton.getDrawingSurface ());
+	// rectButton, inactive
+	cairo_surface_t* surface = rectButton.image.getImageSurface (BStyles::STATUS_NORMAL);
+	cairo_t* cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
-	cairo_set_source_rgba (cr, CAIRO_RGBA (*rectButton.getBorder()->getLine()->getColor()));
+	double width = cairo_image_surface_get_width(surface);
+	double height = cairo_image_surface_get_height(surface);
+	cairoplus_surface_clear(surface);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (BStyles::black));
+	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
+	cairo_fill (cr);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (rectButton.getFgColors()[BStyles::STATUS_INACTIVE]));
 	cairo_set_line_width (cr, 2.0);
 
-	cairo_move_to (cr, 0.05 * width, 0.9 * height);
-	cairo_line_to (cr, 0.25 * width, 0.9 * height);
-	cairo_line_to (cr, 0.3 * width, 0.1 * height);
-	cairo_line_to (cr, 0.7 * width, 0.1 * height);
-	cairo_line_to (cr, 0.75 * width, 0.9 * height);
-	cairo_line_to (cr, 0.95 * width, 0.9 * height);
+	cairo_rectangle(cr, 0, 0, width, height);
+	cairo_move_to (cr, 0.1 * width, 0.8 * height);
+	cairo_line_to (cr, 0.25 * width, 0.8 * height);
+	cairo_line_to (cr, 0.3 * width, 0.2 * height);
+	cairo_line_to (cr, 0.7 * width, 0.2 * height);
+	cairo_line_to (cr, 0.75 * width, 0.8 * height);
+	cairo_line_to (cr, 0.9 * width, 0.8 * height);
 	cairo_stroke (cr);
 
 	cairo_destroy (cr);
 
-	// sinButton
-	width = sinButton.getEffectiveWidth ();
-	height = sinButton.getEffectiveHeight ();
-
-	cairo_surface_clear (sinButton.getDrawingSurface ());
-	cr = cairo_create (sinButton.getDrawingSurface ());
+	// rectButton, active
+	surface = rectButton.image.getImageSurface (BStyles::STATUS_ACTIVE);
+	cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
-	cairo_set_source_rgba (cr, CAIRO_RGBA (*sinButton.getBorder()->getLine()->getColor()));
+	width = cairo_image_surface_get_width(surface);
+	height = cairo_image_surface_get_height(surface);
+	cairoplus_surface_clear(surface);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (BStyles::black));
+	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
+	cairo_fill (cr);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (rectButton.getFgColors()[BStyles::STATUS_NORMAL]));
 	cairo_set_line_width (cr, 2.0);
 
-	cairo_move_to (cr, 0.05 * width, 0.9 * height);
-	cairo_line_to (cr, 0.15 * width, 0.9 * height);
-	for (int i = 0; i <= 10; ++i) cairo_line_to (cr, (0.15 + i * 0.03) * width, (0.5 - 0.4 * sin (double (i - 5) * M_PI / 10)) * height);
-	cairo_line_to (cr, 0.55 * width, 0.1 * height);
-	for (int i = 0; i <= 10; ++i) cairo_line_to (cr, (0.55 + i * 0.03) * width, (0.5 - 0.4 * sin (double (i + 5) * M_PI / 10)) * height);
-	cairo_line_to (cr, 0.95 * width, 0.9 * height);
+	cairo_rectangle(cr, 0, 0, width, height);
+	cairo_move_to (cr, 0.1 * width, 0.8 * height);
+	cairo_line_to (cr, 0.25 * width, 0.8 * height);
+	cairo_line_to (cr, 0.3 * width, 0.2 * height);
+	cairo_line_to (cr, 0.7 * width, 0.2 * height);
+	cairo_line_to (cr, 0.75 * width, 0.8 * height);
+	cairo_line_to (cr, 0.9 * width, 0.8 * height);
 	cairo_stroke (cr);
 
 	cairo_destroy (cr);
-	*/
+
+	// sinButton, inactive
+	surface = sinButton.image.getImageSurface (BStyles::STATUS_NORMAL);
+	cr = cairo_create (surface);
+	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
+
+	width = cairo_image_surface_get_width(surface);
+	height = cairo_image_surface_get_height(surface);
+	cairoplus_surface_clear(surface);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (BStyles::black));
+	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
+	cairo_fill (cr);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (sinButton.getFgColors()[BStyles::STATUS_INACTIVE]));
+	cairo_set_line_width (cr, 2.0);
+
+	cairo_rectangle(cr, 0, 0, width, height);
+	cairo_move_to (cr, 0.1 * width, 0.8 * height);
+	cairo_line_to (cr, 0.15 * width, 0.8 * height);
+	for (int i = 0; i <= 10; ++i) cairo_line_to (cr, (0.15 + i * 0.03) * width, (0.5 - 0.3 * sin (double (i - 5) * M_PI / 10)) * height);
+	cairo_line_to (cr, 0.55 * width, 0.2 * height);
+	for (int i = 0; i <= 10; ++i) cairo_line_to (cr, (0.55 + i * 0.03) * width, (0.5 - 0.3 * sin (double (i + 5) * M_PI / 10)) * height);
+	cairo_line_to (cr, 0.9 * width, 0.8 * height);
+	cairo_stroke (cr);
+
+	cairo_destroy (cr);
+
+	// sinButton, active
+	surface = sinButton.image.getImageSurface (BStyles::STATUS_ACTIVE);
+	cr = cairo_create (surface);
+	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
+
+	width = cairo_image_surface_get_width(surface);
+	height = cairo_image_surface_get_height(surface);
+	cairoplus_surface_clear(surface);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (BStyles::black));
+	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
+	cairo_fill (cr);
+
+	cairo_set_source_rgba (cr, CAIRO_RGBA (sinButton.getFgColors()[BStyles::STATUS_NORMAL]));
+	cairo_set_line_width (cr, 2.0);
+
+	cairo_rectangle(cr, 0, 0, width, height);
+	cairo_move_to (cr, 0.1 * width, 0.8 * height);
+	cairo_line_to (cr, 0.15 * width, 0.8 * height);
+	for (int i = 0; i <= 10; ++i) cairo_line_to (cr, (0.15 + i * 0.03) * width, (0.5 - 0.3 * sin (double (i - 5) * M_PI / 10)) * height);
+	cairo_line_to (cr, 0.55 * width, 0.2 * height);
+	for (int i = 0; i <= 10; ++i) cairo_line_to (cr, (0.55 + i * 0.03) * width, (0.5 - 0.3 * sin (double (i + 5) * M_PI / 10)) * height);
+	cairo_line_to (cr, 0.9 * width, 0.8 * height);
+	cairo_stroke (cr);
+
+	cairo_destroy (cr);
 }
 
 static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char *plugin_uri, const char *bundle_path,

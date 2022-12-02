@@ -62,9 +62,6 @@ variable `PREFIX` while installing: `sudo make install PREFIX=/usr`. If you want
 install target directory, change the variable `LV2DIR` (e.g., `make install LV2DIR=~/.lv2`) or even define
 `DESTDIR`.
 
-**Optional:** Further supported parameters include `LANGUAGE` (usually two letters code) to change the GUI
-language (see customize).
-
 
 ## Running
 
@@ -135,26 +132,18 @@ shared data. The plugin now shows the host-provided data.
 Note: Shared data are unlinked from host automation.
 
 
-## Customize
-
-You can create customized builds of B.Choppr using the parameter `LANGUAGE` (e.g., `make LANGUAGE=DE`).
-To create a new language pack, copy `src/Locale_EN.hpp` and edit the text for the respective definitions.
-But do not change or delete any definition symbol!
-
-
 ## What's new
 
-* Step-specific panning
-* Improved visibility of widgets by increased window size
-* Improved dial widget visibility even at down scaling
-* Monitor now shows a representation of l/r signals
-* Update presets to include the new control ports
-* Bugfix makefile: strip removes debugging symbols
-* Enter position / step length via keyboard
+* Migration to the new B.Widgets TK
 
 
 ## TODO
 
+* Finalize migration
+  * Adapt makefile
+  * Use theme for all widgets
+  * Adapt widget within a widget behavior
+  * Test shared data
 * Moooaaaaaarrrrrrr presets
 
 
