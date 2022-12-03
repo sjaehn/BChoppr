@@ -34,7 +34,6 @@
 #include "BWidgets/BUtilities/Dictionary.hpp"
 #include "BWidgets/BWidgets/Widget.hpp"
 #include "BWidgets/BWidgets/Window.hpp"
-#include "BWidgets/BWidgets/Frame.hpp"
 #include "BWidgets/BWidgets/Label.hpp"
 #include "BWidgets/BWidgets/HSwitch.hpp"
 #include "BWidgets/BWidgets/VSlider.hpp"
@@ -67,19 +66,10 @@ enum MessageNr
 
 #define URID(x) (BURID(BCHOPPR_GUI_URI x))
 
-#define SCALEMIN -60
-#define SCALEMAX 30
-
 #define BG_FILE "surface.png"
 #define HELP_URL "https://github.com/sjaehn/BChoppr/blob/master/README.md"
 #define YT_URL " https://youtu.be/PuzoxiAs-h8"
 #define WWW_BROWSER_CMD "x-www-browser"
-
-#define DB_CO(g) ((g) > -90.0f ? powf(10.0f, (g) * 0.05f) : 0.0f)
-#define CO_DB(g) ((g) > 0.0001f ? logf((g)) / 0.05f : -90.0f)
-#define LIM(g , min, max) ((g) > (max) ? (max) : ((g) < (min) ? (min) : (g)))
-#define INT(g) (int) (g + 0.5)
-#define RESIZE(widget, x, y, w, h, sz) (widget).moveTo ((x) * (sz), (y) * (sz)); (widget).resize ((w) * (sz), (h) * (sz));
 
 const std::string messageStrings[MAX_MSG + 1] =
 {
@@ -165,7 +155,7 @@ private:
 	std::array<BWidgets::EditLabel*, MAXSTEPS> stepPanControlLabel;
 	std::array<Marker*, MAXSTEPS - 1> markerWidgets;
 	BWidgets::ListBox markerListBox;
-	BWidgets::Frame enterFrame;
+	BWidgets::Widget enterFrame;
 	BWidgets::ComboBox enterPositionComboBox;
 	BWidgets::EditLabel enterEdit;
 	BWidgets::ComboBox enterSequencesComboBox;
@@ -175,14 +165,6 @@ private:
 
 
 	cairo_surface_t* surface;
-	cairo_t* cr1;
-	cairo_t* cr2;
-	cairo_t* cr3;
-	cairo_t* cr4;
-	cairo_pattern_t* pat1;
-	cairo_pattern_t* pat2;
-	cairo_pattern_t* pat3;
-	cairo_pattern_t* pat4;
 	cairo_pattern_t* pat5;
 
 	std::string pluginPath;

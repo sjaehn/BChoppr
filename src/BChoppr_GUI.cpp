@@ -92,9 +92,9 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	enterOkButton (120, 40, 80, 20, BDICT ("Apply"), false, false, URID ("/button")),
 	sharedDataDummy (28, 528, 194, 24, 0.0, 0.0, 4.0, 1.0),
 
-	surface (NULL), cr1 (NULL), cr2 (NULL), cr3 (NULL), cr4 (NULL), pat1 (NULL), pat2 (NULL), pat3 (NULL), pat4 (NULL), pat5 (NULL),
+	surface (NULL), pat5 (NULL),
 	pluginPath (bundle_path ? std::string (bundle_path) : std::string ("")),
-	scale (DB_CO(0.0)),
+	scale (1.0f),
 	map (NULL)
 
 {
@@ -200,8 +200,6 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	ampSwingControl.setClickable (false);
 	swingControl.setClickable (false);
 	nrStepsControl.setScrollable (true);
-	//monitorDisplay.setScrollable (true);
-	//monitorDisplay.setDraggable (true);
 	markerListBox.setStacking (STACKING_ESCAPE);
 	enterFrame.setStacking (STACKING_ESCAPE);
 	enterFrame.hide();
@@ -618,7 +616,7 @@ void BChoppr_GUI::setAutoMarkers ()
 
 void BChoppr_GUI::rearrange_controllers ()
 {
-	int nrStepsi = INT (nrStepsControl.getValue());
+	int nrStepsi = nrStepsControl.getValue();
 
 	if ((nrStepsi < 1) || (nrStepsi > MAXSTEPS)) return;
 
