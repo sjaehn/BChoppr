@@ -177,12 +177,13 @@ private:
 
 
 	// Definition of styles
-	BStyles::ColorMap fgColors = {{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.2, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap fgColors = {{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.5, 0.15, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap bgColors = {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
 	BStyles::ColorMap txColors = {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap monColors = {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 
 	BStyles::Border border = {{fgColors[BStyles::STATUS_NORMAL], 1.0}, 0.0, 2.0, 0.0};
+	BStyles::Border btBorder = BStyles::Border (BStyles::Line (getBgColors()[BStyles::Status::STATUS_NORMAL].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
 
 	BStyles::Fill screenBg = BStyles::Fill (BStyles::Color (0.0, 0.0, 0.0, 0.75));
 
@@ -217,6 +218,27 @@ private:
 				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(BStyles::noBorder)},
 				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(monColors)},
 				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::greys)}
+			})
+		},
+
+		// button
+		{
+			URID ("/button"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::Fill(fgColors[BStyles::STATUS_NORMAL])})},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(fgColors)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(btBorder)}
+			})
+		},
+		
+		// button/label
+		{
+			URID ("/button/label"), 
+			BStyles::Style
+			({	
+				{BURID(BSTYLES_STYLEPROPERTY_FONT_URI), BUtilities::makeAny<BStyles::Font>(defaultFont)},
+				{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(bgColors)}
 			})
 		},
 
@@ -300,17 +322,37 @@ private:
 			URID ("/menu"), 
 			BStyles::Style 
 			({
-				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(screenBg)},
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(BStyles::blackFill)},
 				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}
 			})
 		},
 
-		// menu
+		// menu/button
+		{
+			URID ("/menu/button"), 
+			BStyles::Style 
+			({
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::Fill(fgColors[BStyles::STATUS_NORMAL])})},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(fgColors)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(btBorder)}
+			})
+		},
+		
+		// menu/button/symbol
+		{
+			URID ("/menu/button/symbol"), 
+			BStyles::Style
+			({	
+				{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(bgColors)}
+			})
+		},
+
+		// menu/listbox
 		{
 			URID ("/menu/listbox"), 
 			BStyles::Style 
 			({
-				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(screenBg)},
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>(BStyles::blackFill)},
 				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}
 			})
 		}

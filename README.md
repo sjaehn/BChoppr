@@ -31,8 +31,11 @@ copy the BChoppr.lv2 folder to your lv2 directory (depending on your system sett
 
 c) Build your own binaries in the following three steps.
 
-Step 1: [Download the latest published version](https://github.com/sjaehn/BChoppr/releases) of B.Choppr. Or clone or
-[download the master](https://github.com/sjaehn/BChoppr/archive/master.zip) of this repository.
+Step 1: [Download the latest published version](https://github.com/sjaehn/BChoppr/releases) of B.Choppr. Or clone it 
+including its submodules from this repository:
+```
+git clone --recurse-submodules https://github.com/sjaehn/BChoppr
+```
 
 Step 2: Install pkg-config and the development packages for x11, cairo, and lv2 if not done yet. If you
 don't have already got the build tools (compilers, make, libraries) then install them too.
@@ -141,8 +144,6 @@ Note: Shared data are unlinked from host automation.
 
 * Finalize migration
   * Adapt makefile
-  * Use theme for all widgets
-  * Adapt widget within a widget behavior
   * Test shared data
 * Moooaaaaaarrrrrrr presets
 
