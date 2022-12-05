@@ -344,8 +344,10 @@ void BChoppr_GUI::portEvent(uint32_t port_index, uint32_t buffer_size, uint32_t 
 
 					if ((nr >= StepPositions - Controllers) && (nr < StepPositions - Controllers + MAXSTEPS - 1))
 					{
+						for (Marker* m : markerWidgets) m->setValueable(false);
 						setMarker (nr - (StepPositions - Controllers), val);
 						setAutoMarkers ();
+						for (Marker* m : markerWidgets) m->setValueable(true);
 						rearrange_controllers ();
 						redrawSContainer ();
 					}
