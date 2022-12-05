@@ -143,7 +143,6 @@ Note: Shared data are unlinked from host automation.
 ## TODO
 
 * Finalize migration
-  * Adapt makefile
   * Test shared data
 * Moooaaaaaarrrrrrr presets
 

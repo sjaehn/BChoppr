@@ -125,7 +125,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		sContainer.add (stepLevelControl[i]);
 
 		stepLevelControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "1.00", URID ("/smlabel"));
-		stepLevelControlLabel[i]->setCallbackFunction(BEvents::Event::MESSAGE_EVENT, stepControlLabelMessageCallback);
+		stepLevelControlLabel[i]->setCallbackFunction(BEvents::Event::VALUE_CHANGED_EVENT, stepControlLabelChangedCallback);
 		sContainer.add (stepLevelControlLabel[i]);
 
 		stepPanControl[i] = new BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 15, 135, 30, 30, 0.0, -1.0, 1.0, 0.01, 
@@ -135,7 +135,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		sContainer.add (stepPanControl[i]);
 
 		stepPanControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 165, 20, "1.00", URID ("/smlabel"));
-		stepPanControlLabel[i]->setCallbackFunction(BEvents::Event::MESSAGE_EVENT, stepControlLabelMessageCallback);
+		stepPanControlLabel[i]->setCallbackFunction(BEvents::Event::VALUE_CHANGED_EVENT, stepControlLabelChangedCallback);
 		sContainer.add (stepPanControlLabel[i]);
 
 		
@@ -996,12 +996,14 @@ void BChoppr_GUI::ytButtonClickedCallback (BEvents::Event* event)
 	if (BUtilities::vsystem (argv) == -1) std::cerr << "BChoppr.lv2#GUI: Couldn't fork.\n";
 }
 
-void BChoppr_GUI::stepControlLabelMessageCallback (BEvents::Event* event)
+void BChoppr_GUI::stepControlLabelChangedCallback (BEvents::Event* event)
 {
-	if (event && event->getWidget())
+	BEvents::ValueChangeTypedEvent<std::string>* vew = dynamic_cast<BEvents::ValueChangeTypedEvent<std::string>*>(event);
+	if (!vew) return;
+	if (vew->getWidget())
 	{
-		BWidgets::Label* l = (BWidgets::Label*)event->getWidget();
-		BChoppr_GUI* ui = (BChoppr_GUI*)l->getMainWindow();
+		BWidgets::EditLabel* l = dynamic_cast<BWidgets::EditLabel*>(vew->getWidget());
+		BChoppr_GUI* ui = dynamic_cast<BChoppr_GUI*>(l->getMainWindow());
 		if (ui)
 		{
 			for (int i = 0; i < MAXSTEPS; ++i)

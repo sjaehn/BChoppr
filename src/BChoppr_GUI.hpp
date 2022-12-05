@@ -108,7 +108,7 @@ private:
 	static void sharedDataClickedCallback (BEvents::Event* event);
 	static void helpButtonClickedCallback (BEvents::Event* event);
 	static void ytButtonClickedCallback (BEvents::Event* event);
-	static void stepControlLabelMessageCallback (BEvents::Event* event);
+	static void stepControlLabelChangedCallback (BEvents::Event* event);
 	static void enterListBoxChangedCallback (BEvents::Event* event);
     static void enterOkClickedCallback (BEvents::Event* event);
 	bool init_Stepshape ();
