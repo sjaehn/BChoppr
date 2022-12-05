@@ -86,9 +86,9 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	messageLabel (420, 83, 280, 20, "", URID ("/label")),
 	markerListBox (12, -68, 66, 86, {BDICT ("Auto"), BDICT ("Manual"), BDICT ("Enter")}, 0, URID ("/menu")),
 	enterFrame (66, 52, 320, 70, URID ("/menu")),
-	enterPositionComboBox (10, 10, 120, 20, 0, 20, 120, 64, {BDICT ("New position:"), BDICT ("New length:")}, 1, URID ("/menu")),
+	enterPositionComboBox (10, 10, 120, 20, 0, 20, 120, 44, {BDICT ("New position:"), BDICT ("New length:")}, 1, URID ("/menu")),
 	enterEdit (140, 15, 60, 20, "0.000", URID ("/lflabel")),
-	enterSequencesComboBox (210, 10, 100, 20, 0, 20, 100, 64, {BDICT ("sequence(s)"), BDICT ("step(s)")}, 1, URID ("/menu")),
+	enterSequencesComboBox (210, 10, 100, 20, 0, 20, 100, 44, {BDICT ("sequence(s)"), BDICT ("step(s)")}, 1, URID ("/menu")),
 	enterOkButton (120, 40, 80, 20, BDICT ("Apply"), false, false, URID ("/button")),
 	sharedDataDummy (28, 528, 194, 24, 0.0, 0.0, 4.0, 1.0),
 
