@@ -135,9 +135,45 @@ shared data. The plugin now shows the host-provided data.
 Note: Shared data are unlinked from host automation.
 
 
+## Internationalization
+B.Choppr now uses the dictionaries of the new B.Widgets toolkit and all labels
+are now automatically shown in your system language (if translation is 
+provided). The dictionary for this plugin is stored in 
+src/BChoppr_Dictionary.data. If you want to add a translation to your language, 
+simply edit this file in your text editor und use the (POSIX) language code 
+(format: language_TERRITORY) of your language. 
+
+E. g., if you want to add a french translation of "Help", simply change
+```
+    {
+        "Help",           
+        {
+            {"de_DE", "Hilfe"},
+            {"it_IT", "Aiuto"}
+        }
+    },
+```
+to
+```
+    {
+        "Help",           
+        {
+            {"de_DE", "Hilfe"},
+            {"fr_FR", "Aide"},
+            {"it_IT", "Aiuto"}
+        }
+    },
+```
+
+Once you changed the dictionary, you have to re-build the plugin. And please
+share your translations with other users by either submitting a git pull 
+request or notifying me (issue report, e-mail, ...).
+
+
 ## What's new
 
 * Migration to the new B.Widgets TK
+* New internationalization
 
 
 ## TODO
