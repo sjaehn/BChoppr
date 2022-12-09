@@ -48,7 +48,7 @@
         "Attack",
         {
             {"de_DE", "Attack"},
-            {"fr_FR", "Attaque"}
+            {"fr_FR", "Attaque"},
             {"it_IT", "Attacco"}
         }
     },
@@ -102,7 +102,7 @@
         "Enter",
         {
             {"de_DE", "Eingabe"},
-            {"fr_FR", "Entrée},
+            {"fr_FR", "Entrée"},
             {"it_IT", "Inserire"}
         }
     },
