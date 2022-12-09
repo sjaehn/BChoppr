@@ -21,7 +21,7 @@
 #ifndef BCHOPPR_GUI_HPP_
 #define BCHOPPR_GUI_HPP_
 
-
+#include <array>
 #include "BWidgets/BStyles/Status.hpp"
 #include "BWidgets/BStyles/Style.hpp"
 #include "BWidgets/BStyles/Types/Border.hpp"
