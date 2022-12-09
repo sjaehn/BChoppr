@@ -273,7 +273,7 @@ inline void Marker::draw (const double x0, const double y0, const double width, 
 
 inline void Marker::draw (const BUtilities::Area<>& area)
 {
-	if ((!surface_) || (cairo_surface_status (surface_) != CAIRO_STATUS_SUCCESS)) return;
+	if ((!cairoSurface()) || (cairo_surface_status (cairoSurface()) != CAIRO_STATUS_SUCCESS)) return;
 
 	// Draw super class widget elements first
 	Widget::draw (area);
@@ -285,8 +285,8 @@ inline void Marker::draw (const BUtilities::Area<>& area)
 	// only if minimum requirements satisfied
 	if ((getHeight () >= 1) && (getWidth () >= 1))
 	{
-		cairoplus_surface_clear (surface_);
-		cairo_t* cr = cairo_create (surface_);
+		cairoplus_surface_clear (cairoSurface());
+		cairo_t* cr = cairo_create (cairoSurface());
 
 		if (cairo_status (cr) == CAIRO_STATUS_SUCCESS)
 		{
