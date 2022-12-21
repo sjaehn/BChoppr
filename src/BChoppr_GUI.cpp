@@ -19,7 +19,7 @@
  */
 
 #include "BChoppr_GUI.hpp"
-#include "BWidgets/BDevices/BDevices.hpp"
+#include "BWidgets/BDevices/MouseButton.hpp"
 #include "BWidgets/BEvents/Event.hpp"
 #include "BWidgets/BEvents/ExposeEvent.hpp"
 #include "BWidgets/BStyles/Status.hpp"
@@ -777,7 +777,7 @@ void BChoppr_GUI::markerClickedCallback (BEvents::Event* event)
 {
 	if (!event) return;
 	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
-	if (pev->getButton() != BDevices::MouseDevice::RIGHT_BUTTON) return;
+	if (pev->getButton() != BDevices::MouseButton::MOUSE_RIGHT_BUTTON) return;
 	Marker* marker = (Marker*)event->getWidget();
 	if (!marker) return;
 	marker->raiseToFront();
@@ -826,7 +826,7 @@ void BChoppr_GUI::markerDraggedCallback (BEvents::Event* event)
 {
 	if (!event) return;
 	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
-	if (pev->getButton() != BDevices::MouseDevice::LEFT_BUTTON) return;
+	if (pev->getButton() != BDevices::MouseButton::MOUSE_LEFT_BUTTON) return;
 	Marker* marker = (Marker*)event->getWidget();
 	if (!marker) return;
 	marker->raiseToFront();
@@ -1064,7 +1064,7 @@ void BChoppr_GUI::enterOkClickedCallback (BEvents::Event* event)
 {
 	if (!event) return;
 	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
-	if (pev->getButton() != BDevices::MouseDevice::LEFT_BUTTON) return;
+	if (pev->getButton() != BDevices::MouseButton::MOUSE_LEFT_BUTTON) return;
 	BWidgets::TextButton* button = (BWidgets::TextButton*)event->getWidget();
 	if (!button) return;
 	BChoppr_GUI* ui = (BChoppr_GUI*)button->getMainWindow();

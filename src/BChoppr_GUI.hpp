@@ -24,6 +24,7 @@
 #include <array>
 #include "BWidgets/BStyles/Status.hpp"
 #include "BWidgets/BStyles/Style.hpp"
+#include "BWidgets/BStyles/Theme.hpp"
 #include "BWidgets/BStyles/Types/Border.hpp"
 #include "BWidgets/BStyles/Types/ColorMap.hpp"
 #include "BWidgets/BStyles/Types/Fill.hpp"
@@ -177,10 +178,10 @@ private:
 
 
 	// Definition of styles
-	BStyles::ColorMap fgColors = {{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.5, 0.15, 1.0}, {0.0, 0.0, 0.0, 0.0}};
-	BStyles::ColorMap bgColors = {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
-	BStyles::ColorMap txColors = {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
-	BStyles::ColorMap monColors = {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap fgColors = BStyles::ColorMap {{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.5, 0.15, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap bgColors = BStyles::ColorMap {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
+	BStyles::ColorMap txColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap monColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 
 	BStyles::Border border = {{fgColors[BStyles::STATUS_NORMAL], 1.0}, 0.0, 2.0, 0.0};
 	BStyles::Border btBorder = BStyles::Border (BStyles::Line (getBgColors()[BStyles::Status::STATUS_NORMAL].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
@@ -189,7 +190,7 @@ private:
 
 	BStyles::Font defaultFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0, BStyles::Font::TEXT_ALIGN_CENTER, BStyles::Font::TEXT_VALIGN_MIDDLE);
 	BStyles::Font smFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0, BStyles::Font::TEXT_ALIGN_CENTER, BStyles::Font::TEXT_VALIGN_MIDDLE);
-	BStyles::Theme theme =
+	BStyles::Theme theme = BStyles::Theme
 	{
 		// rcontainer
 		{
@@ -277,7 +278,7 @@ private:
 			BStyles::Style 
 			({
 				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})},
-				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>({BStyles::invisible})},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::ColorMap{BStyles::invisible})},
 				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
 			})
 		},
@@ -310,10 +311,13 @@ private:
 				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::darks)},
 				{BURID(BSTYLES_STYLEPROPERTY_FGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(fgColors)},
 				{URID ("/dial/label"), BUtilities::makeAny<BStyles::Style>
-					({
-						{BURID(BSTYLES_STYLEPROPERTY_FONT_URI), BUtilities::makeAny<BStyles::Font>(smFont)},
-						{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
-					})}
+					(
+						BStyles::Style
+						{
+							{BURID(BSTYLES_STYLEPROPERTY_FONT_URI), BUtilities::makeAny<BStyles::Font>(smFont)},
+							{BURID(BSTYLES_STYLEPROPERTY_TXCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(txColors)}
+						}
+					)}
 			})
 		},
 
