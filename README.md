@@ -182,7 +182,7 @@ request or notifying me (issue report, e-mail, ...).
 
 
 ## Acknowledgments
-* Thanks to LAM for translation
+* Thanks to LAM and sahaathyva for translation
 
 
 ## Links

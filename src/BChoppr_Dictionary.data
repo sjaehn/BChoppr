@@ -3,8 +3,10 @@
         "Monitor",
         {
             {"de_DE", "Monitor"},
+            {"es_ES", "Visualizar"},
             {"fr_FR", "Moniteur"},
-            {"it_IT", "Monitor"}
+            {"it_IT", "Monitor"},
+            {"nl_NL", "Monitor"}
         }
     },
 
@@ -12,8 +14,10 @@
         "Bypass",
         {
             {"de_DE", "Bypass"},
+            {"es_ES", "Paso de banda"},
             {"fr_FR", "Contournement"},
-            {"it_IT", "Bypass"}
+            {"it_IT", "Bypass"},
+            {"nl_NL", "Bypass"}
         }
     },
 
@@ -22,7 +26,8 @@
         {
             {"de_DE", "Mix"},
             {"fr_FR", "Mélange"},
-            {"it_IT", "Secco/bagnato"}
+            {"it_IT", "Secco/bagnato"},
+            {"nl_NL", "Dry/wet"}
         }
     },
 
@@ -30,8 +35,10 @@
         "Help",
         {
             {"de_DE", "Hilfe"},
+            {"es_ES", "Ayuda"},
             {"fr_FR", "Aide"},
-            {"it_IT", "Aiuto"}
+            {"it_IT", "Aiuto"},
+            {"nl_NL", "Hulp"}
         }
     },
 
@@ -40,7 +47,8 @@
         {
             {"de_DE", "Tutorial"},
             {"fr_FR", "Tutoriel"},
-            {"it_IT", "Tutorial"}
+            {"it_IT", "Tutorial"},
+            {"nl_NL", "Tutorial"}
         }
     },
 
@@ -48,8 +56,10 @@
         "Attack",
         {
             {"de_DE", "Attack"},
+            {"es_ES", "Ataque"},
             {"fr_FR", "Attaque"},
-            {"it_IT", "Attacco"}
+            {"it_IT", "Attacco"},
+            {"nl_NL", "Attack"}
         }
     },
 
@@ -57,8 +67,10 @@
         "Decay",
         {
             {"de_DE", "Decay"},
+            {"es_ES", "Decaimiento"},
             {"fr_FR", "Déclin"},
-            {"it_IT", "Decadimento"}
+            {"it_IT", "Decadimento"},
+            {"nl_NL", "Decay"}
         }
     },
 
@@ -85,7 +97,8 @@
         {
             {"de_DE", "Auto"},
             {"fr_FR", "Auto"},
-            {"it_IT", "Auto"}
+            {"it_IT", "Auto"},
+            {"nl_NL", "Auto"}
         }
     },
 
@@ -94,7 +107,8 @@
         {
             {"de_DE", "Manuell"},
             {"fr_FR", "Manuel"},
-            {"it_IT", "Manuale"}
+            {"it_IT", "Manuale"},
+            {"nl_NL", "Manueel"}
         }
     },
 
@@ -103,7 +117,8 @@
         {
             {"de_DE", "Eingabe"},
             {"fr_FR", "Entrée"},
-            {"it_IT", "Inserire"}
+            {"it_IT", "Inserire"},
+            {"nl_NL", "Invoeren"}
         }
     },
 
@@ -112,7 +127,8 @@
         {
             {"de_DE", "Neue Position:"},
             {"fr_FR", "Nouvelle Position"},
-            {"it_IT", "Nuova posizione:"}
+            {"it_IT", "Nuova posizione:"},
+            {"nl_NL", "Niewe positie"}
         }
     },
 
@@ -121,7 +137,8 @@
         {
             {"de_DE", "Neue Länge:"},
             {"fr_FR", "Nouvelle durée"},
-            {"it_IT", "Nuova durata:"}
+            {"it_IT", "Nuova durata:"},
+            {"nl_NL", "Niewe lengte"}
         }
     },
 
@@ -130,7 +147,8 @@
         {
             {"de_DE", "Sequenz(en)"},
             {"fr_FR", "Sequence(s)"},
-            {"it_IT", "sequenz(a/e)"}
+            {"it_IT", "sequenz(a/e)"},
+            {"nl_NL", "Sequentie(s)"}
         }
     },
 
@@ -139,7 +157,8 @@
         {
             {"de_DE", "Schritt(e)"},
             {"fr_FR", "Pas"},
-            {"it_IT", "pass(o/i)"}
+            {"it_IT", "pass(o/i)"},
+            {"nl_NL", "Pas(sen)"}
         }
     },
 
@@ -147,8 +166,10 @@
         "Apply",
         {
             {"de_DE", "Anwenden"},
+            {"es_ES", "Aplicar"},
             {"fr_FR", "Appliquer"},
-            {"it_IT", "Applica"}
+            {"it_IT", "Applica"},
+            {"nl_NL", "Toepassen"}
         }
     },
 
@@ -175,7 +196,8 @@
         {
             {"de_DE", "Anzahl Schritte"},
             {"fr_FR", "Nombre de pas"},
-            {"it_IT", "Numero di passi"}
+            {"it_IT", "Numero di passi"},
+            {"nl_NL", "Aantal passen"}
         }
     },
 
@@ -211,7 +233,8 @@
         {
             {"de_DE", "Gemeinsame Daten"},
             {"fr_FR", "Données partagées"},
-            {"it_IT", "Dati condivisi"}
+            {"it_IT", "Dati condivisi"},
+            {"nl_NL", "Gedeelde data"}
         }
     },
 
@@ -219,7 +242,10 @@
         "Level",
         {
             {"de_DE", "Lautstärke"},
-            {"fr_FR", "Niveau"}
+            {"es_ES", "Nivel"},
+            {"fr_FR", "Niveau"},
+            {"it_IT", "Livello"},
+            {"nl_NL", "Niveau"}
         }
     },
 
@@ -227,7 +253,10 @@
         "on",
         {
             {"de_DE", "ein"},
-            {"fr_FR", "On"}
+            {"es_ES", "activado"},
+            {"fr_FR", "on"},
+            {"it_IT", "attivo"},
+            {"nl_NL", "aan"}
         }
     },
 
@@ -235,7 +264,10 @@
         "off",
         {
             {"de_DE", "aus"},
-            {"fr_FR", "Off"}
+            {"es_ES", "desactivado"},
+            {"fr_FR", "off"},
+            {"it_IT", "non attivo"},
+            {"nl_NL", "uit"}
         }
     }
 }
