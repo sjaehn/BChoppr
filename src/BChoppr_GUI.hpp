@@ -179,12 +179,12 @@ private:
 
 	// Definition of styles
 	BStyles::ColorMap fgColors = BStyles::ColorMap {{0.0, 0.75, 0.2, 1.0}, {0.2, 1.0, 0.6, 1.0}, {0.0, 0.5, 0.15, 1.0}, {0.0, 0.0, 0.0, 0.0}};
-	BStyles::ColorMap bgColors = BStyles::ColorMap {{{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}}};
+	BStyles::ColorMap bgColors = BStyles::ColorMap {{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap txColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap monColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 
-	BStyles::Border border = {{fgColors[BStyles::STATUS_NORMAL], 1.0}, 0.0, 2.0, 0.0};
-	BStyles::Border btBorder = BStyles::Border (BStyles::Line (getBgColors()[BStyles::Status::STATUS_NORMAL].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
+	BStyles::Border border = BStyles::Border {{fgColors[BStyles::STATUS_NORMAL], 1.0}, 0.0, 2.0, 0.0};
+	BStyles::Border btBorder = BStyles::Border (BStyles::Line (bgColors[BStyles::Status::STATUS_NORMAL].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
 
 	BStyles::Fill screenBg = BStyles::Fill (BStyles::Color (0.0, 0.0, 0.0, 0.75));
 
