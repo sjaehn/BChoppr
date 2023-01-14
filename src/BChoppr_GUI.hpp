@@ -183,13 +183,13 @@ private:
 	BStyles::ColorMap txColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap monColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 
-	BStyles::Border border = BStyles::Border {{fgColors[BStyles::STATUS_NORMAL], 1.0}, 0.0, 2.0, 0.0};
-	BStyles::Border btBorder = BStyles::Border (BStyles::Line (bgColors[BStyles::Status::STATUS_NORMAL].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
+	BStyles::Border border = BStyles::Border {{fgColors[BStyles::Status::normal], 1.0}, 0.0, 2.0, 0.0};
+	BStyles::Border btBorder = BStyles::Border (BStyles::Line (bgColors[BStyles::Status::normal].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
 
 	BStyles::Fill screenBg = BStyles::Fill (BStyles::Color (0.0, 0.0, 0.0, 0.75));
 
-	BStyles::Font defaultFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0, BStyles::Font::TEXT_ALIGN_CENTER, BStyles::Font::TEXT_VALIGN_MIDDLE);
-	BStyles::Font smFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0, BStyles::Font::TEXT_ALIGN_CENTER, BStyles::Font::TEXT_VALIGN_MIDDLE);
+	BStyles::Font defaultFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 12.0, BStyles::Font::TextAlign::center, BStyles::Font::TextVAlign::middle);
+	BStyles::Font smFont = BStyles::Font ("sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL, 10.0, BStyles::Font::TextAlign::center, BStyles::Font::TextVAlign::middle);
 	BStyles::Theme theme = BStyles::Theme
 	{
 		// rcontainer
@@ -227,7 +227,7 @@ private:
 			URID ("/button"), 
 			BStyles::Style 
 			({
-				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::Fill(fgColors[BStyles::STATUS_NORMAL])})},
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::Fill(fgColors[BStyles::Status::normal])})},
 				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(fgColors)},
 				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(btBorder)}
 			})
@@ -336,7 +336,7 @@ private:
 			URID ("/menu/button"), 
 			BStyles::Style 
 			({
-				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::Fill(fgColors[BStyles::STATUS_NORMAL])})},
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::Fill(fgColors[BStyles::Status::normal])})},
 				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(fgColors)},
 				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(btBorder)}
 			})

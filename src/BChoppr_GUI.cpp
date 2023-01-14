@@ -106,12 +106,12 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	}
 
 	// Initialize and configure images
-	sContainer.createImage (BStyles::STATUS_NORMAL);
-	rectButton.image.createImage (BStyles::STATUS_NORMAL);
-	rectButton.image.createImage (BStyles::STATUS_ACTIVE);
-	sinButton.image.createImage (BStyles::STATUS_NORMAL);
-	sinButton.image.createImage (BStyles::STATUS_ACTIVE);
-	stepshapeDisplay.createImage (BStyles::STATUS_NORMAL);
+	sContainer.createImage (BStyles::Status::normal);
+	rectButton.image.createImage (BStyles::Status::normal);
+	rectButton.image.createImage (BStyles::Status::active);
+	sinButton.image.createImage (BStyles::Status::normal);
+	sinButton.image.createImage (BStyles::Status::active);
+	stepshapeDisplay.createImage (BStyles::Status::normal);
 
 	//Initialialize and configure step controllers
 	double sw = sContainer.getEffectiveWidth();
@@ -125,7 +125,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		sContainer.add (stepLevelControl[i]);
 
 		stepLevelControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 28, 20, "1.00", URID ("/smlabel"));
-		stepLevelControlLabel[i]->setCallbackFunction(BEvents::Event::VALUE_CHANGED_EVENT, stepControlLabelChangedCallback);
+		stepLevelControlLabel[i]->setCallbackFunction(BEvents::Event::EventType::valueChangedEvent, stepControlLabelChangedCallback);
 		sContainer.add (stepLevelControlLabel[i]);
 
 		stepPanControl[i] = new BWidgets::Dial ((i + 0.5) * sw / MAXSTEPS + sx - 15, 135, 30, 30, 0.0, -1.0, 1.0, 0.01, 
@@ -135,7 +135,7 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		sContainer.add (stepPanControl[i]);
 
 		stepPanControlLabel[i] = new BWidgets::EditLabel ((i + 0.5) * sw / MAXSTEPS + sx - 14, 40, 165, 20, "1.00", URID ("/smlabel"));
-		stepPanControlLabel[i]->setCallbackFunction(BEvents::Event::VALUE_CHANGED_EVENT, stepControlLabelChangedCallback);
+		stepPanControlLabel[i]->setCallbackFunction(BEvents::Event::EventType::valueChangedEvent, stepControlLabelChangedCallback);
 		sContainer.add (stepPanControlLabel[i]);
 
 		
@@ -147,8 +147,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 		markerWidgets[i] = new Marker ((i + 1) * sw / MAXSTEPS + sx - 5, 10, 10, 16, (double(i) + 1.0) / MAXSTEPS, 0.0, 1.0, 0.0,
 									   BNOTRANSFERD, BNOTRANSFERD, URID ("/marker"), BDICT ("Marker") + " " + std::to_string(i + 1));
 		markerWidgets[i]->setHasValue (false);
-		markerWidgets[i]->setCallbackFunction (BEvents::Event::BUTTON_PRESS_EVENT, BChoppr_GUI::markerClickedCallback);
-		markerWidgets[i]->setCallbackFunction (BEvents::Event::POINTER_DRAG_EVENT, BChoppr_GUI::markerDraggedCallback);
+		markerWidgets[i]->setCallbackFunction (BEvents::Event::EventType::buttonPressEvent, BChoppr_GUI::markerClickedCallback);
+		markerWidgets[i]->setCallbackFunction (BEvents::Event::EventType::pointerDragEvent, BChoppr_GUI::markerDraggedCallback);
 		sContainer.add (markerWidgets[i]);
 	}
 
@@ -174,22 +174,22 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	for (int i = 0; i < MAXSTEPS; ++i) controllers[StepPans + i - Controllers] = stepPanControl[i];
 
 	// Set callbacks
-	for (int i = 0; i < NrControllers; ++i) controllers[i]->setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
-	monitorSwitch.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
-	markerListBox.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::listBoxChangedCallback);
-	enterPositionComboBox.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::enterListBoxChangedCallback);
-	enterSequencesComboBox.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::enterListBoxChangedCallback);
-	enterOkButton.setCallbackFunction(BEvents::Event::BUTTON_CLICK_EVENT, enterOkClickedCallback);
-	markersAutoButton.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::markersAutoClickedCallback);
-	rectButton.setCallbackFunction (BEvents::Event::BUTTON_CLICK_EVENT, BChoppr_GUI::buttonClickedCallback);
-	sinButton.setCallbackFunction (BEvents::Event::BUTTON_CLICK_EVENT, BChoppr_GUI::buttonClickedCallback);
-	helpButton.setCallbackFunction(BEvents::Event::BUTTON_PRESS_EVENT, helpButtonClickedCallback);
-	ytButton.setCallbackFunction(BEvents::Event::BUTTON_PRESS_EVENT, ytButtonClickedCallback);
-	for (BWidgets::Button* s: sharedDataButtons) s->setCallbackFunction (BEvents::Event::BUTTON_CLICK_EVENT, BChoppr_GUI::sharedDataClickedCallback);
-	sharedDataDummy.setCallbackFunction (BEvents::Event::VALUE_CHANGED_EVENT, BChoppr_GUI::valueChangedCallback);
+	for (int i = 0; i < NrControllers; ++i) controllers[i]->setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::valueChangedCallback);
+	monitorSwitch.setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::valueChangedCallback);
+	markerListBox.setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::listBoxChangedCallback);
+	enterPositionComboBox.setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::enterListBoxChangedCallback);
+	enterSequencesComboBox.setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::enterListBoxChangedCallback);
+	enterOkButton.setCallbackFunction(BEvents::Event::EventType::buttonClickEvent, enterOkClickedCallback);
+	markersAutoButton.setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::markersAutoClickedCallback);
+	rectButton.setCallbackFunction (BEvents::Event::EventType::buttonClickEvent, BChoppr_GUI::buttonClickedCallback);
+	sinButton.setCallbackFunction (BEvents::Event::EventType::buttonClickEvent, BChoppr_GUI::buttonClickedCallback);
+	helpButton.setCallbackFunction(BEvents::Event::EventType::buttonPressEvent, helpButtonClickedCallback);
+	ytButton.setCallbackFunction(BEvents::Event::EventType::buttonPressEvent, ytButtonClickedCallback);
+	for (BWidgets::Button* s: sharedDataButtons) s->setCallbackFunction (BEvents::Event::EventType::buttonClickEvent, BChoppr_GUI::sharedDataClickedCallback);
+	sharedDataDummy.setCallbackFunction (BEvents::Event::EventType::valueChangedEvent, BChoppr_GUI::valueChangedCallback);
 
 	// Configure widgets
-	bgImage.loadImage(BStyles::STATUS_NORMAL,pluginPath + BG_FILE);
+	bgImage.loadImage(BStyles::Status::normal,pluginPath + BG_FILE);
 	drywetDial.setScrollable (true);
 	drywetDial.setClickable (false);
 	attackControl.setScrollable (true);
@@ -200,8 +200,8 @@ BChoppr_GUI::BChoppr_GUI (const char *bundle_path, const LV2_Feature *const *fea
 	ampSwingControl.setClickable (false);
 	swingControl.setClickable (false);
 	nrStepsControl.setScrollable (true);
-	markerListBox.setStacking (STACKING_ESCAPE);
-	enterFrame.setStacking (STACKING_ESCAPE);
+	markerListBox.setStacking (StackingType::escape);
+	enterFrame.setStacking (StackingType::escape);
 	enterFrame.hide();
 	sharedDataDummy.hide();
 	setTheme (theme);
@@ -777,7 +777,7 @@ void BChoppr_GUI::markerClickedCallback (BEvents::Event* event)
 {
 	if (!event) return;
 	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
-	if (pev->getButton() != BDevices::MouseButton::MOUSE_RIGHT_BUTTON) return;
+	if (pev->getButton() != BDevices::MouseButton::ButtonType::right) return;
 	Marker* marker = (Marker*)event->getWidget();
 	if (!marker) return;
 	marker->raiseToFront();
@@ -826,7 +826,7 @@ void BChoppr_GUI::markerDraggedCallback (BEvents::Event* event)
 {
 	if (!event) return;
 	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
-	if (pev->getButton() != BDevices::MouseButton::MOUSE_LEFT_BUTTON) return;
+	if (pev->getButton() != BDevices::MouseButton::ButtonType::left) return;
 	Marker* marker = (Marker*)event->getWidget();
 	if (!marker) return;
 	marker->raiseToFront();
@@ -1064,7 +1064,7 @@ void BChoppr_GUI::enterOkClickedCallback (BEvents::Event* event)
 {
 	if (!event) return;
 	BEvents::PointerEvent* pev = (BEvents::PointerEvent*) event;
-	if (pev->getButton() != BDevices::MouseButton::MOUSE_LEFT_BUTTON) return;
+	if (pev->getButton() != BDevices::MouseButton::ButtonType::left) return;
 	BWidgets::TextButton* button = (BWidgets::TextButton*)event->getWidget();
 	if (!button) return;
 	BChoppr_GUI* ui = (BChoppr_GUI*)button->getMainWindow();
@@ -1149,12 +1149,12 @@ void BChoppr_GUI::destroy_Stepshape ()
 
 void BChoppr_GUI::redrawStepshape ()
 {
-	cairo_surface_t* surface = stepshapeDisplay.getImageSurface (BStyles::STATUS_NORMAL);
-	cairo_t* cr = cairo_create (stepshapeDisplay.getImageSurface (BStyles::STATUS_NORMAL));
+	cairo_surface_t* surface = stepshapeDisplay.getImageSurface (BStyles::Status::normal);
+	cairo_t* cr = cairo_create (stepshapeDisplay.getImageSurface (BStyles::Status::normal));
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 	const double width = cairo_image_surface_get_width (surface);
 	const double height = cairo_image_surface_get_height(surface);
-	const BStyles::Color fgColor = stepshapeDisplay.getFgColors()[BStyles::STATUS_NORMAL];
+	const BStyles::Color fgColor = stepshapeDisplay.getFgColors()[BStyles::Status::normal];
 
 	// Draw background
 	cairo_set_source_rgba (cr, CAIRO_RGBA(BStyles::black));
@@ -1232,7 +1232,7 @@ void BChoppr_GUI::redrawStepshape ()
 
 void BChoppr_GUI::redrawSContainer ()
 {
-	cairo_surface_t* surface = sContainer.getImageSurface (BStyles::STATUS_NORMAL);
+	cairo_surface_t* surface = sContainer.getImageSurface (BStyles::Status::normal);
 	cairoplus_surface_clear (surface);
 	cairo_t* cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
@@ -1267,7 +1267,7 @@ void BChoppr_GUI::redrawButtons ()
 {
 
 	// rectButton, inactive
-	cairo_surface_t* surface = rectButton.image.getImageSurface (BStyles::STATUS_NORMAL);
+	cairo_surface_t* surface = rectButton.image.getImageSurface (BStyles::Status::normal);
 	cairo_t* cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
@@ -1279,7 +1279,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
 	cairo_fill (cr);
 
-	cairo_set_source_rgba (cr, CAIRO_RGBA (rectButton.getFgColors()[BStyles::STATUS_INACTIVE]));
+	cairo_set_source_rgba (cr, CAIRO_RGBA (rectButton.getFgColors()[BStyles::Status::inactive]));
 	cairo_set_line_width (cr, 2.0);
 
 	cairo_rectangle(cr, 0, 0, width, height);
@@ -1294,7 +1294,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_destroy (cr);
 
 	// rectButton, active
-	surface = rectButton.image.getImageSurface (BStyles::STATUS_ACTIVE);
+	surface = rectButton.image.getImageSurface (BStyles::Status::active);
 	cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
@@ -1306,7 +1306,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
 	cairo_fill (cr);
 
-	cairo_set_source_rgba (cr, CAIRO_RGBA (rectButton.getFgColors()[BStyles::STATUS_NORMAL]));
+	cairo_set_source_rgba (cr, CAIRO_RGBA (rectButton.getFgColors()[BStyles::Status::normal]));
 	cairo_set_line_width (cr, 2.0);
 
 	cairo_rectangle(cr, 0, 0, width, height);
@@ -1321,7 +1321,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_destroy (cr);
 
 	// sinButton, inactive
-	surface = sinButton.image.getImageSurface (BStyles::STATUS_NORMAL);
+	surface = sinButton.image.getImageSurface (BStyles::Status::normal);
 	cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
@@ -1333,7 +1333,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
 	cairo_fill (cr);
 
-	cairo_set_source_rgba (cr, CAIRO_RGBA (sinButton.getFgColors()[BStyles::STATUS_INACTIVE]));
+	cairo_set_source_rgba (cr, CAIRO_RGBA (sinButton.getFgColors()[BStyles::Status::inactive]));
 	cairo_set_line_width (cr, 2.0);
 
 	cairo_rectangle(cr, 0, 0, width, height);
@@ -1348,7 +1348,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_destroy (cr);
 
 	// sinButton, active
-	surface = sinButton.image.getImageSurface (BStyles::STATUS_ACTIVE);
+	surface = sinButton.image.getImageSurface (BStyles::Status::active);
 	cr = cairo_create (surface);
 	if (cairo_status (cr) != CAIRO_STATUS_SUCCESS) return;
 
@@ -1360,7 +1360,7 @@ void BChoppr_GUI::redrawButtons ()
 	cairo_rectangle(cr, 0.05 * width, 0.05 * height, 0.9 * width, 0.9 * height);
 	cairo_fill (cr);
 
-	cairo_set_source_rgba (cr, CAIRO_RGBA (sinButton.getFgColors()[BStyles::STATUS_NORMAL]));
+	cairo_set_source_rgba (cr, CAIRO_RGBA (sinButton.getFgColors()[BStyles::Status::normal]));
 	cairo_set_line_width (cr, 2.0);
 
 	cairo_rectangle(cr, 0, 0, width, height);
@@ -1444,7 +1444,7 @@ static int callResize (LV2UI_Handle ui, int width, int height)
 	BChoppr_GUI* self = (BChoppr_GUI*) ui;
 	if (!self) return 0;
 
-	BEvents::ExposeEvent* ev = new BEvents::ExposeEvent (self, self, BEvents::Event::CONFIGURE_REQUEST_EVENT, self->getPosition().x, self->getPosition().y, width, height);
+	BEvents::ExposeEvent* ev = new BEvents::ExposeEvent (self, self, BEvents::Event::EventType::configureRequestEvent, self->getPosition().x, self->getPosition().y, width, height);
 	self->addEventToQueue (ev);
 	return 0;
 }

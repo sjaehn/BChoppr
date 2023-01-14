@@ -287,9 +287,9 @@ inline void Monitor::draw (const BUtilities::Area<>& area)
 			cairo_clip (cr);
 
 			// Colors uses within this method
-			const BStyles::Color inColor = getFgColors()[BStyles::STATUS_NORMAL];
-			const BStyles::Color outColor = getFgColors()[BStyles::STATUS_ACTIVE];
-			const BStyles::Color bgColor = getBgColors()[BStyles::STATUS_NORMAL];
+			const BStyles::Color inColor = getFgColors()[BStyles::Status::normal];
+			const BStyles::Color outColor = getFgColors()[BStyles::Status::active];
+			const BStyles::Color bgColor = getBgColors()[BStyles::Status::normal];
 
 			// Create individual surfaces for all 4 data blocks
 			cairo_surface_t* surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, getWidth(), getHeight());

@@ -56,7 +56,7 @@ struct BChopprURIs
 
 };
 
-void getURIs (LV2_URID_Map* m, BChopprURIs* uris)
+inline void getURIs (LV2_URID_Map* m, BChopprURIs* uris)
 {
 	uris->atom_Float = m->map(m->handle, LV2_ATOM__Float);
 	uris->atom_Int = m->map(m->handle, LV2_ATOM__Int);
