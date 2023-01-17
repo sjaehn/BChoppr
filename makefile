@@ -54,21 +54,11 @@ DSP_INCL = src/Message.cpp
 
 GUI_CXX_INCL = \
 	src/BWidgets/BUtilities/vsystem.cpp \
-	src/BWidgets/BUtilities/Urid.cpp \
-	src/BWidgets/BUtilities/Dictionary.cpp \
-	src/BWidgets/BWidgets/Supports/Closeable.cpp \
-	src/BWidgets/BWidgets/Supports/Messagable.cpp \
-	src/BWidgets/BWidgets/Window.cpp \
-	src/BWidgets/BWidgets/Widget.cpp 
-
+	$(shell cat src/BWidgets/cppfiles.txt | sed -e 's/^/src\/BWidgets\//')
 
 GUI_C_INCL = \
 	src/screen.c \
-	src/BWidgets/BUtilities/cairoplus.c \
-	src/BWidgets/BWidgets/pugl/implementation.c \
-	src/BWidgets/BWidgets/pugl/x11_stub.c \
-	src/BWidgets/BWidgets/pugl/x11_cairo.c \
-	src/BWidgets/BWidgets/pugl/x11.c
+	$(shell cat src/BWidgets/cfiles_x11.txt | sed -e 's/^/src\/BWidgets\//' )
 
 ifeq ($(shell $(PKG_CONFIG) --exists 'lv2 >= 1.12.4' || echo no), no)
   $(error lv2 >= 1.12.4 not found. Please install lv2 >= 1.12.4 first.)
