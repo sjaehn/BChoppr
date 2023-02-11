@@ -24,7 +24,7 @@ CXXFLAGS ?=-Wall
 STRIPFLAGS ?=-s
 LDFLAGS ?=-Wl,-Bstatic -Wl,-Bdynamic -Wl,--as-needed
 
-override CFLAGS += -std=c99 -fvisibility=hidden -fPIC
+override CFLAGS += -fvisibility=hidden -fPIC
 override CXXFLAGS += -std=c++11 -fvisibility=hidden -fPIC
 override LDFLAGS += -shared -pthread
 
@@ -52,13 +52,9 @@ B_FILES = $(addprefix $(BUNDLE)/, $(FILES))
 
 DSP_INCL = src/Message.cpp
 
-GUI_CXX_INCL = \
-	src/BWidgets/BUtilities/vsystem.cpp \
-	$(shell cat src/BWidgets/cppfiles.txt | sed -e 's/^/src\/BWidgets\//')
+GUI_CXX_INCL = src/BWidgets/BUtilities/vsystem.cpp 
 
-GUI_C_INCL = \
-	src/screen.c \
-	$(shell cat src/BWidgets/cfiles_x11.txt | sed -e 's/^/src\/BWidgets\//' )
+GUI_C_INCL = src/screen.c 
 
 ifeq ($(shell $(PKG_CONFIG) --exists 'lv2 >= 1.12.4' || echo no), no)
   $(error lv2 >= 1.12.4 not found. Please install lv2 >= 1.12.4 first.)
@@ -83,16 +79,16 @@ $(DSP_OBJ): $(DSP_SRC)
 	@$(STRIP) $(STRIPFLAGS) $(BUNDLE)/$@
 	@echo \ done.
 
-$(GUI_OBJ): $(GUI_SRC)
-	@echo -n Build $(BUNDLE) GUI...
-	@mkdir -p $(BUNDLE)
-	@mkdir -p $(BUNDLE)/tmp
-	@cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(GUICFLAGS) $(addprefix ../../, $(GUI_C_INCL)) -c
-	@cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(GUICFLAGS) $(addprefix ../../, $< $(GUI_CXX_INCL)) -c
-	@$(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(GUICFLAGS) -Wl,--start-group $(GUILIBS) $(BUNDLE)/tmp/*.o -Wl,--end-group -o $(BUNDLE)/$@
-	@$(STRIP) $(STRIPFLAGS) $(BUNDLE)/$@
-	@rm -rf $(BUNDLE)/tmp
-	@echo \ done.
+$(GUI_OBJ): $(GUI_SRC) src/BWidgets/build
+	echo -n Build $(BUNDLE) GUI...
+	mkdir -p $(BUNDLE)
+	mkdir -p $(BUNDLE)/tmp
+	cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(GUICFLAGS) -I$(CURDIR)/src/BWidgets/include $(addprefix $(CURDIR)/, $(GUI_C_INCL)) -c
+	cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(GUICFLAGS) -I$(CURDIR)/src/BWidgets/include $(addprefix $(CURDIR)/, $< $(GUI_CXX_INCL)) -c
+	$(CXX) $(LDFLAGS) -Lsrc/BWidgets/build src/BWidgets/build/libbwidgetscore/*.o -lcairoplus -lpugl $(BUNDLE)/tmp/*.o -Wl,--start-group $(GUILIBS) -Wl,--end-group -o $(BUNDLE)/$@
+	$(STRIP) $(STRIPFLAGS) $(BUNDLE)/$@
+	rm -rf $(BUNDLE)/tmp
+	echo \ done.
 else
 $(DSP_OBJ): $(DSP_SRC)
 	@echo -n Build \-g $(BUNDLE) DSP...
@@ -100,17 +96,21 @@ $(DSP_OBJ): $(DSP_SRC)
 	@$(CXX) $(CPPFLAGS) $(OPTIMIZATIONS) $(CXXFLAGS) $(LDFLAGS) $(DSPCFLAGS) -Wl,--start-group $(DSPLIBS) $< $(DSP_INCL) -Wl,--end-group -o $(BUNDLE)/$@
 	@echo \ done.
 
-$(GUI_OBJ): $(GUI_SRC)
-	@echo -n Build \-g $(BUNDLE) GUI...
-	@mkdir -p $(BUNDLE)
-	@mkdir -p $(BUNDLE)/tmp
-	@cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(GUICFLAGS) $(addprefix ../../, $(GUI_C_INCL)) -c
-	@cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(GUICFLAGS) $(addprefix ../../, $< $(GUI_CXX_INCL)) -c
-	@$(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(GUICFLAGS) -Wl,--start-group $(GUILIBS) $(BUNDLE)/tmp/*.o -Wl,--end-group -o $(BUNDLE)/$@
-	@rm -rf $(BUNDLE)/tmp
-	@echo \ done.
+$(GUI_OBJ): $(GUI_SRC) src/BWidgets/build
+	echo -n Build \-g $(BUNDLE) GUI...
+	mkdir -p $(BUNDLE)
+	mkdir -p $(BUNDLE)/tmp
+	cd $(BUNDLE)/tmp; $(CC) $(CPPFLAGS) $(GUIPPFLAGS) $(CFLAGS) $(GUICFLAGS) -I$(CURDIR)/src/BWidgets/include $(addprefix $(CURDIR)/, $(GUI_C_INCL)) -c
+	cd $(BUNDLE)/tmp; $(CXX) $(CPPFLAGS) $(GUIPPFLAGS) $(CXXFLAGS) $(GUICFLAGS) -I$(CURDIR)/src/BWidgets/include $(addprefix $(CURDIR)/, $< $(GUI_CXX_INCL)) -c
+	$(CXX) $(LDFLAGS) -Lsrc/BWidgets/build src/BWidgets/build/libbwidgetscore/*.o -lcairoplus -lpugl $(BUNDLE)/tmp/*.o -Wl,--start-group $(GUILIBS) -Wl,--end-group -o $(BUNDLE)/$@
+	rm -rf $(BUNDLE)/tmp
+	echo \ done.
 endif
 
+src/BWidgets/build:
+	@echo -n Build \-g Toolkit...
+	@cd src/BWidgets ; $(MAKE) -s bwidgets
+	@echo \ done.
 
 install:
 	@echo -n Install $(BUNDLE) to $(DESTDIR)$(LV2DIR)...
@@ -130,6 +130,7 @@ uninstall:
 
 clean:
 	@rm -rf $(BUNDLE)
+	@cd src/BWidgets ; $(MAKE) -s clean
 
 .PHONY: all install uninstall clean
 
