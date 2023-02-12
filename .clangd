@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: ["--include-directory=/home/sven/dev/c/BWidgets/include/"]
