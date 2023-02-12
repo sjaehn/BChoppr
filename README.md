@@ -172,8 +172,8 @@ request or notifying me (issue report, e-mail, ...).
 
 ## What's new
 
-* Migration to the new B.Widgets TK
-* New internationalization
+* New pugl lib implemented
+* Build process modified
 
 
 ## TODO
