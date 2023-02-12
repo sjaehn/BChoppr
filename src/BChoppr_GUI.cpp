@@ -1414,7 +1414,7 @@ static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char 
 	if ((screenWidth < 880) || (screenHeight < 600)) sz = 0.66;
 	if (resize) resize->ui_resize(resize->handle, 820 * sz, 560 * sz);
 
-	*widget = (LV2UI_Widget) puglGetNativeWindow (ui->getPuglView ());
+	*widget = (LV2UI_Widget) puglGetNativeView (ui->getPuglView ());
 	ui->send_record_on();
 	return (LV2UI_Handle) ui;
 }
