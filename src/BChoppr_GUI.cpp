@@ -31,7 +31,6 @@
 #include "BWidgets/BWidgets/ImageButton.hpp"
 #include "BWidgets/BWidgets/Supports/ValueTransferable.hpp"
 #include "SwingHSlider.hpp"
-#include "screen.h"
 #include "BWidgets/BUtilities/stof.hpp"
 #include "BWidgets/BUtilities/vsystem.hpp"
 #include <cairo/cairo.h>
@@ -1380,7 +1379,6 @@ static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char 
 						  const LV2_Feature *const *features)
 {
 	PuglNativeView parentWindow = 0;
-	LV2UI_Resize* resize = NULL;
 
 	if (strcmp(plugin_uri, BCHOPPR_URI) != 0)
 	{
@@ -1391,7 +1389,6 @@ static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char 
 	for (int i = 0; features[i]; ++i)
 	{
 		if (!strcmp(features[i]->URI, LV2_UI__parent)) parentWindow = (PuglNativeView) features[i]->data;
-		else if (!strcmp(features[i]->URI, LV2_UI__resize)) resize = (LV2UI_Resize*)features[i]->data;
 	}
 	if (parentWindow == 0) std::cerr << "BChoppr.lv2#GUI: No parent window.\n";
 
@@ -1406,13 +1403,6 @@ static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char 
 
 	ui->controller = controller;
 	ui->write_function = write_function;
-
-	// Reduce min GUI size for small displays
-	double sz = 1.0;
-	int screenWidth  = getScreenWidth ();
-	int screenHeight = getScreenHeight ();
-	if ((screenWidth < 880) || (screenHeight < 600)) sz = 0.66;
-	if (resize) resize->ui_resize(resize->handle, 820 * sz, 560 * sz);
 
 	*widget = (LV2UI_Widget) puglGetNativeView (ui->getPuglView ());
 	ui->send_record_on();
@@ -1439,23 +1429,11 @@ static int callIdle (LV2UI_Handle ui)
 	return 0;
 }
 
-static int callResize (LV2UI_Handle ui, int width, int height)
-{
-	BChoppr_GUI* self = (BChoppr_GUI*) ui;
-	if (!self) return 0;
-
-	BEvents::ExposeEvent* ev = new BEvents::ExposeEvent (self, self, BEvents::Event::EventType::configureRequestEvent, self->getPosition().x, self->getPosition().y, width, height);
-	self->addEventToQueue (ev);
-	return 0;
-}
-
 static const LV2UI_Idle_Interface idle = {callIdle};
-static const LV2UI_Resize resize = {nullptr, callResize} ;
 
 static const void* extensionData(const char* uri)
 {
 	if (!strcmp(uri, LV2_UI__idleInterface)) return &idle;
-	else if(!strcmp(uri, LV2_UI__resize)) return &resize;
 	else return NULL;
 }
 
