@@ -1403,8 +1403,7 @@ static LV2UI_Handle instantiate (const LV2UI_Descriptor *descriptor, const char 
 
 	ui->controller = controller;
 	ui->write_function = write_function;
-
-	*widget = (LV2UI_Widget) puglGetNativeView (ui->getPuglView ());
+	*widget = (LV2UI_Widget) ui->getNativeView ();
 	ui->send_record_on();
 	return (LV2UI_Handle) ui;
 }
