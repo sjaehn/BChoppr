@@ -182,6 +182,7 @@ private:
 	BStyles::ColorMap bgColors = BStyles::ColorMap {{0.15, 0.15, 0.15, 1.0}, {0.3, 0.3, 0.3, 1.0}, {0.05, 0.05, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap txColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.2, 0.05, 1.0}, {0.0, 0.0, 0.0, 0.0}};
 	BStyles::ColorMap monColors = BStyles::ColorMap {{0.0, 1.0, 0.4, 1.0}, {0.8, 0.6, 0.2, 1.0}, {0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 0.0}};
+	BStyles::ColorMap noColors = BStyles::ColorMap {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
 
 	BStyles::Border border = BStyles::Border {{fgColors[BStyles::Status::normal], 1.0}, 0.0, 2.0, 0.0};
 	BStyles::Border btBorder = BStyles::Border (BStyles::Line (bgColors[BStyles::Status::normal].illuminate (BStyles::Color::darkened), 1.0), 0.0, 0.0, 3.0);
@@ -258,7 +259,8 @@ private:
 			URID ("/invbutton"), 
 			BStyles::Style 
 			({
-				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})}
+				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})},
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(BStyles::ColorMap{BStyles::invisible})},
 			})
 		},
 
@@ -268,7 +270,8 @@ private:
 			BStyles::Style 
 			({
 				{BURID(BSTYLES_STYLEPROPERTY_BACKGROUND_URI), BUtilities::makeAny<BStyles::Fill>({BStyles::noFill})},
-				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(border)}
+				{BURID(BSTYLES_STYLEPROPERTY_BGCOLORS_URI), BUtilities::makeAny<BStyles::ColorMap>(noColors)},
+				{BURID(BSTYLES_STYLEPROPERTY_BORDER_URI), BUtilities::makeAny<BStyles::Border>(BStyles::noBorder)}
 			})
 		},
 

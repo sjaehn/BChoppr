@@ -23,6 +23,7 @@
 #include "BWidgets/BEvents/Event.hpp"
 #include "BWidgets/BEvents/ExposeEvent.hpp"
 #include "BWidgets/BStyles/Status.hpp"
+#include "BWidgets/BStyles/Types/Border.hpp"
 #include "BWidgets/BStyles/Types/Color.hpp"
 #include "BWidgets/BStyles/Types/Fill.hpp"
 #include "BWidgets/BUtilities/Dictionary.hpp"
@@ -755,6 +756,7 @@ void BChoppr_GUI::valueChangedCallback (BEvents::Event* event)
 						ui->sharedDataButtons[i]->setValueable (false);
 						ui->sharedDataButtons[i]->setValue (i == val);
 						ui->sharedDataButtons[i]->setValueable (true);
+						ui->sharedDataButtons[i]->setBorder(i == val ? ui->border : BStyles::noBorder);
 					}
 
 					ui->sendSharedDataNr();
