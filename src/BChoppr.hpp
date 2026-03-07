@@ -1,7 +1,7 @@
 /* B.Choppr
  * Step Sequencer Effect Plugin
  *
- * Copyright (C) 2018, 2019 by Sven Jähnichen
+ * Copyright (C) 2018 - 2026 by Sven Jähnichen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 
 #include <cmath>
 #include <array>
-#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
-#include <lv2/lv2plug.in/ns/ext/atom/forge.h>
-#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/forge.h>
+#include <lv2/state/state.h>
 #include "definitions.hpp"
 #include "Limit.hpp"
 #include "Urids.hpp"

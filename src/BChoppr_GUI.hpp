@@ -1,7 +1,7 @@
 /* B.Choppr
  * Step Sequencer Effect Plugin
  *
- * Copyright (C) 2018, 2019 by Sven Jähnichen
+ * Copyright (C) 2018 - 2026 by Sven Jähnichen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 #include "BWidgets/BStyles/Types/ColorMap.hpp"
 #include "BWidgets/BStyles/Types/Fill.hpp"
 #include "BWidgets/BStyles/Types/Font.hpp"
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
-#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
-#include <lv2/lv2plug.in/ns/ext/atom/forge.h>
+#include <lv2/ui/ui.h>
+#include <lv2/atom/atom.h>
+#include <lv2/atom/forge.h>
 #include "BWidgets/BUtilities/Dictionary.hpp"
 #include "BWidgets/BWidgets/Widget.hpp"
 #include "BWidgets/BWidgets/Window.hpp"

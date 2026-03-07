@@ -1,7 +1,7 @@
 /* B.Choppr
  * Step Sequencer Effect Plugin
  *
- * Copyright (C) 2018, 2019 by Sven Jähnichen
+ * Copyright (C) 2018 - 2026 by Sven Jähnichen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,10 @@
 #ifndef PORTS_HPP_
 #define PORTS_HPP_
 
-#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
-#include <lv2/lv2plug.in/ns/ext/atom/util.h>
-#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
-#include <lv2/lv2plug.in/ns/ext/time/time.h>
-#include "definitions.hpp"
+#include <lv2/core/lv2.h>
+#include <lv2/atom/util.h>
+#include <lv2/urid/urid.h>
+#include <lv2/time/time.h>
 
 enum BChopprPortIndex
 {
