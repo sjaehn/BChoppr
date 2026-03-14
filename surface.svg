@@ -5,7 +5,7 @@
    viewBox="0 0 216.95833 148.16667"
    version="1.1"
    id="svg4538"
-   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
    sodipodi:docname="surface.svg"
    inkscape:export-filename="surface.png"
    inkscape:export-xdpi="96"
@@ -245,7 +245,7 @@
        x="-0.014231899"
        width="1.0358818"
        y="-0.28911366"
-       height="1.6129594">
+       height="1.6129596">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="0.29104165"
@@ -348,8 +348,8 @@
        id="filter5123-5-6-0-6-2-8-7-45"
        x="-0.0061821665"
        width="1.0101546"
-       y="-0.71707289"
-       height="2.4342191">
+       y="-0.71707339"
+       height="2.4342196">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="0.29104165"
@@ -609,7 +609,7 @@
        x="-0.014231899"
        width="1.0358818"
        y="-0.28911366"
-       height="1.6129594">
+       height="1.6129596">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="0.29104165"
@@ -712,8 +712,8 @@
        id="filter5123-5-6-0-6-2-8-7-45-3"
        x="-0.0061821665"
        width="1.0101546"
-       y="-0.71707289"
-       height="2.4342191">
+       y="-0.71707339"
+       height="2.4342196">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="0.29104165"
@@ -855,9 +855,9 @@
      showgrid="true"
      units="px"
      inkscape:window-width="1920"
-     inkscape:window-height="1016"
+     inkscape:window-height="1011"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      showguides="false"
      inkscape:document-rotation="0"
@@ -868,7 +868,10 @@
        type="xygrid"
        id="grid4540"
        originx="0"
-       originy="0" />
+       originy="0"
+       spacingy="1"
+       spacingx="1"
+       units="px" />
   </sodipodi:namedview>
   <metadata
      id="metadata4535">
@@ -1322,7 +1325,7 @@
          id="tspan1008"
          x="85.460503"
          y="16.007292"
-         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.12.7</tspan></text>
+         style="font-size:3.52778px;fill:#ffffff;stroke-width:0.264583">V 1.12.8</tspan></text>
     <g
        transform="translate(-2.9104143)"
        style="enable-background:new"
